@@ -31,10 +31,21 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	//JWT
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-	//h2
+	//DB
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+
+	//H2
 	runtimeOnly 'com.h2database:h2'
 	testRuntimeOnly 'com.h2database:h2'
+
+	// SWAGGER
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 }
 
 tasks.named('test') {

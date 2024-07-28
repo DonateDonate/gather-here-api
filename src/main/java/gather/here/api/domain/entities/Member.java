@@ -11,11 +11,13 @@ import org.hibernate.annotations.DynamicUpdate;
 @Getter
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "member")
 @Entity
 public class Member extends BaseTime {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @Column(name = "member_seq")
     @Comment("member 식별값")
     private Long seq;
 

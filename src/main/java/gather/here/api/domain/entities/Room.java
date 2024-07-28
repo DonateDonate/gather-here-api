@@ -15,12 +15,14 @@ import java.util.List;
 @Getter
 @DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "room")
 @Entity
 public class Room extends BaseTime {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Comment("member 식별값")
+    @Column(name = "room_seq")
+    @Comment("room 식별값")
     private Long seq;
 
     @Comment("목적지 위도")
