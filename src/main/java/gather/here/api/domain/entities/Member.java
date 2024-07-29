@@ -1,12 +1,15 @@
 package gather.here.api.domain.entities;
 
 import gather.here.api.domain.entities.base.BaseTime;
+import gather.here.api.infra.exception.MemberException;
+import gather.here.api.infra.exception.ResponseStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @DynamicUpdate
@@ -48,4 +51,27 @@ public class Member extends BaseTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_seq")
     private Room room;
+
+    @Comment("활성화 유무")
+    private boolean isActive;
+
+    private Member(String id, String password) {
+        this.id = id;
+        this.password = password;
+        this.isActive = true;
+    }
+    //유저를 생성한다
+    public static Member create(String id, String password,String encodedPassword){
+        if(password.length()<4 || password.length() >8){
+            throw new MemberException(ResponseStatus.INVALID_INPUT, HttpStatus.BAD_REQUEST);
+        }
+
+        if(id.length() != 11){
+            throw new MemberException(ResponseStatus.INVALID_INPUT, HttpStatus.BAD_REQUEST);
+        }
+
+
+        return new Member(id,encodedPassword);
+    }
+
 }
