@@ -1,4 +1,4 @@
-package gather.here.api.domain.entities.base;
+package gather.here.api.domain.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

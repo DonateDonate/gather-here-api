@@ -1,8 +1,7 @@
 package gather.here.api.domain.entities;
 
-import gather.here.api.domain.entities.base.BaseTime;
-import gather.here.api.infra.exception.MemberException;
-import gather.here.api.infra.exception.ResponseStatus;
+import gather.here.api.global.exception.MemberException;
+import gather.here.api.global.exception.ResponseStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.http.HttpStatus;
+
+import static gather.here.api.global.util.NicknameMachine.getRandomNickname;
 
 @Getter
 @DynamicUpdate
@@ -25,7 +26,7 @@ public class Member extends BaseTime {
     private Long seq;
 
     @Comment("아이디")
-    private String id;
+    private String identity;
 
     @Comment("비밀번호")
     private String password;
@@ -55,23 +56,23 @@ public class Member extends BaseTime {
     @Comment("활성화 유무")
     private boolean isActive;
 
-    private Member(String id, String password) {
-        this.id = id;
+    private Member(String identity, String password, String nickname) {
+        this.identity = identity;
         this.password = password;
+        this.nickname =nickname;
         this.isActive = true;
     }
     //유저를 생성한다
     public static Member create(String id, String password,String encodedPassword){
         if(password.length()<4 || password.length() >8){
-            throw new MemberException(ResponseStatus.INVALID_INPUT, HttpStatus.BAD_REQUEST);
+            throw new MemberException(ResponseStatus.INVALID_INPUT, HttpStatus.CONFLICT);
         }
 
         if(id.length() != 11){
-            throw new MemberException(ResponseStatus.INVALID_INPUT, HttpStatus.BAD_REQUEST);
+            throw new MemberException(ResponseStatus.INVALID_INPUT, HttpStatus.CONFLICT);
         }
 
-
-        return new Member(id,encodedPassword);
+        return new Member(id,encodedPassword,getRandomNickname());
     }
 
 }

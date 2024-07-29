@@ -1,6 +1,5 @@
 package gather.here.api.domain.entities;
 
-import gather.here.api.domain.entities.base.BaseTime;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package gather.here.api.infra.exception;
+package gather.here.api.global.exception;
 
 import org.springframework.http.HttpStatus;
 
