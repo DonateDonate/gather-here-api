@@ -19,9 +19,7 @@ import org.springframework.http.HttpStatus;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final TokenRepository tokenRepository;
     private final CryptoFactory cryptoFactory;
-    private final JwtFactory jwtFactory;
 
     public void save(MemberSignUpRequestDto request){
         Member duplicateMember = memberRepository.findByIdentity(request.getId())
@@ -36,21 +34,5 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public GetTokenResponseDto getToken(MemberSignInRequestDto request){
-        Member member = memberRepository.findByIdentity(request.getId())
-                .orElseThrow(() -> new MemberException(ResponseStatus.NOT_FOUND,HttpStatus.NOT_FOUND));
-
-        Boolean validPassword = cryptoFactory.passwordMatches(request.getPassword(), member.getPassword());
-
-        if(!validPassword){
-            throw new MemberException(ResponseStatus.UNCORRECTED_MEMBER_PASSWORD, HttpStatus.UNAUTHORIZED);
-        }
-
-        GetTokenResponseDto tokenRes = jwtFactory.generate(member.getIdentity(), member.getSeq());
-        Token token = Token.create(member.getSeq(), tokenRes.getRefreshToken());
-        tokenRepository.save(token);
-
-        return tokenRes;
-    }
 
 }

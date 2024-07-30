@@ -1,4 +1,5 @@
 package gather.here.api.infra.config;
+import gather.here.api.application.service.AuthService;
 import gather.here.api.application.service.MemberService;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.TokenRepository;
@@ -17,11 +18,20 @@ public class ServiceConfig {
     @Bean
     public MemberService memberService(
             MemberRepository memberRepository,
+            CryptoFactory cryptoFactory
+            ){
+        return new MemberService(memberRepository,cryptoFactory);
+    }
+
+    @Bean
+    public AuthService authService(
+            MemberRepository memberRepository,
             TokenRepository tokenRepository,
             CryptoFactory cryptoFactory,
             JwtFactory jwtFactory
-            ){
-        return new MemberService(memberRepository,tokenRepository,cryptoFactory,jwtFactory);
+
+    ){
+        return new AuthService(memberRepository, tokenRepository, cryptoFactory, jwtFactory);
     }
 
     @Bean
