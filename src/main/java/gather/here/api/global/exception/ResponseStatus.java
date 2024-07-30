@@ -18,6 +18,7 @@ public enum ResponseStatus {
      */
 
     INVALID_INPUT(8101, "Invalid Input"),
+    NOT_FOUND(8102,"not found resource"),
 
     /**
      *  9xxx : auth exception

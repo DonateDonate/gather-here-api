@@ -43,12 +43,6 @@ public class Member extends BaseTime {
     @Comment("socket session id")
     private String socketId;
 
-    @Comment("인증 토큰")
-    private String accessToken;
-
-    @Comment("인증 refresh token")
-    private String refreshToken;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_seq")
     private Room room;

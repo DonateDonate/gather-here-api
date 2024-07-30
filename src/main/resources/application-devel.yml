@@ -7,3 +7,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
+
+security:
+  salt: 10billion
+  jwt:
+    secret: 6rmA7IKw7ZWY6rmA7KKF66+86rmA64+E7Jew7J2Y7LKr7ZSE66Gc7KCd7Yq47ISx6rO16riw7JuQ
+    access-token:
+      minute: 1800
+    refresh-token:
+      minute: 86400000
+

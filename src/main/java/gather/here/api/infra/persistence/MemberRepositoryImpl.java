@@ -5,6 +5,8 @@ import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.infra.persistence.jpa.MemberJpaRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberRepository {
 
@@ -16,7 +18,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Member findByIdentity(String id) {
-        return memberJpaRepository.findByIdentity(id);
+    public Optional<Member> findByIdentity(String id) {
+        return Optional.ofNullable(memberJpaRepository.findByIdentity(id));
     }
 }
