@@ -22,7 +22,7 @@ class MemberTest {
         actual = Member.create(id,password,encodedPassword);
 
         //assert
-        Assertions.assertThat(actual.getId()).isEqualTo(id);
+        Assertions.assertThat(actual.getIdentity()).isEqualTo(id);
         Assertions.assertThat(actual.getPassword()).isEqualTo(encodedPassword);
     }
 
@@ -46,6 +46,7 @@ class MemberTest {
         //assert
         Assertions.assertThat(actual).isNotNull();
         Assertions.assertThat(actual).isInstanceOf(MemberException.class);
+        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(8101);
     }
     @DisplayName("sut는 password의 길이가 4글자 이상 8글자 이하가 아니면 예외가 발생한다")
     @Test
@@ -67,6 +68,7 @@ class MemberTest {
         //assert
         Assertions.assertThat(actual).isNotNull();
         Assertions.assertThat(actual).isInstanceOf(MemberException.class);
+        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(8101);
     }
 
 }

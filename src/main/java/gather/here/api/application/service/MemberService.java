@@ -18,9 +18,9 @@ public class MemberService {
     private final CryptoFactory cryptoFactory;
 
     public void save(MemberSignUpRequestDto request){
-        Member originMember = memberRepository.findByIdentity(request.getId());
+        Member duplicateMember = memberRepository.findByIdentity(request.getId());
 
-        if(originMember != null){
+        if(duplicateMember != null){
             throw new MemberException(ResponseStatus.DUPLICATE_MEMBER_ID, HttpStatus.CONFLICT);
         }
 
@@ -29,12 +29,12 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public void signIn(MemberSignInRequestDto request){
-        Member originMember = memberRepository.findByIdentity(request.getId());
-        Boolean validPassword = cryptoFactory.passwordMatches(request.getPassword(), originMember.getPassword());
+    public void getToken(MemberSignInRequestDto request){
+        Member member = memberRepository.findByIdentity(request.getId());
+        Boolean validPassword = cryptoFactory.passwordMatches(request.getPassword(), member.getPassword());
 
         if(!validPassword){
-            throw new MemberException(ResponseStatus.INCORRECT_MEMBER_PASSWORD, HttpStatus.UNAUTHORIZED);
+            throw new MemberException(ResponseStatus.UNCORRECTED_MEMBER_PASSWORD, HttpStatus.UNAUTHORIZED);
         }
     }
 
