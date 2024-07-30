@@ -20,20 +20,33 @@ public class AuthService {
     private final CryptoFactory cryptoFactory;
     private final JwtFactory jwtFactory;
 
-    public GetTokenResponseDto getToken(MemberSignInRequestDto request){
+    public GetTokenResponseDto getToken(MemberSignInRequestDto request) {
         Member member = memberRepository.findByIdentity(request.getId())
                 .orElseThrow(() -> new MemberException(ResponseStatus.NOT_FOUND, HttpStatus.NOT_FOUND));
 
         Boolean validPassword = cryptoFactory.passwordMatches(request.getPassword(), member.getPassword());
 
-        if(!validPassword){
+        if (!validPassword) {
             throw new MemberException(ResponseStatus.UNCORRECTED_MEMBER_PASSWORD, HttpStatus.UNAUTHORIZED);
         }
 
+        return createToken(member);
+    }
+
+    /**
+     * accessToken, refreshToken을 받아서
+     * refresh token 유효성체크
+     * accesstoken 및 refresh token 갱신하여 return
+     */
+
+//    public GetTokenResponseDto tokenRefresh(){
+//
+//    }
+
+    private GetTokenResponseDto createToken(Member member) {
         GetTokenResponseDto tokenRes = jwtFactory.generate(member.getIdentity(), member.getSeq());
         Token token = Token.create(member.getSeq(), tokenRes.getRefreshToken());
         tokenRepository.save(token);
-
         return tokenRes;
     }
 }

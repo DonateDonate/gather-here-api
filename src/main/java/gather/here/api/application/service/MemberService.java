@@ -8,7 +8,6 @@ import gather.here.api.domain.entities.Token;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.TokenRepository;
 import gather.here.api.domain.security.CryptoFactory;
-import gather.here.api.domain.security.JwtFactory;
 import gather.here.api.global.exception.MemberException;
 import gather.here.api.global.exception.ResponseStatus;
 import lombok.RequiredArgsConstructor;
