@@ -14,7 +14,8 @@ public class GlobalExceptionHandler   {
     protected ResponseEntity<Object> handleBusinessException(BusinessException exception) {
         HttpStatus httpStatus = exception.getHttpStatus();
         ResponseStatus responseStatus = exception.getResponseStatus();
-        return new ResponseEntity<>(responseStatus,httpStatus);
+        CustomResponseBody customResponseBody = new CustomResponseBody(responseStatus.getMessage(), responseStatus.getCode());
+        return new ResponseEntity<>(customResponseBody,httpStatus);
     }
 
 }

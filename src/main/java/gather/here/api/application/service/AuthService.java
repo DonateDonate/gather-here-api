@@ -21,7 +21,7 @@ public class AuthService {
     private final JwtFactory jwtFactory;
 
     public GetTokenResponseDto getToken(MemberSignInRequestDto request) {
-        Member member = memberRepository.findByIdentity(request.getId())
+        Member member = memberRepository.findByIdentity(request.getIdentity())
                 .orElseThrow(() -> new MemberException(ResponseStatus.NOT_FOUND, HttpStatus.NOT_FOUND));
 
         Boolean validPassword = cryptoFactory.passwordMatches(request.getPassword(), member.getPassword());

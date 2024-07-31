@@ -24,7 +24,8 @@ public enum ResponseStatus {
      *  9xxx : auth exception
      */
 
-    NOT_AUTH(9101, "asd");
+    INVALID_IDENTITY_PASSWORD(9101, "invalid identity or password"),
+    INVALID_TOKEN(9102,"invalid token");
 
 
 

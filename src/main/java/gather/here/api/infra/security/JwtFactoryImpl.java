@@ -2,6 +2,7 @@ package gather.here.api.infra.security;
 
 import gather.here.api.application.dto.response.GetTokenResponseDto;
 import gather.here.api.domain.security.JwtFactory;
+import gather.here.api.domain.security.SecurityMemberInfo;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -13,7 +14,7 @@ import java.util.Date;
 
 public class JwtFactoryImpl implements JwtFactory {
 
-    @Value("${security.jwt-secret}")
+    @Value("${security.jwt.secret}")
     private String JWT_SECRET ;
 
     @Value("${security.jwt.access-token.minute}")
@@ -63,6 +64,13 @@ public class JwtFactoryImpl implements JwtFactory {
         }catch (Exception e){
             return false;
         }
+    }
+
+    @Override
+    public String getIdentity(String token) {
+        Key key = getKey();
+        Claims parseClaims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return parseClaims.get("identity", String.class);
     }
 
     private Key getKey() {

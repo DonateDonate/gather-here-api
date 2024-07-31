@@ -10,6 +10,7 @@ import gather.here.api.infra.security.CustomPasswordEncoder;
 import gather.here.api.infra.security.JwtFactoryImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
@@ -43,6 +44,4 @@ public class ServiceConfig {
     public JwtFactory jwtFactory(){
         return new JwtFactoryImpl();
     }
-
-
 }

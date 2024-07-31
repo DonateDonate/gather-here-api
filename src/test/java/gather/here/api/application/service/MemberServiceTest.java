@@ -41,12 +41,13 @@ class MemberServiceTest {
         Assertions.assertThat(actual.getIdentity()).isEqualTo(id);
     }
 
+
     @DisplayName("sut는 저장중 중복된 identity가 존재하면 예외가 발생한다")
     @Test
     public void saveDuplicateTest(){
         //arrange
         MemberService sut = memberService;
-        String id = "01012345678";
+        String id = "01012341234";
         String password = "12341234";
 
         Member member = Member.create(id, password, password);

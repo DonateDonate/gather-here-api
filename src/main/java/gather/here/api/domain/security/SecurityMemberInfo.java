@@ -1,13 +1,12 @@
-package gather.here.api.application.dto.request;
+package gather.here.api.domain.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class MemberSignInRequestDto {
+public class SecurityMemberInfo {
     private String identity;
+    private long memberSeq;
     private String password;
 }
