@@ -1,13 +1,9 @@
 package gather.here.api.infra.security;
 
-import gather.here.api.application.dto.response.GetTokenResponseDto;
 import gather.here.api.domain.security.AccessTokenFactory;
 import gather.here.api.global.exception.AuthException;
 import gather.here.api.global.exception.ResponseStatus;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

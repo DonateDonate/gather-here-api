@@ -1,5 +1,6 @@
 package gather.here.api.infra.security;
 
+import gather.here.api.application.dto.response.TokenResponseDto;
 import gather.here.api.application.service.TokenService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -25,6 +26,20 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("JwtAuthenticationProcessingFilter");
         String accessToken = extractAccessTokenWithPrefix(request);
+        String refreshToken = extractRefreshTokenWithPrefix(request);
+
+        // refresh token 포함 == 재발급의 경우
+        if (StringUtils.hasText(refreshToken)) {
+            try {
+                TokenResponseDto tokenDto = tokenService.reissue(refreshToken);
+                sendReissueSuccessResponse(response, tokenDto);
+                return;
+            } catch (JwtException e) {
+                request.setAttribute("exception", e);
+                filterChain.doFilter(request, response);
+                return;
+            }
+        }
 
         if(!StringUtils.hasText(accessToken)){
             filterChain.doFilter(request, response);
@@ -40,7 +55,17 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    private void sendReissueSuccessResponse(HttpServletResponse response, TokenResponseDto tokenResponseDto) {
+        response.setHeader("Authorization", tokenResponseDto.getAccessToken());
+        response.setHeader("Refresh-token", tokenResponseDto.getRefreshToken());
+        response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+    }
+
     private String extractAccessTokenWithPrefix(HttpServletRequest request) {
         return request.getHeader("Authorization");
+    }
+
+    private String extractRefreshTokenWithPrefix(HttpServletRequest request) {
+        return request.getHeader("Refresh-token");
     }
 }
