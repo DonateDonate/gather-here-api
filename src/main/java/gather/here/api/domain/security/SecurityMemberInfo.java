@@ -7,6 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SecurityMemberInfo {
     private String identity;
-    private long memberSeq;
     private String password;
 }

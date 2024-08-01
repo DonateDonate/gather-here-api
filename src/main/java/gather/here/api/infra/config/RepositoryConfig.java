@@ -1,14 +1,14 @@
 package gather.here.api.infra.config;
 
 import gather.here.api.domain.repositories.MemberRepository;
+import gather.here.api.domain.repositories.RefreshTokenRepository;
 import gather.here.api.domain.repositories.RoomRepository;
-import gather.here.api.domain.repositories.TokenRepository;
 import gather.here.api.infra.persistence.MemberRepositoryImpl;
+import gather.here.api.infra.persistence.RefreshTokenRepositoryImpl;
 import gather.here.api.infra.persistence.RoomRepositoryImpl;
-import gather.here.api.infra.persistence.TokenRepositoryImpl;
 import gather.here.api.infra.persistence.jpa.MemberJpaRepository;
+import gather.here.api.infra.persistence.jpa.RefreshTokenJpaRepository;
 import gather.here.api.infra.persistence.jpa.RoomJpaRepository;
-import gather.here.api.infra.persistence.jpa.TokenJpaRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,8 +26,8 @@ public class RepositoryConfig {
     }
 
     @Bean
-    public TokenRepository tokenRepository(TokenJpaRepository rep){
-        return new TokenRepositoryImpl(rep);
+    public RefreshTokenRepository tokenRepository(RefreshTokenJpaRepository rep){
+        return new RefreshTokenRepositoryImpl(rep);
 
     }
 }

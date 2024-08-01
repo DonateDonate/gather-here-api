@@ -25,7 +25,9 @@ public enum ResponseStatus {
      */
 
     INVALID_IDENTITY_PASSWORD(9101, "invalid identity or password"),
-    INVALID_TOKEN(9102,"invalid token");
+    INVALID_TOKEN(9102,"invalid token"),
+    EXPIRE_TOKEN(9103,"expire token"),
+    EMPTY_TOKEN(9104,"empty token");
 
 
 

@@ -1,4 +1,4 @@
-package gather.here.api.infra.security;
+package gather.here.api.infra.crypto;
 
 import gather.here.api.domain.security.CryptoFactory;
 import lombok.RequiredArgsConstructor;

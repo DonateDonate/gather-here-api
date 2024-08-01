@@ -30,9 +30,4 @@ public class SecurityMemberDetails implements UserDetails {
     public String getUsername() {
         return securityMemberInfo.getIdentity();
     }
-
-    public Long getMemberSeq() {
-        return securityMemberInfo.getMemberSeq();
-    }
-
 }
