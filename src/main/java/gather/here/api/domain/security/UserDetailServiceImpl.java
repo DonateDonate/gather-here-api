@@ -20,7 +20,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Member member = memberRepository.findByIdentity(username)
-                .orElseThrow(() -> new MemberException(ResponseStatus.NOT_FOUND, HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new UsernameNotFoundException(ResponseStatus.NOT_FOUND.getMessage()));
 
         return User.builder()
                 .username(member.getIdentity())

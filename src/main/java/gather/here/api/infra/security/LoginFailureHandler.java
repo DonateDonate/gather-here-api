@@ -20,7 +20,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     private final ObjectMapper objectMapper;
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        CustomResponseBody errorResponse = new CustomResponseBody(ResponseStatus.UNCORRECTED_MEMBER_PASSWORD.getMessage(), ResponseStatus.INVALID_IDENTITY_PASSWORD.getCode());
+        CustomResponseBody errorResponse = new CustomResponseBody(ResponseStatus.UNCORRECTED_MEMBER_ID_PASSWORD.getMessage(), ResponseStatus.UNCORRECTED_MEMBER_ID_PASSWORD.getCode());
 
         String body = objectMapper.writeValueAsString(errorResponse);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

@@ -55,29 +55,11 @@ public class LoginProcessingFilter extends AbstractAuthenticationProcessingFilte
 
         String username = obtainParameter(usernameParameter, usernamePasswordMap);
         String password = obtainParameter(passwordParameter, usernamePasswordMap);
-        log.info("username ={}",username);
-        log.info("password ={}",password);
 
         UsernamePasswordAuthenticationToken authRequest =
                 UsernamePasswordAuthenticationToken.unauthenticated(username, password);
 
         return getAuthenticationManager().authenticate(authRequest);
-
-
-    }
-
-    public void setUsernameParameter(String usernameParameter) {
-        Assert.hasText(usernameParameter, "Username parameter must not be empty or null");
-        this.usernameParameter = usernameParameter;
-    }
-
-    public void setPasswordParameter(String passwordParameter) {
-        Assert.hasText(passwordParameter, "Password parameter must not be empty or null");
-        this.passwordParameter = passwordParameter;
-    }
-
-    public void setPostOnly(boolean postOnly) {
-        this.postOnly = postOnly;
     }
 
     private String obtainParameter(String parameter, Map<String, String> usernamePasswordMap) {

@@ -13,10 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.session.InMemoryWebSessionStore;
 
 import java.security.Key;
 import java.util.Optional;
+
+import static gather.here.api.global.util.TokenUtil.removePrefix;
+import static gather.here.api.global.util.TokenUtil.withTokenPrefix;
 
 @RequiredArgsConstructor
 public class TokenService {
@@ -30,12 +32,19 @@ public class TokenService {
     @Value("${security.jwt.refresh-token.minute}")
     private long REFRESH_TOKEN_MINUTE;
 
+    @Value("${security.jwt.access-token.prefix}")
+    private String ACCESS_TOKEN_PREFIX;
+
+    @Value("${security.jwt.refresh-token.prefix}")
+    private String REFRESH_TOKEN_PREFIX;
+
     private final AccessTokenFactory accessTokenFactory;
     private final RefreshTokenFactory refreshTokenFactory;
 
     public String accessTokenGenerate(Authentication authentication){
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return accessTokenFactory.generate(userDetails.getUsername(),getKey(),ACCESS_TOKEN_MINUTE);
+        String accessToken = accessTokenFactory.generate(userDetails.getUsername(), getKey(), ACCESS_TOKEN_MINUTE);
+        return withTokenPrefix(accessToken,ACCESS_TOKEN_PREFIX);
     }
 
     public Authentication accessTokenValidate(String token){
@@ -48,11 +57,11 @@ public class TokenService {
         String refreshToken = refreshTokenFactory.generate(identity, getKey(), REFRESH_TOKEN_MINUTE);
 
         refreshTokenFactory.update(identity, refreshToken);
-        return withTokenPrefix(refreshToken);
+        return withTokenPrefix(refreshToken,REFRESH_TOKEN_PREFIX);
     }
 
     public TokenResponseDto reissue(String refreshTokenWithPrefix){
-        String refreshToken = removePrefix(refreshTokenWithPrefix);
+        String refreshToken = removePrefix(refreshTokenWithPrefix,REFRESH_TOKEN_PREFIX);
         Authentication authentication = refreshTokenFactory.validate(refreshTokenWithPrefix, getKey());
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String identity = userDetails.getUsername();
@@ -75,15 +84,5 @@ public class TokenService {
         byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);
         Key key = Keys.hmacShaKeyFor(keyBytes);
         return key;
-    }
-    private String withTokenPrefix(String token) {
-        return "Bearer " + token;
-    }
-    private String removePrefix(String token) {
-        String tokenPrefix = "Bearer";
-        if (!token.startsWith(tokenPrefix + " ")) {
-            throw new AuthException(ResponseStatus.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
-        }
-        return token.substring(tokenPrefix.length() + 1);
     }
 }

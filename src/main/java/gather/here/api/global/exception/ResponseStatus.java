@@ -10,7 +10,7 @@ public enum ResponseStatus {
      *  1xxx : member Exception
      */
     DUPLICATE_MEMBER_ID(1101,"duplicated member id"),
-    UNCORRECTED_MEMBER_PASSWORD(1102, "uncorrected member password"),
+    UNCORRECTED_MEMBER_ID_PASSWORD(1102, "uncorrected member id or password"),
 
 
     /**

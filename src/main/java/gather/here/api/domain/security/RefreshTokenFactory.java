@@ -11,5 +11,5 @@ public interface RefreshTokenFactory {
 
     Optional<String> find(String identity);
     void delete(String identity);
-    public Authentication validate(String accessTokenTokenWithPrefix, Key key);
+    Authentication validate(String refreshTokenTokenWithPrefix, Key key);
 }

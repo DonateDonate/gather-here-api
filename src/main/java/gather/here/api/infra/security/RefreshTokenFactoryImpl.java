@@ -3,16 +3,13 @@ package gather.here.api.infra.security;
 import gather.here.api.domain.entities.RefreshToken;
 import gather.here.api.domain.repositories.RefreshTokenRepository;
 import gather.here.api.domain.security.RefreshTokenFactory;
-import gather.here.api.global.exception.AuthException;
-import gather.here.api.global.exception.ResponseStatus;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Key;
 import java.time.ZonedDateTime;
@@ -20,8 +17,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static gather.here.api.global.util.TokenUtil.removePrefix;
+
 @RequiredArgsConstructor
 public class RefreshTokenFactoryImpl implements RefreshTokenFactory {
+
+    @Value("${security.jwt.refresh-token.prefix}")
+    private String REFRESH_TOKEN_PREFIX;
 
     private final RefreshTokenRepository repository;
 
@@ -79,18 +81,12 @@ public class RefreshTokenFactoryImpl implements RefreshTokenFactory {
 
         refreshToken.deleteToken();
     }
+
     @Override
-    public Authentication validate(String accessTokenTokenWithPrefix, Key key) {
-        String token = removePrefix(accessTokenTokenWithPrefix);
+    public Authentication validate(String refreshTokenTokenWithPrefix, Key key) {
+        String token = removePrefix(refreshTokenTokenWithPrefix,REFRESH_TOKEN_PREFIX);
         Claims parseClaims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         String identity = parseClaims.get("identity", String.class);
         return UsernamePasswordAuthenticationToken.authenticated(identity, null,null);
-    }
-    private String removePrefix(String token) {
-        String tokenPrefix = "Bearer";
-        if (!token.startsWith(tokenPrefix + " ")) {
-            throw new AuthException(ResponseStatus.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
-        }
-        return token.substring(tokenPrefix.length() + 1);
     }
 }
