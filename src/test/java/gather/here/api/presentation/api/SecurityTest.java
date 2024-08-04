@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.UUID;
@@ -70,34 +69,73 @@ class SecurityTest {
         assertThat(actual.getHeaders().get("Refresh-token").get(0)).isNotNull();
     }
 
-//    @Test
-//    @DisplayName("sut는 access-token으로 인증을 받는다")
-//    public void test(){
-//
-//        //arrange
-//        String identity = "01012345678";
-//        String password = "12341234";
-//        memberSave(identity, password);
-//
-//        MemberSignInRequestDto signInRequestDto = new MemberSignInRequestDto(identity,password);
-//
-//        String loginUrl = "http://localhost:" + port + "/login";
-//        ResponseEntity<UUID> loginRequest = restTemplate.postForEntity(loginUrl,signInRequestDto, UUID.class);
-//        String accessToken = loginRequest.getHeaders().get("Authorization").get(0);
-//        String refreshToken = loginRequest.getHeaders().get("Refresh-token").get(0);
-//
-//        String url = "http://localhost:" + port + "/test";
-//
-//        //act
-//
-//        ResponseEntity<UUID> actual = restTemplate.
-//                postForEntity(url, null, UUID.class);
-//
-//
-//
-//
-//    }
+    @Test
+    @DisplayName("sut는 access-token으로 인증을 받는다")
+    public void accessTokenAuthenticationTest(){
 
+        //arrange
+        String identity = "01012345678";
+        String password = "12341234";
+        memberSave(identity, password);
+
+        MemberSignInRequestDto signInRequestDto = new MemberSignInRequestDto(identity,password);
+
+        String loginUrl = "http://localhost:" + port + "/login";
+        ResponseEntity<Object> loginRequest = restTemplate.postForEntity(loginUrl,signInRequestDto, Object.class);
+        String accessToken = loginRequest.getHeaders().get("Authorization").get(0);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization",accessToken);
+
+        ResponseEntity<Object> actual = testGetMappingRequest(headers);
+
+        //assertions
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    @DisplayName("sut는 refresh token이 존재하면 새로운 access token을 발급하고 인증에 성공한다")
+    public void reIssueTest(){
+        //arrange
+        String identity = "01012345678";
+        String password = "12341234";
+        memberSave(identity, password);
+
+        MemberSignInRequestDto signInRequestDto = new MemberSignInRequestDto(identity,password);
+
+        String loginUrl = "http://localhost:" + port + "/login";
+        ResponseEntity<Object> loginRequest = restTemplate.postForEntity(loginUrl,signInRequestDto, Object.class);
+        String accessToken = loginRequest.getHeaders().get("Authorization").get(0);
+        String refreshToken = loginRequest.getHeaders().get("Refresh-token").get(0);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization",accessToken);
+        headers.set("Refresh-token",refreshToken);
+
+        ResponseEntity<Object> refreshRequest = testGetMappingRequest(headers);
+
+        String newAccessToken = refreshRequest.getHeaders().get("Authorization").get(0);
+        HttpHeaders newHeaders = new HttpHeaders();
+        newHeaders.set("Authorization","Bearer "+newAccessToken);
+
+        //act
+        ResponseEntity<Object> actual = testGetMappingRequest(newHeaders);
+
+        //assertions
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    }
+
+    private ResponseEntity<Object> testGetMappingRequest(HttpHeaders headers) {
+        HttpEntity<Object> request = new HttpEntity<>(null, headers);
+        String url = "http://localhost:" + port + "/test/empty/request";
+
+        ResponseEntity<Object> refreshRequest = restTemplate.exchange(
+                url,
+                HttpMethod.GET,request,
+                Object.class);
+        return refreshRequest;
+    }
 
 
     private void memberSave(String identity, String password){

@@ -52,8 +52,7 @@ public class TokenService {
     }
     @Transactional
     public String refreshTokenGenerate(Authentication authentication){
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String identity = userDetails.getUsername();
+        String identity = authentication.getName();
         String refreshToken = refreshTokenFactory.generate(identity, getKey(), REFRESH_TOKEN_MINUTE);
 
         refreshTokenFactory.update(identity, refreshToken);
@@ -63,8 +62,7 @@ public class TokenService {
     public TokenResponseDto reissue(String refreshTokenWithPrefix){
         String refreshToken = removePrefix(refreshTokenWithPrefix,REFRESH_TOKEN_PREFIX);
         Authentication authentication = refreshTokenFactory.validate(refreshTokenWithPrefix, getKey());
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String identity = userDetails.getUsername();
+        String identity =  authentication.getName();
 
         Optional<String> savedRefresh = refreshTokenFactory.find(identity);
 

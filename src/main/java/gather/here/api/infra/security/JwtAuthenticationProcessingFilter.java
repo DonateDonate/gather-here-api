@@ -24,7 +24,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("JwtAuthenticationProcessingFilter");
         String accessToken = extractAccessTokenWithPrefix(request);
         String refreshToken = extractRefreshTokenWithPrefix(request);
 
