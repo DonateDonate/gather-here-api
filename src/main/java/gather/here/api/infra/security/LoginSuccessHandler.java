@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -17,13 +16,11 @@ import java.io.IOException;
 @Slf4j
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    @Value("${security.jwt.access-token.header.name}")
-    private String ACCESS_TOKEN_HEADER_NAME;
-
-    @Value("${security.jwt.refresh-token.header.name}")
-    private String REFRESH_TOKEN_HEADER_NAME;
-
     private final TokenService tokenService;
+
+    private final String ACCESS_TOKEN_HEADER_NAME;
+
+    private final String REFRESH_TOKEN_HEADER_NAME;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {

@@ -7,8 +7,7 @@ import gather.here.api.domain.security.UserDetailServiceImpl;
 import gather.here.api.infra.crypto.CustomPasswordEncoder;
 import gather.here.api.infra.security.*;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +32,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig{
+
+    @Value("${security.jwt.access-token.header.name}")
+    private String ACCESS_TOKEN_HEADER_NAME;
+
+    @Value("${security.jwt.refresh-token.header.name}")
+    private String REFRESH_TOKEN_HEADER_NAME;
 
     private final ObjectMapper objectMapper;
     private final ObjectPostProcessor<Object> objectPostProcessor;
@@ -83,7 +88,7 @@ public class SecurityConfig{
         loginProcessingFilter.setAuthenticationManager(authenticationManager);
 
         // Handler 설정
-        loginProcessingFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler(tokenService));
+        loginProcessingFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler(tokenService,ACCESS_TOKEN_HEADER_NAME,REFRESH_TOKEN_HEADER_NAME));
         loginProcessingFilter.setAuthenticationFailureHandler(new LoginFailureHandler(objectMapper));
 
         return loginProcessingFilter;
@@ -114,7 +119,7 @@ public class SecurityConfig{
 
     @Bean
     AuthenticationSuccessHandler authenticationSuccessHandler(){
-        return new LoginSuccessHandler(tokenService);
+        return new LoginSuccessHandler(tokenService,ACCESS_TOKEN_HEADER_NAME,REFRESH_TOKEN_HEADER_NAME);
     }
 
     @Bean
