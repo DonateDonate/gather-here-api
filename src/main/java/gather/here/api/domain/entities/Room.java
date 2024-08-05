@@ -2,6 +2,7 @@ package gather.here.api.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @DynamicUpdate
@@ -50,4 +52,33 @@ public class Room extends BaseTime {
 
     @OneToMany(mappedBy = "room")
     private List<Member> memberList = new ArrayList<>();
+
+    @Builder
+    private Room(Float destinationLat, Float destinationLng, int status, LocalDateTime encounterDate, String shareCode,List<Member> memberList) {
+        this.destinationLat = destinationLat;
+        this.destinationLng = destinationLng;
+        this.status = status;
+        this.encounterDate = encounterDate;
+        this.shareCode = shareCode;
+        this.memberList = memberList;
+    }
+
+    public Room create(Float destinationLat, Float destinationLng, int status, LocalDateTime encounterDate, Member member){
+        Room room = Room.builder()
+                .destinationLat(destinationLat)
+                .destinationLng(destinationLng)
+                .status(status)
+                .encounterDate(encounterDate)
+                .shareCode(makeShareCode())
+                .build();
+
+        room.memberList.add(member);
+
+        return room;
+    }
+
+    private static String makeShareCode(){
+        return String.valueOf(UUID.randomUUID()).substring(0,8);
+    }
+
 }
