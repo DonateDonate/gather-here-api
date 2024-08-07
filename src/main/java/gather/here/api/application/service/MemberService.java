@@ -8,6 +8,7 @@ import gather.here.api.global.exception.MemberException;
 import gather.here.api.global.exception.ResponseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @RequiredArgsConstructor
@@ -16,6 +17,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final CryptoFactory cryptoFactory;
 
+    @Transactional
     public void save(MemberSignUpRequestDto request){
         boolean isExistMember = memberRepository.findByIdentity(request.getIdentity()).isPresent();
 

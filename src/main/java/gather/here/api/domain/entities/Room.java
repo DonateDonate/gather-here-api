@@ -63,11 +63,13 @@ public class Room extends BaseTime {
         this.memberList = memberList;
     }
 
-    public Room create(Float destinationLat, Float destinationLng, int status, LocalDateTime encounterDate, Member member){
+    public static Room create(Float destinationLat, Float destinationLng,LocalDateTime encounterDate, Member member){
         Room room = Room.builder()
                 .destinationLat(destinationLat)
                 .destinationLng(destinationLng)
-                .status(status)
+                .status(1)
+
+                //encounter은 과거시간은 넣을 수 없다
                 .encounterDate(encounterDate)
                 .shareCode(makeShareCode())
                 .build();

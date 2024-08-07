@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface MemberRepository {
      Member save(Member member);
-     Optional<Member> findByIdentity(String id);
+     Optional<Member> findByIdentity(String identity);
 }

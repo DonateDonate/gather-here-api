@@ -1,8 +1,10 @@
 package gather.here.api.infra.config;
 import gather.here.api.application.service.MemberService;
+import gather.here.api.application.service.RoomService;
 import gather.here.api.application.service.TokenService;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RefreshTokenRepository;
+import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.security.CryptoFactory;
 import gather.here.api.domain.security.AccessTokenFactory;
 import gather.here.api.domain.security.RefreshTokenFactory;
@@ -15,6 +17,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class ServiceConfig {
+
+    @Bean
+    public RoomService roomService(
+            MemberRepository memberRepository,
+        RoomRepository roomRepository
+    ){
+        return new RoomService(memberRepository,roomRepository);
+    }
 
     @Bean
     public MemberService memberService(

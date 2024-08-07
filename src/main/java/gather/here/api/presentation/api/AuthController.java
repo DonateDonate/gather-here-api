@@ -4,10 +4,16 @@ import gather.here.api.application.dto.request.MemberSignInRequestDto;
 import gather.here.api.application.dto.request.MemberSignUpRequestDto;
 import gather.here.api.application.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class AuthController {
@@ -30,10 +36,11 @@ public class AuthController {
 
     @GetMapping("/test")
     public ResponseEntity<Object> test(
+            Authentication authentication
     ){
-        System.out.println();
-        System.out.println();
-        System.out.println();
+        log.info("principal ={}", authentication.getPrincipal());
+        //UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
