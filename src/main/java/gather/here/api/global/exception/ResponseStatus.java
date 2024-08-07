@@ -12,6 +12,11 @@ public enum ResponseStatus {
     DUPLICATE_MEMBER_ID(1101,"duplicated member id"),
     UNCORRECTED_MEMBER_ID_PASSWORD(1102, "uncorrected member id or password"),
 
+    /**
+     * 2xxx: room exception
+     */
+    NOT_FOUND_SHARE_CODE(2101,"not found share code"),
+
 
     /**
      *  8xxx : general exception
