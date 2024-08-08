@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
+import static gather.here.api.global.util.DateUtil.convertLocalDateTimeToString;
+
 @RequiredArgsConstructor
 public class RoomService {
     private final MemberRepository memberRepository;
@@ -28,18 +30,31 @@ public class RoomService {
         Room room = Room.create(
                 request.getDestinationLat(),
                 request.getDestinationLng(),
+                request.getDestinationName(),
                 request.getEncounterDate(),
                 member);
 
         roomRepository.save(room);
-        return new RoomCreateResponseDto(room.getSeq(),room.getDestinationLat(), room.getDestinationLng(),room.getEncounterDate());
+        member.setRoom(room);
+        return new RoomCreateResponseDto(
+                room.getSeq(),
+                room.getDestinationLat(),
+                room.getDestinationLng(),
+                room.getDestinationName(),
+                convertLocalDateTimeToString(room.getEncounterDate()),
+                room.getShareCode()
+        );
     }
 
     @Transactional
     public JoinRoomResponseDto joinRoom(JoinRoomRequestDto request, String memberIdentity){
         Room room = roomRepository.findByShareCode(request.getShareCode()).orElseThrow(
                 ()-> new RoomException(ResponseStatus.NOT_FOUND_SHARE_CODE,HttpStatus.UNAUTHORIZED));
-
+        //isActive가 false이면 못 들어감
+        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
+                ()-> new MemberException(ResponseStatus.INVALID_INPUT,HttpStatus.BAD_REQUEST)
+        );
+        room.addMemberList(member);
         return new JoinRoomResponseDto(room.getSeq(),room.getDestinationLat(),room.getDestinationLng(),room.getEncounterDate());
     }
 

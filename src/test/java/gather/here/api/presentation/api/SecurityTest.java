@@ -61,7 +61,7 @@ class SecurityTest {
 
 
         //act
-        ResponseEntity<UUID> actual = restTemplate.postForEntity(url,signInRequestDto, UUID.class);
+        ResponseEntity<Object> actual = restTemplate.postForEntity(url,signInRequestDto, Object.class);
 
         //assert
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);

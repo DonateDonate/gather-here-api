@@ -68,5 +68,8 @@ public class Member extends BaseTime {
 
         return new Member(id,encodedPassword,getRandomNickname());
     }
+    public void setRoom(Room room){
+        this.room = room;
+    }
 
 }

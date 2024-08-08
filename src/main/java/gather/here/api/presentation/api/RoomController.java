@@ -6,12 +6,15 @@ import gather.here.api.application.dto.response.JoinRoomResponseDto;
 import gather.here.api.application.dto.response.RoomCreateResponseDto;
 import gather.here.api.application.service.RoomService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class RoomController {
@@ -19,7 +22,7 @@ public class RoomController {
 
     @PostMapping("/rooms")
     public ResponseEntity<Object> create(
-            RoomCreateRequestDto request,
+            @RequestBody RoomCreateRequestDto request,
             Authentication authentication
     ){
         RoomCreateResponseDto response = roomService.createRoom(request, String.valueOf(authentication.getPrincipal()));
@@ -28,7 +31,7 @@ public class RoomController {
 
     @PostMapping("/rooms/join")
     public ResponseEntity<Object> join(
-            JoinRoomRequestDto request,
+            @RequestBody JoinRoomRequestDto request,
             Authentication authentication
     ){
         JoinRoomResponseDto response = roomService.joinRoom(request, String.valueOf(authentication.getPrincipal()));
