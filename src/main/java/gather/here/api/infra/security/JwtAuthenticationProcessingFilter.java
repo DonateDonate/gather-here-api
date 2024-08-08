@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -16,10 +17,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import static gather.here.api.global.util.TokenUtil.withTokenPrefix;
+
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
-
+    @Value("${security.jwt.access-token.prefix}")
+    private String ACCESS_TOKEN_PREFIX;
     private final TokenService tokenService;
 
     @Override
@@ -32,7 +36,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             try {
                 TokenResponseDto tokenDto = tokenService.reissue(refreshToken);
                 sendReissueSuccessResponse(response, tokenDto);
-                return;
+                accessToken = withTokenPrefix(tokenDto.getAccessToken(),ACCESS_TOKEN_PREFIX);
+
             } catch (JwtException e) {
                 request.setAttribute("exception", e);
                 filterChain.doFilter(request, response);
@@ -57,7 +62,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     private void sendReissueSuccessResponse(HttpServletResponse response, TokenResponseDto tokenResponseDto) {
         response.setHeader("Authorization", tokenResponseDto.getAccessToken());
         response.setHeader("Refresh-token", tokenResponseDto.getRefreshToken());
-        response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
     }
 
     private String extractAccessTokenWithPrefix(HttpServletRequest request) {

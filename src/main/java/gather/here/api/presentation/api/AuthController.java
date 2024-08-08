@@ -41,6 +41,6 @@ public class AuthController {
         log.info("principal ={}", authentication.getPrincipal());
         //UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(authentication.getPrincipal(),HttpStatus.OK);
     }
 }
