@@ -1,5 +1,4 @@
 name: github-actions
-	
 on:
   push:
     branches: [ main ] 
