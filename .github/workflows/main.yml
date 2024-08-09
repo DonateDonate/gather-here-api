@@ -3,7 +3,6 @@ name: github-actions
 on:
   push:
     branches: [ main ] 
-	
 jobs:
   build:
     # 실행 환경 지정
