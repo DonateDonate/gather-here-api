@@ -46,7 +46,7 @@ class MemberTest {
         //assert
         Assertions.assertThat(actual).isNotNull();
         Assertions.assertThat(actual).isInstanceOf(MemberException.class);
-        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(8101);
+        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(9101);
     }
     @DisplayName("sut는 password의 길이가 4글자 이상 8글자 이하가 아니면 예외가 발생한다")
     @Test
@@ -68,7 +68,7 @@ class MemberTest {
         //assert
         Assertions.assertThat(actual).isNotNull();
         Assertions.assertThat(actual).isInstanceOf(MemberException.class);
-        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(8101);
+        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(9101);
     }
 
 }
