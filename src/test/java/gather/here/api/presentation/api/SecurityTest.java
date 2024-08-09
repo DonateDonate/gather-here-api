@@ -13,8 +13,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
@@ -37,11 +35,11 @@ class SecurityTest {
     @DisplayName("sut는 정상적으로 회원가입 요청을 받는다")
     void signUpTest() throws Exception {
         //arrange
-        MemberSignUpRequestDto requestDto = new MemberSignUpRequestDto("01012345678","12341234");
+        MemberSignUpRequestDto requestDto = new MemberSignUpRequestDto("01012345674","12341234");
         String url = "http://localhost:" + port + "/members";
-        //act
 
-        ResponseEntity<UUID> actual = restTemplate.postForEntity(url,requestDto, UUID.class);
+        //act
+        ResponseEntity<Object> actual = restTemplate.postForEntity(url,requestDto, Object.class);
 
         //assert
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -74,7 +72,7 @@ class SecurityTest {
     public void accessTokenAuthenticationTest(){
 
         //arrange
-        String identity = "01012345678";
+        String identity = "01012345670";
         String password = "12341234";
         memberSave(identity, password);
 
@@ -97,7 +95,7 @@ class SecurityTest {
     @DisplayName("sut는 refresh token이 존재하면 새로운 access token을 발급하고 인증에 성공한다")
     public void reIssueTest(){
         //arrange
-        String identity = "01012345678";
+        String identity = "01012345679";
         String password = "12341234";
         memberSave(identity, password);
 
