@@ -73,12 +73,14 @@ public class Room extends BaseTime {
     }
 
     public static Room create(Float destinationLat, Float destinationLng, String destinationName,String encounterDate, Member member){
-        //encounterDate yyyy-mm-dd hh:mm이 아니면 예외
-        //과거시간이면 예외
         LocalDateTime convertedToLocalDateTime = convertToLocalDateTime(encounterDate);
 
-        if(convertedToLocalDateTime == null || isPastSeoulTime(convertedToLocalDateTime)){
-            throw new RoomException(ResponseStatus.PAST_DATE_INVALID, HttpStatus.BAD_REQUEST);
+        if(convertedToLocalDateTime == null){
+            throw new RoomException(ResponseStatus.ENCOUNTER_DATE_INVALID, HttpStatus.CONFLICT);
+        }
+
+        if(isPastSeoulTime(convertedToLocalDateTime)){
+            throw new RoomException(ResponseStatus.PAST_DATE_INVALID, HttpStatus.CONFLICT);
         }
 
         Room room = Room.builder()

@@ -56,14 +56,14 @@ public class Member extends BaseTime {
         this.nickname =nickname;
         this.isActive = true;
     }
-    //유저를 생성한다
+
     public static Member create(String id, String password,String encodedPassword){
         if(password.length()<4 || password.length() >8){
-            throw new MemberException(ResponseStatus.INVALID_INPUT, HttpStatus.CONFLICT);
+            throw new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.CONFLICT);
         }
 
         if(id.length() != 11){
-            throw new MemberException(ResponseStatus.INVALID_INPUT, HttpStatus.CONFLICT);
+            throw new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.CONFLICT);
         }
 
         return new Member(id,encodedPassword,getRandomNickname());

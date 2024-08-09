@@ -17,6 +17,7 @@ public enum ResponseStatus {
      */
     NOT_FOUND_SHARE_CODE(2101,"not found share code"),
     PAST_DATE_INVALID(2102,"encounter date cannot be in the past"),
+    ENCOUNTER_DATE_INVALID(2103,"encounter date invalid format"),
 
 
     /**

@@ -36,6 +36,7 @@ public class RoomService {
 
         roomRepository.save(room);
         member.setRoom(room);
+
         return new RoomCreateResponseDto(
                 room.getSeq(),
                 room.getDestinationLat(),
@@ -51,8 +52,10 @@ public class RoomService {
         Room room = roomRepository.findByShareCode(request.getShareCode()).orElseThrow(
                 ()-> new RoomException(ResponseStatus.NOT_FOUND_SHARE_CODE,HttpStatus.UNAUTHORIZED));
         //isActive가 false이면 못 들어감
+
+        //내가 다른방에 있으면 못 들어감
         Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
-                ()-> new MemberException(ResponseStatus.INVALID_INPUT,HttpStatus.BAD_REQUEST)
+                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
         );
         room.addMemberList(member);
         return new JoinRoomResponseDto(room.getSeq(),room.getDestinationLat(),room.getDestinationLng(),room.getEncounterDate());
