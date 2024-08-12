@@ -27,7 +27,7 @@ jobs:
 
     # docker image 빌드
     - name: Build docker image
-      run: docker build -t <docker_hub_username>/<docker_image_name> .
+      run: docker build -t ${{secrets.DOCKER_ID}}/<gather-here-api> .
 
     # docker hub 로그인
     - name: Login docker hub
@@ -38,4 +38,4 @@ jobs:
 
     # docker hub 퍼블리시
     - name: Publish to docker hub
-      run: docker push <docker_hub_username>/<docker_image_name>
+      run: docker push ${{secrets.DOCKER_ID}}/<gather-here-api>
