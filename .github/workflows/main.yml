@@ -32,11 +32,10 @@ jobs:
         username: ${{secrets.DOCKER_ID}}
         password: ${{secrets.DOCKER_ACCESS_TOKEN}}
 
-      # docker image 빌드
-    - name: Build docker image build
-      run: docker build -t gatherhere/sansanha .
+      # docker image build and push
+    - name: Build docker image build and push
+      run: |
+        docker build -t gatherhere/sansanha .
+        docker push gatherhere/sansanha
 
-        # docker image 빌드
-    - name: Build docker push
-      run: docker push gatherhere/sansanha
         
