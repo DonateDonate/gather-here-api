@@ -35,3 +35,7 @@ jobs:
       with:
         username: ${{secrets.DOCKER_ID}}
         password: ${{secrets.ACCESS_TOKEN}}
+
+    # docker hub 퍼블리시
+    - name: Publish to docker hub
+      run: docker push <docker_hub_username>/<docker_image_name>
