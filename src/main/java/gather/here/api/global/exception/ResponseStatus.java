@@ -18,7 +18,8 @@ public enum ResponseStatus {
     NOT_FOUND_SHARE_CODE(2101,"not found share code"),
     PAST_DATE_INVALID(2102,"encounter date cannot be in the past"),
     ENCOUNTER_DATE_INVALID(2103,"encounter date invalid format"),
-
+    ALREADY_ROOM_ENCOUNTER(2104,"already room encounter"),
+    CLOSED_ROOM(2105,"this is closed room"),
 
     /**
      *  8xxx : general exception

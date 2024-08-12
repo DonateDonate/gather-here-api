@@ -49,16 +49,24 @@ public class RoomService {
 
     @Transactional
     public JoinRoomResponseDto joinRoom(JoinRoomRequestDto request, String memberIdentity){
-        Room room = roomRepository.findByShareCode(request.getShareCode()).orElseThrow(
-                ()-> new RoomException(ResponseStatus.NOT_FOUND_SHARE_CODE,HttpStatus.UNAUTHORIZED));
-        //isActive가 false이면 못 들어감
-
-        //내가 다른방에 있으면 못 들어감
         Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
                 ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
         );
+
+        if(member.getRoom() != null){
+            throw new RoomException(ResponseStatus.ALREADY_ROOM_ENCOUNTER,HttpStatus.CONFLICT);
+        }
+
+        Room room = roomRepository.findByShareCode(request.getShareCode()).orElseThrow(
+                ()-> new RoomException(ResponseStatus.NOT_FOUND_SHARE_CODE,HttpStatus.UNAUTHORIZED));
+
+        if(room.getStatus() != 1){
+            throw new RoomException(ResponseStatus.CLOSED_ROOM,HttpStatus.CONFLICT);
+        }
+
         room.addMemberList(member);
         return new JoinRoomResponseDto(room.getSeq(),room.getDestinationLat(),room.getDestinationLng(),room.getEncounterDate());
     }
 
+    //room exit 1순위
 }

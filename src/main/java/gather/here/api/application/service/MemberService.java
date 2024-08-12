@@ -28,4 +28,13 @@ public class MemberService {
         Member member = Member.create(request.getIdentity(),request.getPassword(),encodedPassword);
         memberRepository.save(member);
     }
+
+    //정보 조회 1순위
+
+
+    //프로필 이미지 수정
+    //닉네임수정
+    //프로필 이미지 수정
+    //비밀번호 변경
+    //회원탈퇴
 }
