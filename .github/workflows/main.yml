@@ -33,8 +33,10 @@ jobs:
         password: ${{secrets.DOCKER_ACCESS_TOKEN}}
 
       # docker image 빌드
-    - name: Build docker image
-      run: |
-        docker build -t gatherhere/sanhahub .
-        docker push gatherhere/sanhahub
+    - name: Build docker image build
+      run: docker build -t gatherhere/sanhahub .
+
+        # docker image 빌드
+    - name: Build docker push
+      run: docker push gatherhere/sanhahub
         
