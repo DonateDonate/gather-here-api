@@ -35,7 +35,7 @@ jobs:
       # docker image build and push
     - name: docker image build and push
       run: |
-        docker build -t samkim/gatherhere .
-        docker push samkim/gatherhere
+        docker build -t kimsanha kimsanha/samkim .
+        docker push kimsanha/samkim
 
         
