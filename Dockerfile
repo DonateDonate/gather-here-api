@@ -21,7 +21,7 @@ EXPOSE 8080
 
 ENTRYPOINT [\
     "java",\
-    "-Dspring.profiles.active=devel",\
+    "-Dspring.profiles.active=product",\
     "-Dserver.port=8080",\
     "-jar",\
     "/app.jar"\
