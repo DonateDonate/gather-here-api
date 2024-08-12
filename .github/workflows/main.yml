@@ -34,4 +34,7 @@ jobs:
 
       # docker image 빌드
     - name: Build docker image
-      run: docker build -t gather-api-server/sanhaHub .
+      run: |
+        docker build -t gatherApi/sanhaHub .
+        docker push gatherApi/sanhaHub
+        
