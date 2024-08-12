@@ -33,7 +33,7 @@ jobs:
         password: ${{secrets.DOCKER_ACCESS_TOKEN}}
 
       # docker image build and push
-    - name: Build docker image build and push
+    - name: docker image build and push
       run: |
         docker build -t gatherhere/sansanha .
         docker push gatherhere/sansanha
