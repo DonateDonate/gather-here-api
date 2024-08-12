@@ -1,7 +1,7 @@
 name: github-actions
 on:
   push:
-    branches: [ main ] 
+    branches: [ devel ]
 jobs:
   build:
     # 실행 환경 지정
