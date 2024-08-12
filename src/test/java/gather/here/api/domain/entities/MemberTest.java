@@ -5,7 +5,7 @@ import gather.here.api.global.exception.MemberException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
+import org.springframework.test.context.ActiveProfiles;
 
 class MemberTest {
 
