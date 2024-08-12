@@ -34,9 +34,9 @@ jobs:
 
       # docker image 빌드
     - name: Build docker image build
-      run: docker build -t gatherhere/sanhahub .
+      run: docker build -t gatherhere/sansanha .
 
         # docker image 빌드
     - name: Build docker push
-      run: docker push gatherhere/sanhahub
+      run: docker push gatherhere/sansanha
         
