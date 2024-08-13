@@ -68,9 +68,9 @@ jobs:
         port: ${{ secrets.SH_P_PORT }}
         timeout: 60s
         script: |
-          sudo docker stop kimsanha/gatherhere
-          sudo docker rm kimsanha/gatherhere
-          docker run -d -p 8080:8080 kimsanha/gatherhere:latest
+          sudo docker stop gatherhere
+          sudo docker rm gatherhere
+          docker run -d -p 8080:8080 --name gatherhere kimsanha/gatherhere:latest
 
       # REMOVE Github IP FROM security group (9)
     - name: Remove IP FROM security group
