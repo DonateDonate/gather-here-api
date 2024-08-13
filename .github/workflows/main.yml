@@ -63,7 +63,7 @@ jobs:
         host: ${{ secrets.SH_P_HOST }}
         username: ${{ secrets.SH_P_USERNAME }}
         password: ${{ secrets.SH_P_PASSWORD }}
-        port: ${{ secrets.SH_P_PORT }}
+        port: 22
         timeout: 60s
         script: |
           sudo docker stop gatherhere
