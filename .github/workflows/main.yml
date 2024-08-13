@@ -60,9 +60,11 @@ jobs:
     - name: AWS EC2 Connection
       uses: appleboy/ssh-action@v0.1.6
       with:
+
         host: ${{ secrets.SH_P_HOST }}
-        username: ${{ secrets.SH_P_USERNAME }}
-        password: ${{ secrets.SH_P_PASSWORD }}
+        username: ubuntu
+        #password: ${{ secrets.SH_P_PASSWORD }}
+        key: ${{ secrets.SH_P_KEY }}
         port: ${{ secrets.SH_P_PORT }}
         timeout: 60s
         script: |
