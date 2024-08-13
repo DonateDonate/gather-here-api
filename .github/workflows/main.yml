@@ -56,5 +56,22 @@ jobs:
       run: |
         aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
+      # AWS EC2 Server Connect & Docker 명령어 실행 (8)
+    - name: AWS EC2 Connection
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ secrets.SH_P_HOST }}
+        username: ${{ secrets.SH_P_USERNAME }}
+        password: ${{ secrets.SH_P_PASSWORD }}
+        port: ${{ secrets.SH_P_PORT }}
+        timeout: 60s
+        script: |
+          sudo docker stop gatherhere
+          sudo docker rm gatherhere
+          docker run -d -p 8080:8080 kimsanha/gatherhere:latest
 
+      # REMOVE Github IP FROM security group (9)
+    - name: Remove IP FROM security group
+      run: |
+        aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
         
