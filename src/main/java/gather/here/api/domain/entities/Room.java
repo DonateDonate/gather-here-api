@@ -98,7 +98,7 @@ public class Room extends BaseTime {
     }
 
     private static String makeShareCode(){
-        return String.valueOf(UUID.randomUUID()).substring(0,8);
+        return String.valueOf(UUID.randomUUID()).substring(0,4);
     }
 
     public void addMemberList(Member member){

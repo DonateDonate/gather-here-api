@@ -48,7 +48,8 @@ public class SecurityConfig{
             "/members",
             "/login",
             "/v3/**", // v3 : SpringBoot 3(없으면 swagger 예시 api 목록 제공)
-            "/swagger-ui/**"
+            "/swagger-ui/**",
+            "/test/**"
     };
 
     @Bean

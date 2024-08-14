@@ -5,7 +5,6 @@ import gather.here.api.global.exception.RoomException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -41,9 +40,9 @@ class RoomTest {
         Assertions.assertThat(sut.getStatus()).isNotNull();
     }
 
-    @DisplayName("sut는 room shareCode 값이 null이 아니다")
+    @DisplayName("sut는 room shareCode 4자리가 생성된다")
     @Test
-    public void shareCodeNullTest(){
+    public void shareCodeValidTest(){
 
         //arrange
         Float destinationLat = 1F;
@@ -65,6 +64,7 @@ class RoomTest {
 
         //assert
         Assertions.assertThat(sut.getShareCode()).isNotNull();
+        Assertions.assertThat(validShareCode(sut.getShareCode())).isTrue();
 
     }
 
@@ -125,6 +125,10 @@ class RoomTest {
         Assertions.assertThat(actual.getResponseStatus()).isEqualTo(ResponseStatus.PAST_DATE_INVALID);
         Assertions.assertThat(actual).isInstanceOf(RoomException.class);
 
+    }
+
+    private boolean validShareCode(String shareCode){
+        return shareCode.length() == 4;
     }
 
 }

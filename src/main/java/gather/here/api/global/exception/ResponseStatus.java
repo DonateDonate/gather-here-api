@@ -27,6 +27,8 @@ public enum ResponseStatus {
 
     INVALID_INPUT(8101, "Invalid Input"),
     NOT_FOUND(8102,"not found resource"),
+    INTERNAL_SERVER_ERROR(9999,"internal server error"),
+
 
     /**
      *  9xxx : auth exception

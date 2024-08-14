@@ -5,8 +5,17 @@ import gather.here.api.application.dto.request.RoomCreateRequestDto;
 import gather.here.api.application.dto.response.JoinRoomResponseDto;
 import gather.here.api.application.dto.response.RoomCreateResponseDto;
 import gather.here.api.application.service.RoomService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,15 +23,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Room API", description = "Room API Docs")
+@SecurityRequirement(name = "Bearer Authentication")
+@SecurityScheme( name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "Bearer")
 public class RoomController {
     private final RoomService roomService;
 
     @PostMapping("/rooms")
+    @Operation(summary = "Room 등록", description = "Room 등록")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공", content = {@Content(schema = @Schema(implementation = RoomCreateResponseDto.class))})
+    })
     public ResponseEntity<Object> create(
-            @RequestBody RoomCreateRequestDto request,
+            @Valid @RequestBody RoomCreateRequestDto request,
             Authentication authentication
     ){
         RoomCreateResponseDto response = roomService.createRoom(request, String.valueOf(authentication.getPrincipal()));

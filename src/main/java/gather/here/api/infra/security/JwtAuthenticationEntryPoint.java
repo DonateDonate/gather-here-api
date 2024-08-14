@@ -1,10 +1,8 @@
 package gather.here.api.infra.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gather.here.api.global.exception.AuthException;
 import gather.here.api.global.exception.CustomResponseBody;
 import gather.here.api.global.exception.ResponseStatus;
-import gather.here.api.global.exception.TokenExpiredException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.ServletException;
@@ -36,11 +34,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         // 유효한 토큰이 아닌 경우
         if (exception != null) {
             sendErrorResponse(response,ResponseStatus.INVALID_TOKEN);
-            return;
         }
-
-        // 토큰이 존재 하지 않는 경우
-        sendErrorResponse(response, ResponseStatus.EMPTY_TOKEN);
     }
 
     private void sendErrorResponse(HttpServletResponse response, ResponseStatus responseStatus)
