@@ -1,5 +1,7 @@
 package gather.here.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -8,9 +10,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 public class Application {
 
+	private static final Logger log = LoggerFactory.getLogger(Application.class);
+
 	public static void main(String[] args) {
-		System.out.println("push success");
 		SpringApplication.run(Application.class, args);
+		log.info("PUSH SUCCESS");
 	}
 
 }
