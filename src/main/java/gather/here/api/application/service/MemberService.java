@@ -1,6 +1,9 @@
 package gather.here.api.application.service;
 
 import gather.here.api.application.dto.request.MemberSignUpRequestDto;
+import gather.here.api.application.dto.request.ModifyNicknameRequestDto;
+import gather.here.api.application.dto.request.ModifyPasswordRequestDto;
+import gather.here.api.application.dto.response.GetMemberResponseDto;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.security.CryptoFactory;
@@ -16,6 +19,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final CryptoFactory cryptoFactory;
+    private final FileService fileService;
 
     @Transactional
     public void save(MemberSignUpRequestDto request){
@@ -29,12 +33,37 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    //정보 조회 1순위
 
+    public GetMemberResponseDto getMember(String memberIdentity){
+        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
+                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
+        );
+        String profileImageUrl = fileService.getProfileImageUrl(member.getImageKey());
+        return new GetMemberResponseDto(member.getNickname(), member.getIdentity(), profileImageUrl);
+    }
 
-    //프로필 이미지 수정
-    //닉네임수정
-    //프로필 이미지 수정
-    //비밀번호 변경
-    //회원탈퇴
+    @Transactional
+    public void modifyNickname(ModifyNicknameRequestDto request, String memberIdentity){
+        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
+                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
+        );
+        member.setNickname(request.getNickname());
+    }
+
+    @Transactional
+    public void modifyPassword(ModifyPasswordRequestDto request, String memberIdentity){
+        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
+                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
+        );
+        member.setPassword(request.getPassword());
+    }
+
+    @Transactional
+    public void cancelAccount(String memberIdentity){
+        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
+                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
+        );
+        member.cancelAccount();
+    }
 }
+//프로필 이미지 수정

@@ -72,4 +72,23 @@ public class Member extends BaseTime {
         this.room = room;
     }
 
+    public void setNickname(String newNickname){
+        if(newNickname.length()<1 || newNickname.length()>8){
+            throw new MemberException(ResponseStatus.UNCORRECTED_MEMBER_NICKNAME, HttpStatus.CONFLICT);
+        }
+        this.nickname = newNickname;
+    }
+
+    public void setPassword(String newPassword){
+        if(password.length()<4 || password.length() >8){
+            throw new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.CONFLICT);
+        }
+
+        this.password = newPassword;
+    }
+
+    public void cancelAccount(){
+        this.isActive  = false;
+    }
+
 }

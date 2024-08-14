@@ -1,5 +1,6 @@
 package gather.here.api.presentation.api;
 
+import gather.here.api.application.dto.request.ExitRoomRequestDto;
 import gather.here.api.application.dto.request.JoinRoomRequestDto;
 import gather.here.api.application.dto.request.RoomCreateRequestDto;
 import gather.here.api.application.dto.response.JoinRoomResponseDto;
@@ -31,12 +32,12 @@ public class RoomController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공", content = {@Content(schema = @Schema(implementation = RoomCreateResponseDto.class))})
     })
-    public ResponseEntity<Object> create(
+    public ResponseEntity<RoomCreateResponseDto> create(
             @Valid @RequestBody RoomCreateRequestDto request,
             Authentication authentication
     ){
         RoomCreateResponseDto response = roomService.createRoom(request, String.valueOf(authentication.getPrincipal()));
-        return new ResponseEntity<Object>(response,HttpStatus.OK);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @PostMapping("/rooms/join")
@@ -44,11 +45,24 @@ public class RoomController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공", content = {@Content(schema = @Schema(implementation = JoinRoomResponseDto.class))})
     })
-    public ResponseEntity<Object> join(
+    public ResponseEntity<JoinRoomResponseDto> join(
             @Valid @RequestBody JoinRoomRequestDto request,
             Authentication authentication
     ){
         JoinRoomResponseDto response = roomService.joinRoom(request, String.valueOf(authentication.getPrincipal()));
-        return new ResponseEntity<Object>(response,HttpStatus.OK);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @PostMapping("/rooms/exit")
+    @Operation(summary = "Room 나가기", description = "Room 나가기")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공", content = {@Content(schema = @Schema(implementation = void.class))})
+    })
+    public ResponseEntity<Object> exit(
+            @Valid @RequestBody ExitRoomRequestDto request,
+            Authentication authentication
+    ){
+        roomService.exitRoom(request,String.valueOf(authentication.getPrincipal()));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

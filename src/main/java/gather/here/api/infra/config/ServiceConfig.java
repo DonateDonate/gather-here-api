@@ -1,4 +1,5 @@
 package gather.here.api.infra.config;
+import gather.here.api.application.service.FileService;
 import gather.here.api.application.service.MemberService;
 import gather.here.api.application.service.RoomService;
 import gather.here.api.application.service.TokenService;
@@ -27,11 +28,17 @@ public class ServiceConfig {
     }
 
     @Bean
+    public FileService fileService(){
+        return new FileService();
+    }
+
+    @Bean
     public MemberService memberService(
             MemberRepository memberRepository,
-            CryptoFactory cryptoFactory
+            CryptoFactory cryptoFactory,
+            FileService fileService
             ){
-        return new MemberService(memberRepository,cryptoFactory);
+        return new MemberService(memberRepository,cryptoFactory,fileService);
     }
 
     @Bean

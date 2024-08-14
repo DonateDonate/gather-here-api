@@ -1,5 +1,6 @@
 package gather.here.api.application.service;
 
+import gather.here.api.application.dto.request.ExitRoomRequestDto;
 import gather.here.api.application.dto.request.JoinRoomRequestDto;
 import gather.here.api.application.dto.request.RoomCreateRequestDto;
 import gather.here.api.application.dto.response.JoinRoomResponseDto;
@@ -68,5 +69,20 @@ public class RoomService {
         return new JoinRoomResponseDto(room.getSeq(),room.getDestinationLat(),room.getDestinationLng(),room.getEncounterDate());
     }
 
-    //room exit 1순위
+    @Transactional
+    public void exitRoom(ExitRoomRequestDto request, String memberIdentity){
+        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
+                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
+        );
+
+        if(member.getRoom().getSeq() != request.getRoomSeq()){
+            throw new RoomException(ResponseStatus.NOT_FOUND_ROOM_SEQ,HttpStatus.BAD_REQUEST);
+        }
+
+        member.setRoom(null);
+    }
+
+
+
+
 }

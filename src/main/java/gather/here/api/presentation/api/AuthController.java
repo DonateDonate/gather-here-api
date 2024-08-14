@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,6 +38,16 @@ public class AuthController {
     public ResponseEntity<Object> signIn(
             @Valid @RequestBody MemberSignInRequestDto memberSignInRequestDto
             ){
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/members")
+    @Operation(summary = "Member 회원탈퇴", description = "Member 회원탈퇴")
+    public ResponseEntity<Object> cancelAccount(
+            Authentication authentication
+    ){
+        memberService.cancelAccount(String.valueOf(authentication.getPrincipal()));
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
