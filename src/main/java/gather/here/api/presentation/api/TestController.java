@@ -6,16 +6,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RequestMapping("/test")
 @RestController
 public class TestController {
+    @GetMapping("/auth")
+    public String auth(){
+        return "auth ok";
+    }
 
-    @GetMapping("/ping")
+    @GetMapping("/test/ping")
     public String ping(){
         return "pong";
     }
 
-    @PostMapping("/empty-test")
+    @PostMapping("/test/empty-test")
     public String bodyTest(
             @Valid @RequestBody RoomCreateRequestDto roomCreateRequestDto
             ){

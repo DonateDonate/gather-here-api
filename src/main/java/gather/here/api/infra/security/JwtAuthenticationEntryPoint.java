@@ -34,7 +34,10 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         // 유효한 토큰이 아닌 경우
         if (exception != null) {
             sendErrorResponse(response,ResponseStatus.INVALID_TOKEN);
+            return;
         }
+
+        sendErrorResponse(response,ResponseStatus.EMPTY_TOKEN);
     }
 
     private void sendErrorResponse(HttpServletResponse response, ResponseStatus responseStatus)
