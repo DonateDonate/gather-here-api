@@ -1,8 +1,10 @@
 package gather.here.api.infra.config;
+import com.amazonaws.services.s3.AmazonS3;
 import gather.here.api.application.service.FileService;
 import gather.here.api.application.service.MemberService;
 import gather.here.api.application.service.RoomService;
 import gather.here.api.application.service.TokenService;
+import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RefreshTokenRepository;
 import gather.here.api.domain.repositories.RoomRepository;
@@ -10,6 +12,7 @@ import gather.here.api.domain.security.CryptoFactory;
 import gather.here.api.domain.security.AccessTokenFactory;
 import gather.here.api.domain.security.RefreshTokenFactory;
 import gather.here.api.infra.crypto.CryptoFactoryImpl;
+import gather.here.api.infra.file.S3FileFactoryImpl;
 import gather.here.api.infra.security.AccessTokenFactoryImpl;
 import gather.here.api.infra.security.RefreshTokenFactoryImpl;
 import org.springframework.context.annotation.Bean;
@@ -63,5 +66,10 @@ public class ServiceConfig {
     @Bean
     public RefreshTokenFactory refreshTokenFactory(RefreshTokenRepository repository){
         return new RefreshTokenFactoryImpl(repository);
+    }
+
+    @Bean
+    public FileFactory fileFactory(AmazonS3 amazonS3){
+        return new S3FileFactoryImpl(amazonS3);
     }
 }
