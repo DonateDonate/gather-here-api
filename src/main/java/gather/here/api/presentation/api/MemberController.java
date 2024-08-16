@@ -73,5 +73,4 @@ public class MemberController {
         UpdateImageResponseDto response = memberService.updateMemberImage(imageFile, String.valueOf(authentication.getPrincipal()));
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
-
 }
