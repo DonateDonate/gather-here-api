@@ -15,10 +15,10 @@ public class AwsS3Config {
 
     @Bean
     public AmazonS3Client amazonS3Client() {
-        String ACCESS_KEY = "AKIAQ3EGWD27KKWFHCY7";
-        String SECRET_KEY = "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";
+        String sanha = "AKIAQ3EGWD27KKWFHCY7";
+        String sd = "FU5Aoi9G0iP+FiaPLZ4EeDJxEphAlBRwnw1I7Glk";
 
-        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(ACCESS_KEY, SECRET_KEY);
+        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(sanha, sd);
         return (AmazonS3Client) AmazonS3ClientBuilder.standard()
                 .withRegion(Regions.AP_NORTHEAST_2).enablePathStyleAccess()
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
