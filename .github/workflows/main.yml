@@ -28,11 +28,11 @@ jobs:
     - name: Create application.properties file
       run: touch ./src/main/resources/application.properties
 
-    - name: Write AWS user security to application-test.properties
-      run: echo "${{ secrets.AWS_USER_SECURITY }}" > ./src/main/resources/application-test.properties
+    - name: Write AWS user security to application-devel.properties
+      run: echo "${{ secrets.AWS_USER_SECURITY }}" > ./src/main/resources/application-devel.properties
 
     - name: Display application-test.properties contents
-      run: cat ./src/main/resources/application-test.properties
+      run: cat ./src/main/resources/application-devel.properties
 
     - name: Set up JDK 17
       uses: actions/setup-java@v1
