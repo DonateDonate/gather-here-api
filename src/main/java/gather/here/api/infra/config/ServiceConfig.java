@@ -1,8 +1,10 @@
 package gather.here.api.infra.config;
+import com.amazonaws.services.s3.AmazonS3Client;
 import gather.here.api.application.service.FileService;
 import gather.here.api.application.service.MemberService;
 import gather.here.api.application.service.RoomService;
 import gather.here.api.application.service.TokenService;
+import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RefreshTokenRepository;
 import gather.here.api.domain.repositories.RoomRepository;
@@ -10,6 +12,8 @@ import gather.here.api.domain.security.CryptoFactory;
 import gather.here.api.domain.security.AccessTokenFactory;
 import gather.here.api.domain.security.RefreshTokenFactory;
 import gather.here.api.infra.crypto.CryptoFactoryImpl;
+import gather.here.api.infra.file.FileFactoryImpl;
+import gather.here.api.infra.file.s3.S3Provider;
 import gather.here.api.infra.security.AccessTokenFactoryImpl;
 import gather.here.api.infra.security.RefreshTokenFactoryImpl;
 import org.springframework.context.annotation.Bean;
@@ -36,9 +40,9 @@ public class ServiceConfig {
     public MemberService memberService(
             MemberRepository memberRepository,
             CryptoFactory cryptoFactory,
-            FileService fileService
+            FileFactory fileFactory
             ){
-        return new MemberService(memberRepository,cryptoFactory,fileService);
+        return new MemberService(memberRepository,cryptoFactory,fileFactory);
     }
 
     @Bean
@@ -55,6 +59,11 @@ public class ServiceConfig {
     }
 
     @Bean
+    public FileFactory fileFactory(S3Provider s3Provider){
+        return new FileFactoryImpl(s3Provider);
+    }
+
+    @Bean
     public AccessTokenFactory accessTokenFactory(){
         return new AccessTokenFactoryImpl();
     }
@@ -64,4 +73,11 @@ public class ServiceConfig {
     public RefreshTokenFactory refreshTokenFactory(RefreshTokenRepository repository){
         return new RefreshTokenFactoryImpl(repository);
     }
+
+    @Bean
+    public S3Provider s3Provider(AmazonS3Client amazonS3Client){
+        return new S3Provider(amazonS3Client);
+    }
+
+
 }

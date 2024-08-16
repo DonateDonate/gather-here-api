@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.http.HttpStatus;
@@ -34,7 +35,7 @@ public class Member extends BaseTime {
     @Comment("닉네임")
     private String nickname;
 
-    @Comment("이미지키 - uuid")
+    @Comment("이미지 key - uuid")
     private String imageKey;
 
     @Comment("푸쉬알림 토큰")
@@ -85,6 +86,13 @@ public class Member extends BaseTime {
         }
 
         this.password = newPassword;
+    }
+
+    public void setImageKey(String imageKey){
+        if(StringUtils.isEmpty(imageKey)){
+            throw new MemberException(ResponseStatus.INVALID_INPUT, HttpStatus.CONFLICT);
+        }
+        this.imageKey = imageKey;
     }
 
     public void cancelAccount(){
