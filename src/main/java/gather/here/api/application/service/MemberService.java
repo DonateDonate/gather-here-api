@@ -41,7 +41,10 @@ public class MemberService {
         Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
                 ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
         );
-        String imageUrl = fileFactory.getImageUrl(member.getImageKey());
+        String imageUrl = null;
+        if(member.getImageKey() !=null) {
+             imageUrl = fileFactory.getImageUrl(member.getImageKey());
+        }
         return new GetMemberResponseDto(member.getNickname(), member.getIdentity(), imageUrl);
     }
 
