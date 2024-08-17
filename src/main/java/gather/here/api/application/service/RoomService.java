@@ -66,7 +66,14 @@ public class RoomService {
         }
 
         room.addMemberList(member);
-        return new JoinRoomResponseDto(room.getSeq(),room.getDestinationLat(),room.getDestinationLng(),room.getEncounterDate());
+        return new JoinRoomResponseDto(
+                room.getSeq(),
+                room.getDestinationLat(),
+                room.getDestinationLng(),
+                room.getDestinationName(),
+                room.getEncounterDate(),
+                room.getShareCode()
+        );
     }
 
     @Transactional

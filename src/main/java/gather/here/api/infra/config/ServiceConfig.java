@@ -16,6 +16,7 @@ import gather.here.api.infra.file.FileFactoryImpl;
 import gather.here.api.infra.file.s3.S3Provider;
 import gather.here.api.infra.security.AccessTokenFactoryImpl;
 import gather.here.api.infra.security.RefreshTokenFactoryImpl;
+import gather.here.api.infra.socket.CustomWebSocketHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -77,6 +78,11 @@ public class ServiceConfig {
     @Bean
     public S3Provider s3Provider(AmazonS3Client amazonS3Client){
         return new S3Provider(amazonS3Client);
+    }
+
+    @Bean
+    public CustomWebSocketHandler customWebSocketHandler(){
+        return new CustomWebSocketHandler();
     }
 
 
