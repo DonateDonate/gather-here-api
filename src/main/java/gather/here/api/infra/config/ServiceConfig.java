@@ -1,10 +1,8 @@
 package gather.here.api.infra.config;
 import com.amazonaws.services.s3.AmazonS3Client;
-import gather.here.api.application.service.FileService;
-import gather.here.api.application.service.MemberService;
-import gather.here.api.application.service.RoomService;
-import gather.here.api.application.service.TokenService;
+import gather.here.api.application.service.*;
 import gather.here.api.domain.file.FileFactory;
+import gather.here.api.domain.repositories.AppInfoRepository;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RefreshTokenRepository;
 import gather.here.api.domain.repositories.RoomRepository;
@@ -23,6 +21,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class ServiceConfig {
+
+    @Bean
+    public AppInfoService appInfoService(AppInfoRepository appInfoRepository){
+        return new AppInfoService(appInfoRepository);
+    }
 
     @Bean
     public RoomService roomService(
@@ -84,6 +87,8 @@ public class ServiceConfig {
     public CustomWebSocketHandler customWebSocketHandler(){
         return new CustomWebSocketHandler();
     }
+
+
 
 
 }
