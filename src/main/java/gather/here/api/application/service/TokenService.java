@@ -1,9 +1,11 @@
 package gather.here.api.application.service;
 
 import gather.here.api.application.dto.response.TokenResponseDto;
+import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.security.AccessTokenFactory;
 import gather.here.api.domain.security.RefreshTokenFactory;
 import gather.here.api.global.exception.AuthException;
+import gather.here.api.global.exception.MemberException;
 import gather.here.api.global.exception.ResponseStatus;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -40,15 +42,22 @@ public class TokenService {
 
     private final AccessTokenFactory accessTokenFactory;
     private final RefreshTokenFactory refreshTokenFactory;
+    private final MemberRepository memberRepository;
 
     public String accessTokenGenerate(Authentication authentication){
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String accessToken = accessTokenFactory.generate(userDetails.getUsername(), getKey(), ACCESS_TOKEN_MINUTE);
+        String identity = userDetails.getUsername();
+
+        Long memberSeq = memberRepository.findByIdentity(identity)
+                .orElseThrow(() -> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.CONFLICT))
+                .getSeq();
+
+        String accessToken = accessTokenFactory.generate(identity,memberSeq, getKey(), ACCESS_TOKEN_MINUTE);
         return withTokenPrefix(accessToken,ACCESS_TOKEN_PREFIX);
     }
 
-    public Authentication accessTokenValidate(String token){
-        return accessTokenFactory.validate(token,getKey());
+    public Authentication accessTokenValidate(String accessTokenTokenWithPrefix){
+        return accessTokenFactory.validate(accessTokenTokenWithPrefix,getKey());
     }
     @Transactional
     public String refreshTokenGenerate(Authentication authentication){
@@ -64,6 +73,10 @@ public class TokenService {
         Authentication authentication = refreshTokenFactory.validate(refreshTokenWithPrefix, getKey());
         String identity =  authentication.getName();
 
+        Long memberSeq = memberRepository.findByIdentity(identity)
+                .orElseThrow(() -> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.CONFLICT))
+                .getSeq();
+
         Optional<String> savedRefresh = refreshTokenFactory.find(identity);
 
         if(savedRefresh.isEmpty() || !refreshToken.equals(savedRefresh.get())){
@@ -71,7 +84,7 @@ public class TokenService {
             throw new AuthException(ResponseStatus.INVALID_TOKEN,HttpStatus.UNAUTHORIZED);
         }
 
-        String newAccessToken = accessTokenFactory.generate(identity, getKey(), ACCESS_TOKEN_MINUTE);
+        String newAccessToken = accessTokenFactory.generate(identity, memberSeq,getKey(), ACCESS_TOKEN_MINUTE);
         String newRefreshToken = refreshTokenFactory.generate(identity, getKey(), REFRESH_TOKEN_MINUTE);
 
         return new TokenResponseDto(newAccessToken, newRefreshToken);
@@ -83,4 +96,6 @@ public class TokenService {
         Key key = Keys.hmacShaKeyFor(keyBytes);
         return key;
     }
+
+
 };
