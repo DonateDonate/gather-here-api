@@ -3,6 +3,7 @@ package gather.here.api.presentation.api;
 import gather.here.api.application.dto.request.MemberSignInRequestDto;
 import gather.here.api.application.dto.request.MemberSignUpRequestDto;
 import gather.here.api.application.service.MemberService;
+import gather.here.api.domain.security.CustomPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -46,7 +47,8 @@ public class AuthController {
     public ResponseEntity<Object> cancelAccount(
             Authentication authentication
     ){
-        memberService.cancelAccount(String.valueOf(authentication.getPrincipal()));
+        CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
+        memberService.cancelAccount(principal.getIdentity());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -6,6 +6,7 @@ import gather.here.api.application.dto.request.RoomCreateRequestDto;
 import gather.here.api.application.dto.response.JoinRoomResponseDto;
 import gather.here.api.application.dto.response.RoomCreateResponseDto;
 import gather.here.api.application.service.RoomService;
+import gather.here.api.domain.security.CustomPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,7 +40,8 @@ public class RoomController {
             @Valid @RequestBody RoomCreateRequestDto request,
             Authentication authentication
     ){
-        RoomCreateResponseDto response = roomService.createRoom(request, String.valueOf(authentication.getPrincipal()));
+        CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
+        RoomCreateResponseDto response = roomService.createRoom(request, principal.getIdentity());
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
@@ -53,7 +54,8 @@ public class RoomController {
             @Valid @RequestBody JoinRoomRequestDto request,
             Authentication authentication
     ){
-        JoinRoomResponseDto response = roomService.joinRoom(request, String.valueOf(authentication.getPrincipal()));
+        CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
+        JoinRoomResponseDto response = roomService.joinRoom(request, principal.getIdentity());
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
@@ -66,14 +68,8 @@ public class RoomController {
             @Valid @RequestBody ExitRoomRequestDto request,
             Authentication authentication
     ){
-        roomService.exitRoom(request,String.valueOf(authentication.getPrincipal()));
+        CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
+        roomService.exitRoom(request, principal.getIdentity());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    @GetMapping("/location/share")
-    public ResponseEntity<Object> locationShareConnect(){
-        log.info("location share!");
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
 }

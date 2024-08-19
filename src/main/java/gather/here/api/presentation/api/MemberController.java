@@ -5,6 +5,7 @@ import gather.here.api.application.dto.request.ModifyPasswordRequestDto;
 import gather.here.api.application.dto.response.GetMemberResponseDto;
 import gather.here.api.application.dto.response.UpdateImageResponseDto;
 import gather.here.api.application.service.MemberService;
+import gather.here.api.domain.security.CustomPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,7 +34,8 @@ public class MemberController {
     public ResponseEntity<GetMemberResponseDto> signUp(
             Authentication authentication
 ){
-        GetMemberResponseDto member = memberService.getMember(String.valueOf(authentication.getPrincipal()));
+        CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
+        GetMemberResponseDto member = memberService.getMember(principal.getIdentity());
         return new ResponseEntity<>(member,HttpStatus.OK);
     }
 
@@ -43,8 +45,8 @@ public class MemberController {
             Authentication authentication,
             @Valid @RequestBody ModifyNicknameRequestDto request
             ){
-
-        memberService.modifyNickname(request, String.valueOf(authentication.getPrincipal()));
+        CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
+        memberService.modifyNickname(request, principal.getIdentity());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -55,8 +57,8 @@ public class MemberController {
             Authentication authentication,
             @Valid @RequestBody ModifyPasswordRequestDto request
     ){
-
-        memberService.modifyPassword(request, String.valueOf(authentication.getPrincipal()));
+        CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
+        memberService.modifyPassword(request, principal.getIdentity());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -70,7 +72,8 @@ public class MemberController {
             @RequestPart MultipartFile imageFile,
             Authentication authentication
     ){
-        UpdateImageResponseDto response = memberService.updateMemberImage(imageFile, String.valueOf(authentication.getPrincipal()));
+        CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
+        UpdateImageResponseDto response = memberService.updateMemberImage(imageFile, principal.getIdentity());
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

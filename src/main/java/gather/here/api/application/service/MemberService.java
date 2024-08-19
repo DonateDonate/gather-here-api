@@ -36,7 +36,6 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-
     public GetMemberResponseDto getMember(String memberIdentity){
         Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
                 ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)

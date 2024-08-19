@@ -5,6 +5,6 @@ import org.springframework.security.core.Authentication;
 import java.security.Key;
 
 public interface AccessTokenFactory {
-    String generate(String identity, Key key, long minute);
+    String generate(String identity, Long memberSeq,Key key, long minute);
     Authentication validate(String token, Key key);
 }

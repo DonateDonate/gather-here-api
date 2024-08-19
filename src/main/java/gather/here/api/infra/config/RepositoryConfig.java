@@ -1,17 +1,13 @@
 package gather.here.api.infra.config;
 
-import gather.here.api.domain.repositories.AppInfoRepository;
-import gather.here.api.domain.repositories.MemberRepository;
-import gather.here.api.domain.repositories.RefreshTokenRepository;
-import gather.here.api.domain.repositories.RoomRepository;
-import gather.here.api.infra.persistence.AppInfoRepositoryImpl;
-import gather.here.api.infra.persistence.MemberRepositoryImpl;
-import gather.here.api.infra.persistence.RefreshTokenRepositoryImpl;
-import gather.here.api.infra.persistence.RoomRepositoryImpl;
+import gather.here.api.domain.repositories.*;
+import gather.here.api.infra.persistence.*;
 import gather.here.api.infra.persistence.jpa.AppInfoJpaRepository;
 import gather.here.api.infra.persistence.jpa.MemberJpaRepository;
 import gather.here.api.infra.persistence.jpa.RefreshTokenJpaRepository;
 import gather.here.api.infra.persistence.jpa.RoomJpaRepository;
+import gather.here.api.infra.persistence.redis.LocationShareEventRedisRepository;
+import gather.here.api.infra.persistence.redis.WebSocketAuthRedisRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,8 +20,11 @@ public class RepositoryConfig {
     }
 
     @Bean
-    public RoomRepository roomRepository(RoomJpaRepository rep){
-        return new RoomRepositoryImpl(rep);
+    public RoomRepository roomRepository(
+            RoomJpaRepository roomJpaRepository,
+            LocationShareEventRedisRepository locationShareEventRedisRepository
+    ){
+        return new RoomRepositoryImpl(roomJpaRepository,locationShareEventRedisRepository);
     }
 
     @Bean
@@ -36,5 +35,10 @@ public class RepositoryConfig {
     @Bean
     public AppInfoRepository appInfoRepository(AppInfoJpaRepository rep){
         return new AppInfoRepositoryImpl(rep);
+    }
+
+    @Bean
+    public WebSocketAuthRepository webSocketAuthRepository(WebSocketAuthRedisRepository rep){
+        return new WebSocketAuthRepositoryImpl(rep);
     }
 }

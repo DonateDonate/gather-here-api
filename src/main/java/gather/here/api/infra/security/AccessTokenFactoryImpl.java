@@ -1,6 +1,7 @@
 package gather.here.api.infra.security;
 
 import gather.here.api.domain.security.AccessTokenFactory;
+import gather.here.api.domain.security.CustomPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -20,10 +21,11 @@ public class AccessTokenFactoryImpl implements AccessTokenFactory {
     private String ACCESS_TOKEN_PREFIX;
 
     @Override
-    public String generate(String identity, Key key , long minute) {
+    public String generate(String identity, Long memberSeq,Key key , long minute) {
 
         Claims accessTokenClaim = Jwts.claims();
         accessTokenClaim.put("identity", identity);
+        accessTokenClaim.put("memberSeq", memberSeq);
 
         ZonedDateTime now = ZonedDateTime.now();
 
@@ -40,6 +42,8 @@ public class AccessTokenFactoryImpl implements AccessTokenFactory {
         String token = removePrefix(accessTokenTokenWithPrefix,ACCESS_TOKEN_PREFIX);
         Claims parseClaims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         String identity = parseClaims.get("identity", String.class);
-        return UsernamePasswordAuthenticationToken.authenticated(identity, null,null);
+        Long memberSeq = parseClaims.get("memberSeq", Long.class);
+
+        return UsernamePasswordAuthenticationToken.authenticated(new CustomPrincipal(identity, memberSeq), null,null);
     }
 }

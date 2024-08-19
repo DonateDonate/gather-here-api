@@ -1,20 +1,17 @@
 package gather.here.api.infra.config;
+
 import com.amazonaws.services.s3.AmazonS3Client;
 import gather.here.api.application.service.*;
 import gather.here.api.domain.file.FileFactory;
-import gather.here.api.domain.repositories.AppInfoRepository;
-import gather.here.api.domain.repositories.MemberRepository;
-import gather.here.api.domain.repositories.RefreshTokenRepository;
-import gather.here.api.domain.repositories.RoomRepository;
-import gather.here.api.domain.security.CryptoFactory;
+import gather.here.api.domain.repositories.*;
 import gather.here.api.domain.security.AccessTokenFactory;
+import gather.here.api.domain.security.CryptoFactory;
 import gather.here.api.domain.security.RefreshTokenFactory;
 import gather.here.api.infra.crypto.CryptoFactoryImpl;
 import gather.here.api.infra.file.FileFactoryImpl;
 import gather.here.api.infra.file.s3.S3Provider;
 import gather.here.api.infra.security.AccessTokenFactoryImpl;
 import gather.here.api.infra.security.RefreshTokenFactoryImpl;
-import gather.here.api.infra.socket.CustomWebSocketHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,9 +27,10 @@ public class ServiceConfig {
     @Bean
     public RoomService roomService(
             MemberRepository memberRepository,
-        RoomRepository roomRepository
+        RoomRepository roomRepository,
+            WebSocketAuthRepository webSocketAuthRepository
     ){
-        return new RoomService(memberRepository,roomRepository);
+        return new RoomService(memberRepository,roomRepository,webSocketAuthRepository);
     }
 
     @Bean
@@ -52,9 +50,10 @@ public class ServiceConfig {
     @Bean
     public TokenService tokenService(
             AccessTokenFactory accessTokenFactory,
-            RefreshTokenFactory refreshTokenFactory
+            RefreshTokenFactory refreshTokenFactory,
+            MemberRepository memberRepository
     ){
-        return new TokenService(accessTokenFactory, refreshTokenFactory);
+        return new TokenService(accessTokenFactory, refreshTokenFactory,memberRepository);
     }
 
     @Bean
@@ -82,13 +81,5 @@ public class ServiceConfig {
     public S3Provider s3Provider(AmazonS3Client amazonS3Client){
         return new S3Provider(amazonS3Client);
     }
-
-    @Bean
-    public CustomWebSocketHandler customWebSocketHandler(){
-        return new CustomWebSocketHandler();
-    }
-
-
-
 
 }
