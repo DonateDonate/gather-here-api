@@ -42,6 +42,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
             WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, memberSessionId);
             roomService.saveWebSocketAuth(webSocketAuth);
         }catch (Exception e){
+            e.printStackTrace();
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason(ResponseStatus.INVALID_TOKEN.getMessage()));
         }
     }
