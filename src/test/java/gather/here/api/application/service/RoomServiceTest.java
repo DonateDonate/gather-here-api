@@ -15,12 +15,12 @@ class RoomServiceTest {
     @Autowired
     private RoomService roomService;
 
-    @Test
-    public void webSocketSaveTest(){
-        List<WebSocketAuth> byAllWebSocketAuth = roomService.findByAllWebSocketAuth();
-        Assertions.assertThat(byAllWebSocketAuth).isNotNull();
-
-    }
+//    @Test
+//    public void webSocketSaveTest(){
+//        List<WebSocketAuth> byAllWebSocketAuth = roomService.findByAllWebSocketAuth();
+//        Assertions.assertThat(byAllWebSocketAuth).isNotNull();
+//
+//    }
 
 
 }

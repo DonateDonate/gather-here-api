@@ -2,11 +2,9 @@ package gather.here.api.application.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @NoArgsConstructor
 @Getter
-@ToString
 public class LocationShareEventRequestDto {
     private int type;
     private Float presentLat;
@@ -18,5 +16,15 @@ public class LocationShareEventRequestDto {
         this.presentLat = presentLat;
         this.presentLng = presentLng;
         this.destinationDistance = destinationDistance;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "type=" + type +
+                ", presentLat=" + presentLat +
+                ", presentLng=" + presentLng +
+                ", destinationDistance=" + destinationDistance +
+                '}';
     }
 }

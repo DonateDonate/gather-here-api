@@ -2,7 +2,6 @@ package gather.here.api.application.service;
 
 import gather.here.api.application.dto.request.ExitRoomRequestDto;
 import gather.here.api.application.dto.request.JoinRoomRequestDto;
-import gather.here.api.application.dto.request.LocationShareEventRequestDto;
 import gather.here.api.application.dto.request.RoomCreateRequestDto;
 import gather.here.api.application.dto.response.JoinRoomResponseDto;
 import gather.here.api.application.dto.response.RoomCreateResponseDto;
@@ -104,11 +103,6 @@ public class RoomService {
         member.setRoom(null);
     }
 
-    @Transactional
-    public void saveWebSocketAuth(WebSocketAuth webSocketAuth){
-        webSocketAuthRepository.save(webSocketAuth);
-    }
-
     public List<WebSocketAuth> findByAllWebSocketAuth(){
         return webSocketAuthRepository.findAll();
     }
@@ -119,52 +113,7 @@ public class RoomService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public LocationShareEvent createTypeHandleAction(LocationShareEventRequestDto request,String sessionId){
-        WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
 
-        Long memberSeq = webSocketAuth.getMemberSeq();
-        Member member = memberRepository.findById(memberSeq)
-                .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
-
-        LocationShareEvent locationShareEvent = LocationShareEvent
-                .generateTypeCreate(
-                        member.getRoom().getSeq(),
-                        member.getSeq(),
-                        sessionId,
-                        member.getNickname(),
-                        fileFactory.getImageUrl(member.getImageKey()),
-                        request.getPresentLat(),
-                        request.getPresentLng(),
-                        request.getDestinationDistance()
-                );
-        roomRepository.generateLocationShareEvent(locationShareEvent);
-        return locationShareEvent;
-    }
-
-    @Transactional
-    public LocationShareEvent joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId){
-        WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
-
-        Long memberSeq = webSocketAuth.getMemberSeq();
-        Member member = memberRepository.findById(memberSeq)
-                .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
-
-        LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq());
-
-        locationShareEvent.addMemberLocations(
-                member.getSeq(),
-                sessionId,
-                member.getNickname(),
-                fileFactory.getImageUrl(member.getImageKey()),
-                request.getPresentLat(),
-                request.getPresentLng(),
-                request.getDestinationDistance()
-                );
-
-        roomRepository.updateLocationShareEvent(locationShareEvent);
-        return locationShareEvent;
-    }
 
 
 }

@@ -59,6 +59,17 @@ public class ServiceConfig {
     }
 
     @Bean
+    public LocationShareService locationShareService (
+            TokenService tokenService,
+            WebSocketAuthRepository webSocketAuthRepository,
+            MemberRepository memberRepository,
+            FileFactory fileFactory,
+            RoomRepository roomRepository
+    ){
+        return new LocationShareService(tokenService,webSocketAuthRepository,memberRepository,fileFactory,roomRepository);
+    }
+
+    @Bean
     public CryptoFactory cryptoFactory(PasswordEncoder passwordEncoder){
         return new CryptoFactoryImpl(passwordEncoder);
     }
