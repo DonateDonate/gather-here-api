@@ -7,5 +7,6 @@ import java.util.List;
 public interface WebSocketAuthRepository{
     void save(WebSocketAuth webSocketAuth);
     WebSocketAuth findByMemberSeq(Long memberSeq);
+    WebSocketAuth findBySessionId(String sessionId);
     List<WebSocketAuth> findAll();
 }

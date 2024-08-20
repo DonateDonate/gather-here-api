@@ -12,6 +12,7 @@ public enum ResponseStatus {
     DUPLICATE_MEMBER_ID(1101,"duplicated member id"),
     UNCORRECTED_MEMBER_ID_PASSWORD(1102, "uncorrected member id or password"),
     UNCORRECTED_MEMBER_NICKNAME(1103, "uncorrected member nickname"),
+    UNCORRECTED_MEMBER_SEQ(1104,"uncorrected member seq"),
 
     /**
      * 2xxx: room exception
@@ -22,6 +23,7 @@ public enum ResponseStatus {
     ALREADY_ROOM_ENCOUNTER(2104,"already room encounter"),
     CLOSED_ROOM(2105,"this is closed room"),
     NOT_FOUND_ROOM_SEQ(2106,"not found room seq"),
+    DUPLICATE_SESSION_ID(2107,"duplicate session id"),
 
     /**
      *  8xxx : general exception

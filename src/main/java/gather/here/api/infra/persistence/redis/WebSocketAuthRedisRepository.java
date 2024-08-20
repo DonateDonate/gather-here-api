@@ -8,4 +8,5 @@ import java.util.List;
 public interface WebSocketAuthRedisRepository extends CrudRepository<WebSocketAuth,Long> {
     WebSocketAuth findByMemberSeq(Long memberSeq);
     List<WebSocketAuth> findAll();
+    WebSocketAuth findBySessionId(String sessionId);
 }

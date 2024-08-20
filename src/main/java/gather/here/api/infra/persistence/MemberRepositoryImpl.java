@@ -21,4 +21,9 @@ public class MemberRepositoryImpl implements MemberRepository {
     public Optional<Member> findByIdentity(String id) {
         return Optional.ofNullable(memberJpaRepository.findByIdentity(id));
     }
+
+    @Override
+    public Optional<Member> findById(Long memberSeq) {
+        return memberJpaRepository.findById(memberSeq);
+    }
 }

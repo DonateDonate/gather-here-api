@@ -10,6 +10,7 @@ import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.Room;
 import gather.here.api.domain.entities.WebSocketAuth;
+import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
@@ -21,6 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static gather.here.api.global.util.DateUtil.convertLocalDateTimeToString;
 
@@ -29,6 +32,7 @@ public class RoomService {
     private final MemberRepository memberRepository;
     private final RoomRepository roomRepository;
     private final WebSocketAuthRepository webSocketAuthRepository;
+    private final FileFactory fileFactory;
 
     @Transactional
     public RoomCreateResponseDto createRoom(RoomCreateRequestDto request, String memberIdentity){
@@ -74,13 +78,13 @@ public class RoomService {
             throw new RoomException(ResponseStatus.CLOSED_ROOM,HttpStatus.CONFLICT);
         }
 
-        room.addMemberList(member);
+        member.setRoom(room);
         return new JoinRoomResponseDto(
                 room.getSeq(),
                 room.getDestinationLat(),
                 room.getDestinationLng(),
                 room.getDestinationName(),
-                room.getEncounterDate(),
+                convertLocalDateTimeToString(room.getEncounterDate()),
                 room.getShareCode()
         );
 
@@ -101,28 +105,6 @@ public class RoomService {
     }
 
     @Transactional
-    public void createLocationShareEvent(LocationShareEventRequestDto request, String memberIdentity, String memberSessionId){
-        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
-                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
-        );
-
-        //member session id는 redis에서 가져오기 -> 최초에 연결이 되면 memberSession를 넣어줘야함
-
-        Room room = member.getRoom();
-
-        LocationShareEvent locationShareEvent = LocationShareEvent.create(
-                room.getSeq(),
-                member.getSeq(), memberSessionId,
-                member.getNickname(),
-                member.getImageKey(),
-                request.getPresentLat(),
-                request.getPresentLng(),
-                request.getDestinationDistance()
-        );
-        roomRepository.createLocationShareEvent(locationShareEvent);
-    }
-
-    @Transactional
     public void saveWebSocketAuth(WebSocketAuth webSocketAuth){
         webSocketAuthRepository.save(webSocketAuth);
     }
@@ -130,5 +112,59 @@ public class RoomService {
     public List<WebSocketAuth> findByAllWebSocketAuth(){
         return webSocketAuthRepository.findAll();
     }
+
+    public List<LocationShareEvent> findByAllLocationShareEvent() {
+        Iterable<LocationShareEvent> allLocationEvents = roomRepository.findAllLocationEvents();
+        return StreamSupport.stream(allLocationEvents.spliterator(), false)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public LocationShareEvent createTypeHandleAction(LocationShareEventRequestDto request,String sessionId){
+        WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
+
+        Long memberSeq = webSocketAuth.getMemberSeq();
+        Member member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
+
+        LocationShareEvent locationShareEvent = LocationShareEvent
+                .generateTypeCreate(
+                        member.getRoom().getSeq(),
+                        member.getSeq(),
+                        sessionId,
+                        member.getNickname(),
+                        fileFactory.getImageUrl(member.getImageKey()),
+                        request.getPresentLat(),
+                        request.getPresentLng(),
+                        request.getDestinationDistance()
+                );
+        roomRepository.generateLocationShareEvent(locationShareEvent);
+        return locationShareEvent;
+    }
+
+    @Transactional
+    public LocationShareEvent joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId){
+        WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
+
+        Long memberSeq = webSocketAuth.getMemberSeq();
+        Member member = memberRepository.findById(memberSeq)
+                .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
+
+        LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq());
+
+        locationShareEvent.addMemberLocations(
+                member.getSeq(),
+                sessionId,
+                member.getNickname(),
+                fileFactory.getImageUrl(member.getImageKey()),
+                request.getPresentLat(),
+                request.getPresentLng(),
+                request.getDestinationDistance()
+                );
+
+        roomRepository.updateLocationShareEvent(locationShareEvent);
+        return locationShareEvent;
+    }
+
 
 }

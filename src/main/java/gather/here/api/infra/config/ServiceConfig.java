@@ -27,10 +27,12 @@ public class ServiceConfig {
     @Bean
     public RoomService roomService(
             MemberRepository memberRepository,
-        RoomRepository roomRepository,
-            WebSocketAuthRepository webSocketAuthRepository
+            RoomRepository roomRepository,
+            WebSocketAuthRepository webSocketAuthRepository,
+            FileFactory fileFactory
+
     ){
-        return new RoomService(memberRepository,roomRepository,webSocketAuthRepository);
+        return new RoomService(memberRepository,roomRepository,webSocketAuthRepository,fileFactory);
     }
 
     @Bean

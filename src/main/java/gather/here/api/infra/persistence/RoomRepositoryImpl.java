@@ -26,12 +26,23 @@ public class RoomRepositoryImpl implements RoomRepository {
     }
 
     @Override
-    public void createLocationShareEvent(LocationShareEvent locationShareEvent) {
+    public void generateLocationShareEvent(LocationShareEvent locationShareEvent) {
         locationShareEventRedisRepository.save(locationShareEvent);
     }
 
     @Override
-    public LocationShareEvent findByRoomSeq(Long roomSeq) {
+    public LocationShareEvent findLocationShareEventByRoomSeq(Long roomSeq) {
         return locationShareEventRedisRepository.findByRoomSeq(roomSeq);
+    }
+
+    @Override
+    public void updateLocationShareEvent(LocationShareEvent locationShareEvent){
+        locationShareEventRedisRepository.delete(locationShareEvent);
+        locationShareEventRedisRepository.save(locationShareEvent);
+    }
+
+    @Override
+    public Iterable<LocationShareEvent> findAllLocationEvents() {
+        return locationShareEventRedisRepository.findAll();
     }
 }

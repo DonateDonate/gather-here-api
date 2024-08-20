@@ -24,4 +24,9 @@ public class WebSocketAuthRepositoryImpl implements WebSocketAuthRepository {
     public List<WebSocketAuth> findAll() {
         return webSocketAuthRedisRepository.findAll();
     }
+
+    @Override
+    public WebSocketAuth findBySessionId(String sessionId) {
+        return webSocketAuthRedisRepository.findBySessionId(sessionId);
+    }
 }

@@ -6,9 +6,10 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
-@RedisHash(value = "locationShareEvent", timeToLive = 30)
+@RedisHash(value = "locationShareEvent", timeToLive = 86400L)
 public class LocationShareEvent {
 
     @Id
@@ -16,15 +17,32 @@ public class LocationShareEvent {
     private List<MemberLocation> memberLocations;
     private Score score;
 
-    public static LocationShareEvent create(Long roomSeq,Long memberSeq, String memberSessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
+    public static LocationShareEvent generateTypeCreate(Long roomSeq,Long memberSeq, String sessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
         List<MemberLocation> memberLocations = new ArrayList<>();
 
-        MemberLocation memberLocation = new MemberLocation(memberSeq,memberSessionId, nickname, imageUrl,presentLat,presentLng,destinationDistance);
+        MemberLocation memberLocation = new MemberLocation(memberSeq,sessionId, nickname, imageUrl,presentLat,presentLng,destinationDistance);
         memberLocations.add(memberLocation);
         return new LocationShareEvent(roomSeq,memberLocations, new Score());
     }
 
-    public LocationShareEvent(Long roomSeq, List<MemberLocation> memberLocations, Score score) {
+    public static void joinTypeCreate(){
+
+    }
+
+    public List<String> getSessionIdList() {
+        List<MemberLocation> memberLocations = this.getMemberLocations();
+        return memberLocations.stream()
+                .map(MemberLocation::getSessionId)
+                .collect(Collectors.toList());
+    }
+
+    public void addMemberLocations(Long memberSeq, String sessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
+        MemberLocation memberLocation = new MemberLocation(memberSeq, sessionId, nickname, imageUrl, presentLat, presentLng, destinationDistance);
+        this.memberLocations.add(memberLocation);
+    }
+
+
+    private LocationShareEvent(Long roomSeq, List<MemberLocation> memberLocations, Score score) {
         this.roomSeq = roomSeq;
         this.memberLocations = memberLocations;
         this.score = score;
@@ -32,18 +50,18 @@ public class LocationShareEvent {
 }
 
 @Getter
-class MemberLocation{
+ class MemberLocation{
     private Long memberSeq;
-    private String memberSessionId;
+    private String sessionId;
     private String nickname;
     private String imageUrl;
     private Float presentLat;
     private Float presentLng;
     private Float destinationDistance;
 
-    public MemberLocation(Long memberSeq, String memberSessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance) {
+    public MemberLocation(Long memberSeq, String sessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance) {
         this.memberSeq = memberSeq;
-        this.memberSessionId = memberSessionId;
+        this.sessionId = sessionId;
         this.nickname = nickname;
         this.imageUrl = imageUrl;
         this.presentLat = presentLat;

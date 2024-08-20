@@ -4,8 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
-
 @AllArgsConstructor
 @Getter
 public class JoinRoomResponseDto {
@@ -22,7 +20,7 @@ public class JoinRoomResponseDto {
     private String destinationName;
 
     @Schema(description = "만나는 날짜 (yyyy-MM-dd HH:mm)", example = "2029-01-07 15:33")
-    private LocalDateTime encounterDate;
+    private String encounterDate;
 
     @Schema(description = "공유 코드(4자리 숫자,영어)", example = "AB14")
     private String shareCode;

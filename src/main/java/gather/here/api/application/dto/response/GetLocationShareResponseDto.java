@@ -2,19 +2,34 @@ package gather.here.api.application.dto.response;
 
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class GetLocationShareResponseDto {
-
-    private MemberLocationRes memberLocation;
+    private Long roomSeq;
+    private List<MemberLocationRes> memberLocationResList;
     private ScoreRes score;
 
-    public GetLocationShareResponseDto(Long memberSeq, String username, String imageUrl, String presentLat, String presentLng, String destinationDistance) {
-        this.memberLocation = createMemberLocation(memberSeq,username,imageUrl,presentLat,presentLng,destinationDistance);
-        this.score = new ScoreRes();
+
+//    public static GetLocationShareResponseDto create(LocationShareEvent locationShareEvent){
+//        Long roomSeq = locationShareEvent.getRoomSeq();
+//
+//
+//
+//
+//    }
+
+    public GetLocationShareResponseDto(Long roomSeq, List<MemberLocationRes> memberLocationResList, ScoreRes score) {
+        this.roomSeq = roomSeq;
+        this.memberLocationResList = memberLocationResList;
+        this.score = score;
     }
 
     public static MemberLocationRes createMemberLocation(Long memberSeq, String username, String imageUrl, String presentLat, String presentLng, String destinationDistance){
         return new MemberLocationRes(memberSeq,username,imageUrl,presentLat,presentLng,destinationDistance);
+    }
+    public static ScoreRes createScoreRes(Long goldMemberSeq, Long silverMemberSeq, Long bronzeMemberSeq){
+        return new ScoreRes(goldMemberSeq, silverMemberSeq, bronzeMemberSeq);
     }
 }
 
@@ -42,7 +57,10 @@ class ScoreRes{
     private Long silverMemberSeq;
     private Long bronzeMemberSeq;
 
-    public ScoreRes() {
+    public ScoreRes(Long goldMemberSeq, Long silverMemberSeq, Long bronzeMemberSeq) {
+        this.goldMemberSeq = goldMemberSeq;
+        this.silverMemberSeq = silverMemberSeq;
+        this.bronzeMemberSeq = bronzeMemberSeq;
     }
 
     public void setGoldMemberSeq(Long goldMemberSeq) {
