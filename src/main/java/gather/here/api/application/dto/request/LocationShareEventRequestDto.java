@@ -17,14 +17,4 @@ public class LocationShareEventRequestDto {
         this.presentLng = presentLng;
         this.destinationDistance = destinationDistance;
     }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "type=" + type +
-                ", presentLat=" + presentLat +
-                ", presentLng=" + presentLng +
-                ", destinationDistance=" + destinationDistance +
-                '}';
-    }
 }

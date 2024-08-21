@@ -17,16 +17,12 @@ public class LocationShareEvent {
     private List<MemberLocation> memberLocations;
     private Score score;
 
-    public static LocationShareEvent generateTypeCreate(Long roomSeq,Long memberSeq, String sessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
+    public static LocationShareEvent create(Long roomSeq, Long memberSeq, String sessionId, String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
         List<MemberLocation> memberLocations = new ArrayList<>();
 
         MemberLocation memberLocation = new MemberLocation(memberSeq,sessionId, nickname, imageUrl,presentLat,presentLng,destinationDistance);
         memberLocations.add(memberLocation);
         return new LocationShareEvent(roomSeq,memberLocations, new Score());
-    }
-
-    public static void joinTypeCreate(){
-
     }
 
     public List<String> getSessionIdList() {
@@ -47,35 +43,38 @@ public class LocationShareEvent {
         this.memberLocations = memberLocations;
         this.score = score;
     }
-}
 
-@Getter
- class MemberLocation{
-    private Long memberSeq;
-    private String sessionId;
-    private String nickname;
-    private String imageUrl;
-    private Float presentLat;
-    private Float presentLng;
-    private Float destinationDistance;
 
-    public MemberLocation(Long memberSeq, String sessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance) {
-        this.memberSeq = memberSeq;
-        this.sessionId = sessionId;
-        this.nickname = nickname;
-        this.imageUrl = imageUrl;
-        this.presentLat = presentLat;
-        this.presentLng = presentLng;
-        this.destinationDistance = destinationDistance;
+    @Getter
+    public static class MemberLocation{
+        private Long memberSeq;
+        private String sessionId;
+        private String nickname;
+        private String imageUrl;
+        private Float presentLat;
+        private Float presentLng;
+        private Float destinationDistance;
+
+        public MemberLocation(Long memberSeq, String sessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance) {
+            this.memberSeq = memberSeq;
+            this.sessionId = sessionId;
+            this.nickname = nickname;
+            this.imageUrl = imageUrl;
+            this.presentLat = presentLat;
+            this.presentLng = presentLng;
+            this.destinationDistance = destinationDistance;
+        }
+
+    }
+
+    @Getter
+   public static class Score{
+        private Long goldMemberSeq;
+        private Long silverMemberSeq;
+        private Long bronzeMemberSeq;
+
+        public Score() {
+        }
     }
 }
 
-@Getter
-class Score{
-    private Long goldMemberSeq;
-    private Long silverMemberSeq;
-    private Long bronzeMemberSeq;
-
-    public Score() {
-    }
-}

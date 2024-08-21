@@ -29,4 +29,9 @@ public class WebSocketAuthRepositoryImpl implements WebSocketAuthRepository {
     public WebSocketAuth findBySessionId(String sessionId) {
         return webSocketAuthRedisRepository.findBySessionId(sessionId);
     }
+
+    @Override
+    public void deleteByMemberSeq(Long memberSeq) {
+        webSocketAuthRedisRepository.deleteById(memberSeq);
+    }
 }

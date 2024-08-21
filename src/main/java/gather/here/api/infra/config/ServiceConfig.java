@@ -60,13 +60,12 @@ public class ServiceConfig {
 
     @Bean
     public LocationShareService locationShareService (
-            TokenService tokenService,
             WebSocketAuthRepository webSocketAuthRepository,
             MemberRepository memberRepository,
             FileFactory fileFactory,
             RoomRepository roomRepository
     ){
-        return new LocationShareService(tokenService,webSocketAuthRepository,memberRepository,fileFactory,roomRepository);
+        return new LocationShareService(webSocketAuthRepository,memberRepository,fileFactory,roomRepository);
     }
 
     @Bean

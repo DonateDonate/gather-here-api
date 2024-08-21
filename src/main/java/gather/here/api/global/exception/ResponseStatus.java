@@ -26,6 +26,11 @@ public enum ResponseStatus {
     DUPLICATE_SESSION_ID(2107,"duplicate session id"),
 
     /**
+     * 3xxx: Location Share exception
+     */
+
+
+    /**
      *  8xxx : general exception
      */
 

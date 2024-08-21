@@ -9,4 +9,5 @@ public interface WebSocketAuthRedisRepository extends CrudRepository<WebSocketAu
     WebSocketAuth findByMemberSeq(Long memberSeq);
     List<WebSocketAuth> findAll();
     WebSocketAuth findBySessionId(String sessionId);
+    void deleteByMemberSeq(Long memberSeq);
 }
