@@ -60,12 +60,14 @@ dependencies {
 	// AWS S3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.1.RELEASE'
 
-
 	//web socket
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
 
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// Embedded-Redis
+	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
 
 }
 

@@ -1,6 +1,7 @@
 package gather.here.api.domain.entities;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @RedisHash(value = "locationShareEvent", timeToLive = 86400L)
+@NoArgsConstructor
 public class LocationShareEvent {
 
     @Id
@@ -22,7 +24,9 @@ public class LocationShareEvent {
 
         MemberLocation memberLocation = new MemberLocation(memberSeq,sessionId, nickname, imageUrl,presentLat,presentLng,destinationDistance);
         memberLocations.add(memberLocation);
-        return new LocationShareEvent(roomSeq,memberLocations, new Score());
+        LocationShareEvent locationShareEvent = new LocationShareEvent(roomSeq, memberLocations);
+        locationShareEvent.setScore(new Score());
+        return locationShareEvent;
     }
 
     public List<String> getSessionIdList() {
@@ -37,6 +41,9 @@ public class LocationShareEvent {
         this.memberLocations.add(memberLocation);
     }
 
+    public void setScore(Score score){
+        this.score = score;
+    }
 
     private LocationShareEvent(Long roomSeq, List<MemberLocation> memberLocations, Score score) {
         this.roomSeq = roomSeq;
@@ -44,6 +51,10 @@ public class LocationShareEvent {
         this.score = score;
     }
 
+    private LocationShareEvent(Long roomSeq, List<MemberLocation> memberLocations) {
+        this.roomSeq = roomSeq;
+        this.memberLocations = memberLocations;
+    }
 
     @Getter
     public static class MemberLocation{
@@ -67,14 +78,33 @@ public class LocationShareEvent {
 
     }
 
-    @Getter
+   @Getter
    public static class Score{
         private Long goldMemberSeq;
         private Long silverMemberSeq;
         private Long bronzeMemberSeq;
 
+
         public Score() {
         }
-    }
+
+        public Score(Long goldMemberSeq, Long silverMemberSeq, Long bronzeMemberSeq) {
+            this.goldMemberSeq = goldMemberSeq;
+            this.silverMemberSeq = silverMemberSeq;
+            this.bronzeMemberSeq = bronzeMemberSeq;
+        }
+
+       public void setGoldMemberSeq(Long goldMemberSeq) {
+           this.goldMemberSeq = goldMemberSeq;
+       }
+
+       public void setSilverMemberSeq(Long silverMemberSeq) {
+           this.silverMemberSeq = silverMemberSeq;
+       }
+
+       public void setBronzeMemberSeq(Long bronzeMemberSeq) {
+           this.bronzeMemberSeq = bronzeMemberSeq;
+       }
+   }
 }
 

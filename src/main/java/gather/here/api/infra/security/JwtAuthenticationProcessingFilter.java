@@ -2,6 +2,7 @@ package gather.here.api.infra.security;
 
 import gather.here.api.application.dto.response.TokenResponseDto;
 import gather.here.api.application.service.TokenService;
+import gather.here.api.global.exception.AuthException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -40,6 +41,11 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
             } catch (JwtException e) {
                 request.setAttribute("exception", e);
+                request.setAttribute("type", "refresh");
+                filterChain.doFilter(request, response);
+                return;
+            } catch (AuthException e){
+                request.setAttribute("exception", e);
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -53,6 +59,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
             Authentication authentication = tokenService.accessTokenValidate(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }catch (JwtException e){
+            request.setAttribute("type", "access");
             request.setAttribute("exception", e);
         }
 

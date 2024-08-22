@@ -81,7 +81,7 @@ public class TokenService {
 
         if(savedRefresh.isEmpty() || !refreshToken.equals(savedRefresh.get())){
             refreshTokenFactory.delete(identity);
-            throw new AuthException(ResponseStatus.INVALID_TOKEN,HttpStatus.UNAUTHORIZED);
+            throw new AuthException(ResponseStatus.INVALID_REFRESH_TOKEN,HttpStatus.UNAUTHORIZED);
         }
 
         String newAccessToken = accessTokenFactory.generate(identity, memberSeq,getKey(), ACCESS_TOKEN_MINUTE);

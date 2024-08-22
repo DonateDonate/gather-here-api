@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface RoomRepository {
     void save(Room room);
     Optional<Room> findByShareCode(String shareCode);
-    void generateLocationShareEvent(LocationShareEvent locationShareEvent);
+    void saveLocationShareEvent(LocationShareEvent locationShareEvent);
     LocationShareEvent findLocationShareEventByRoomSeq(Long roomSeq);
     void updateLocationShareEvent(LocationShareEvent locationShareEvent);
     Iterable<LocationShareEvent> findAllLocationEvents();

@@ -2,12 +2,14 @@ package gather.here.api.application.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
 @Schema(title = "Room 등록 요청 DTO")
 @ToString
 @Getter
+@AllArgsConstructor
 public class RoomCreateRequestDto {
 
     @NotNull(message = "필수 항목입니다.")

@@ -12,7 +12,7 @@ public class TokenUtil {
 
     public static  String removePrefix(String token, String prefix) {
         if (!token.startsWith(prefix + " ")) {
-            throw new AuthException(ResponseStatus.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
+            throw new AuthException(ResponseStatus.TOKEN_TYPE_ERROR, HttpStatus.UNAUTHORIZED);
         }
         return token.substring(prefix.length() + 1);
     }

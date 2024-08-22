@@ -25,7 +25,6 @@ public class LocationShareService {
 
     @Transactional
     public void saveWebSocketAuth(String sessionId,Long memberSeq) {
-        //todo redis에 기존에 관리하는 sessionId <-> memberSeq가 있는지 확인하는 로직 필요
         WebSocketAuth existWebSocketAuth = webSocketAuthRepository.findByMemberSeq(memberSeq);
 
         if(existWebSocketAuth != null){
@@ -34,7 +33,7 @@ public class LocationShareService {
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
         webSocketAuthRepository.save(webSocketAuth);
     }
-
+    //todo 여기서 부터 테스트하기
     @Transactional
     public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId){
         WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
@@ -54,7 +53,7 @@ public class LocationShareService {
                         request.getPresentLng(),
                         request.getDestinationDistance()
                 );
-        roomRepository.generateLocationShareEvent(locationShareEvent);
+        roomRepository.saveLocationShareEvent(locationShareEvent);
     }
 
 
@@ -87,6 +86,7 @@ public class LocationShareService {
 
     @Transactional
     public GetLocationShareResponseDto distanceChangeHandleAction(LocationShareEventRequestDto request, String sessionId){
+        //있는 회원인지 확인하는 로직 추가
 
         WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
 
@@ -94,7 +94,11 @@ public class LocationShareService {
         Member member = memberRepository.findById(memberSeq)
                 .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
 
+        //todo ERROR -> score null로 찍힘
         LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq());
+
+        locationShareEvent.getMemberLocations()
+                .removeIf(memberLocation -> memberLocation.getSessionId().equals(sessionId));
 
         locationShareEvent.addMemberLocations(
                 member.getSeq(),
@@ -106,9 +110,9 @@ public class LocationShareService {
                 request.getDestinationDistance()
         );
 
-        roomRepository.updateLocationShareEvent(locationShareEvent);
         LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
         updateScoreMessage(request.getDestinationDistance(), locationShareEvent, message, member.getSeq());
+        roomRepository.updateLocationShareEvent(locationShareEvent);
 
         return new GetLocationShareResponseDto(message,locationShareEvent.getSessionIdList());
     }
@@ -121,15 +125,20 @@ public class LocationShareService {
 
     private void updateScoreMessage(Float destinationDistance, LocationShareEvent locationShareEvent, LocationShareMessage message, Long memberSeq) {
         final Float goalStandardDistance = 2F;
-
         if (destinationDistance <= goalStandardDistance) {
-            if (locationShareEvent.getScore().getGoldMemberSeq() != null) {
-                message.getScoreRes().setGoldMemberSeq(memberSeq);
+            if (locationShareEvent.getScore() == null || locationShareEvent.getScore().getGoldMemberSeq() == null) {
+                LocationShareEvent.Score score = new LocationShareEvent.Score();
+                score.setGoldMemberSeq(memberSeq);
+                locationShareEvent.setScore(score);
+                return;
             }
-            if (locationShareEvent.getScore().getSilverMemberSeq() != null) {
+            if (locationShareEvent.getScore().getSilverMemberSeq() == null) {
+                locationShareEvent.getScore().setSilverMemberSeq(memberSeq);
                 message.getScoreRes().setSilverMemberSeq(memberSeq);
+                return;
             }
-            if (locationShareEvent.getScore().getBronzeMemberSeq() != null) {
+            if (locationShareEvent.getScore().getBronzeMemberSeq() == null) {
+                locationShareEvent.getScore().setBronzeMemberSeq(memberSeq);
                 message.getScoreRes().setBronzeMemberSeq(memberSeq);
             }
         }

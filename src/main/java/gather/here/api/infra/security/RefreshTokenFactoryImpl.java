@@ -33,11 +33,11 @@ public class RefreshTokenFactoryImpl implements RefreshTokenFactory {
         refreshTokenClaim.put("identity",identity);
 
         ZonedDateTime now = ZonedDateTime.now();
-
+        Date expireDate = Date.from(now.plusMinutes(minute).toInstant());
         return Jwts.builder()
                 .setClaims(refreshTokenClaim)
                 .setIssuedAt(Date.from(now.toInstant()))
-                .setExpiration(Date.from(now.plusMinutes(minute).toInstant()))
+                .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }

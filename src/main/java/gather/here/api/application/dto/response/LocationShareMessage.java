@@ -61,6 +61,7 @@ public class LocationShareMessage {
         this.scoreRes = new ScoreRes();
     }
 
+    @Getter
      public static class MemberLocationRes{
         private Long MemberSeq;
         private String nickname;
@@ -79,6 +80,7 @@ public class LocationShareMessage {
         }
      }
 
+     @Getter
     public static class ScoreRes {
         private Long goldMemberSeq;
         private Long silverMemberSeq;

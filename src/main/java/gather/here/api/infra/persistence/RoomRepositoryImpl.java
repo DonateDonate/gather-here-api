@@ -26,7 +26,7 @@ public class RoomRepositoryImpl implements RoomRepository {
     }
 
     @Override
-    public void generateLocationShareEvent(LocationShareEvent locationShareEvent) {
+    public void saveLocationShareEvent(LocationShareEvent locationShareEvent) {
         locationShareEventRedisRepository.save(locationShareEvent);
     }
 

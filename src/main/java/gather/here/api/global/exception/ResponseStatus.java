@@ -44,9 +44,13 @@ public enum ResponseStatus {
      */
 
     INVALID_IDENTITY_PASSWORD(9101, "invalid identity or password"),
-    INVALID_TOKEN(9102,"invalid token"),
-    EXPIRE_TOKEN(9103,"expire token"),
-    EMPTY_TOKEN(9104,"empty token");
+    INVALID_ACCESS_TOKEN(9102,"invalid access token"),
+    EXPIRE_ACCESS_TOKEN(9103,"expire access token"),
+    EMPTY_ACCESS_TOKEN(9104,"empty access token"),
+    INVALID_REFRESH_TOKEN(9105,"invalid refresh token"),
+    EXPIRE_REFRESH_TOKEN(9106,"expire refresh token"),
+    TOKEN_TYPE_ERROR(9107, "invalid token type error");
+
 
 
 
