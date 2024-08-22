@@ -67,6 +67,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         }catch (JsonParseException e){
             //todo error 처리
             session.sendMessage(new TextMessage("잘못된 입력값"));
+            return;
         }
         handleLocationShareRequest(session, request);
     }
