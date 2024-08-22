@@ -33,7 +33,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     // 소켓 연결 확인
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        log.info("session ID ={}",session.getId());
+        log.info("connection on ID ={}",session.getId());
 
         List<String> authorization = session.getHandshakeHeaders().get("Authorization");
 
@@ -58,6 +58,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     // 소켓 통신 시 메세지의 전송을 다루는 부분
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        log.info("send message {} ",session.getId() );
         ObjectMapper objectMapper = new ObjectMapper();
         String payload = message.getPayload();
         LocationShareEventRequestDto request = null;
@@ -73,6 +74,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     // 소켓 종료 확인
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        log.info("connection close ={} ",session.getId() );
         sessionList.remove(session.getId());
         locationShareService.removeWebSocketAuth(session.getId());
     }
