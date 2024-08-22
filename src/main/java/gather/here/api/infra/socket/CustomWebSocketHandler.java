@@ -51,6 +51,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
             sessionList.add(session);
 
         }catch (Exception e){
+            //todo token expire error handling
             e.printStackTrace();
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason(ResponseStatus.INVALID_ACCESS_TOKEN.getMessage()));
         }
@@ -59,7 +60,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     // 소켓 통신 시 메세지의 전송을 다루는 부분
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        log.info("send message {} ",session.getId() );
+        log.info("handle message {} ",session.getId() );
         ObjectMapper objectMapper = new ObjectMapper();
         String payload = message.getPayload();
         LocationShareEventRequestDto request = null;
@@ -82,32 +83,40 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     }
 
     private void sendMessage(List<String> sessionIdList, String message) {
-        for (String id : sessionIdList) {
-            for(WebSocketSession webSocketSession : sessionList){
-                if(webSocketSession.getId().equals(id)){
-                    try {
-                        webSocketSession.sendMessage(new TextMessage(message));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+        try {
+            for (String id : sessionIdList) {
+                for (WebSocketSession webSocketSession : sessionList) {
+                    if (webSocketSession.getId().equals(id)) {
+                        try {
+                            webSocketSession.sendMessage(new TextMessage(message));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
     private void handleLocationShareRequest(WebSocketSession session, LocationShareEventRequestDto request) {
-        if(request.getType() == 0) {
-            locationShareService.createTypeHandleAction(request, session.getId());
-        }
+        try {
+            if (request.getType() == 0) {
+                locationShareService.createTypeHandleAction(request, session.getId());
+            }
 
-        if(request.getType() == 1){
-            GetLocationShareResponseDto response = locationShareService.joinTypeHandleAction(request, session.getId());
-            sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
-        }
+            if (request.getType() == 1) {
+                GetLocationShareResponseDto response = locationShareService.joinTypeHandleAction(request, session.getId());
+                sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
+            }
 
-        if(request.getType() ==2){
-            GetLocationShareResponseDto response = locationShareService.distanceChangeHandleAction(request, session.getId());
-            sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
+            if (request.getType() == 2) {
+                GetLocationShareResponseDto response = locationShareService.distanceChangeHandleAction(request, session.getId());
+                sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }
