@@ -51,6 +51,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
             sessionList.add(session);
 
         }catch (Exception e){
+            e.printStackTrace();
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason(ResponseStatus.INVALID_ACCESS_TOKEN.getMessage()));
         }
     }
