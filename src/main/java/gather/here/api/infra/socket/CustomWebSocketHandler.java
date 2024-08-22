@@ -33,6 +33,8 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     // 소켓 연결 확인
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        log.info("session ID ={}",session.getId());
+
         List<String> authorization = session.getHandshakeHeaders().get("Authorization");
 
         if(authorization == null  || authorization.get(authorization.size()-1) == null){
