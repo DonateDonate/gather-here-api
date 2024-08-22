@@ -16,6 +16,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 @RequiredArgsConstructor
 public class LocationShareService {
     private final WebSocketAuthRepository webSocketAuthRepository;
@@ -65,7 +69,19 @@ public class LocationShareService {
         Member member = memberRepository.findById(memberSeq)
                 .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
 
-        LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq());
+
+        //todo locationShareEvent null 에러
+        //LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq());
+        LocationShareEvent locationShareEvent = null;
+        Iterable<LocationShareEvent> allLocationEvents = roomRepository.findAllLocationEvents();
+        List<LocationShareEvent> locationShareEventList = StreamSupport.stream(allLocationEvents.spliterator(), false)
+                .collect(Collectors.toList());
+
+        for(LocationShareEvent location : locationShareEventList){
+            if(location.getRoomSeq() == member.getRoom().getSeq()){
+                locationShareEvent = location;
+            }
+        }
 
         locationShareEvent.addMemberLocations(
                 member.getSeq(),
