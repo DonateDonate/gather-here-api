@@ -1,5 +1,6 @@
 package gather.here.api.application.service;
 
+import gather.here.api.Utils;
 import gather.here.api.application.dto.request.JoinRoomRequestDto;
 import gather.here.api.application.dto.request.LocationShareEventRequestDto;
 import gather.here.api.application.dto.request.MemberSignUpRequestDto;
@@ -53,7 +54,7 @@ class LocationShareServiceTest {
     public void duplicateSaveWebSocketAuthTest(){
         //arrange
         String sessionId = String.valueOf(UUID.randomUUID());
-        Long memberSeq = 12341L;
+        Long memberSeq = Utils.randomMemberSeq();
         LocationShareService sut = locationShareService;
 
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
@@ -79,7 +80,7 @@ class LocationShareServiceTest {
 
         //arrange
         String sessionId = String.valueOf(UUID.randomUUID());
-        Long memberSeq = 99999L;
+        Long memberSeq =  Utils.randomMemberSeq();
         LocationShareService sut = locationShareService;
         WebSocketAuth actual = null;
 
@@ -97,7 +98,7 @@ class LocationShareServiceTest {
     public void duplicateCreateTypeHandleActionTest(){
 
         //arrange
-        String identity = "01033550055";
+        String identity =  Utils.randomMemberId();
         String password = "1234";
         String sessionId = String.valueOf(UUID.randomUUID());
         Float destinationLat = 45.2F;
@@ -167,7 +168,7 @@ class LocationShareServiceTest {
     public void successCreateTypeHandleAction(){
 
         //arrange
-        String identity = "01023450019";
+        String identity = Utils.randomMemberId();
         String password = "1234";
         String sessionId = String.valueOf(UUID.randomUUID());
         Float destinationLat = 45.2F;
@@ -224,14 +225,14 @@ class LocationShareServiceTest {
         LocationShareException actual = null;
         LocationShareService sut = locationShareService;
         //방장 member 추가
-        String createIdentity = "01012345678";
+        String createIdentity = Utils.randomMemberId();
         String createPassword = "1234";
         String createSessionId = String.valueOf(UUID.randomUUID());
 
         MemberSignUpRequestDto createMemberRequest = new MemberSignUpRequestDto(createIdentity, createPassword);
         memberService.save(createMemberRequest);
 
-        String joinIdentity = "01012345679";
+        String joinIdentity = Utils.randomMemberId();
         String joinPassword = "1234";
         String joinSessionId = String.valueOf(UUID.randomUUID());
 
@@ -299,14 +300,14 @@ class LocationShareServiceTest {
         //arrange
         LocationShareService sut = locationShareService;
         //방장 member 추가
-        String createIdentity = "01011111111";
+        String createIdentity = Utils.randomMemberId();
         String createPassword = "1234";
         String createSessionId = String.valueOf(UUID.randomUUID());
 
         MemberSignUpRequestDto createMemberRequest = new MemberSignUpRequestDto(createIdentity, createPassword);
         memberService.save(createMemberRequest);
 
-        String joinIdentity = "01022222222";
+        String joinIdentity = Utils.randomMemberId();
         String joinPassword = "1234";
         String joinSessionId = String.valueOf(UUID.randomUUID());
 
@@ -378,22 +379,6 @@ class LocationShareServiceTest {
         Assertions.assertThat(findCreateMember.get().getMemberSeq()).isEqualTo(createMember.getSeq());
         Assertions.assertThat(findCreateMember.get().getSessionId()).isEqualTo(createSessionId);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

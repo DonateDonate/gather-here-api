@@ -1,12 +1,11 @@
 package gather.here.api.application.service;
 
+import gather.here.api.Utils;
 import gather.here.api.application.dto.request.MemberSignUpRequestDto;
 import gather.here.api.domain.entities.Member;
-import gather.here.api.global.exception.BusinessException;
 import gather.here.api.global.exception.MemberException;
 import gather.here.api.infra.persistence.jpa.MemberJpaRepository;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.error.ActualIsNotEmpty;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ class MemberServiceTest {
     @Test
     public void saveTest(){
         //arrange
-        String id = "01012345678";
+        String id = Utils.randomMemberId();
         String password = "12341234";
         MemberSignUpRequestDto memberSignUpRequestDto = new MemberSignUpRequestDto(id,password);
         MemberService sut = memberService;
@@ -47,7 +46,7 @@ class MemberServiceTest {
     public void saveDuplicateTest(){
         //arrange
         MemberService sut = memberService;
-        String id = "01012341234";
+        String id =Utils.randomMemberId();
         String password = "12341234";
 
         Member member = Member.create(id, password, password);

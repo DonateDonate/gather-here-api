@@ -1,11 +1,11 @@
 package gather.here.api.domain.entities;
 
+import gather.here.api.Utils;
 import gather.here.api.global.exception.BusinessException;
 import gather.here.api.global.exception.MemberException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ActiveProfiles;
 
 class MemberTest {
 
@@ -13,7 +13,7 @@ class MemberTest {
     @Test
     public void CreateMemberInstance(){
         //arrange
-        String id = "01012345678";
+        String id = Utils.randomMemberId();
         String password = "12341234";
         String encodedPassword = "ENCODEPASSWORDENCODEPASSWORDENC";
         Member actual = null;
