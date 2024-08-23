@@ -18,7 +18,7 @@ class RoomRepositoryTest {
 
     @Test
     public void saveTest(){
-        Long roomSeq = 2L;
+        Long roomSeq = 7L;
         Long memberSEq = 1L;
         String sessionId = String.valueOf(UUID.randomUUID());
         String nickname = "RoomRepositoryTest";
@@ -37,7 +37,7 @@ class RoomRepositoryTest {
                 destinationDistance
         );
         roomRepository.saveLocationShareEvent(locationShareEvent);
-        LocationShareEvent locationShareEventByRoomSeq = roomRepository.findLocationShareEventByRoomSeq(1L);
+        LocationShareEvent locationShareEventByRoomSeq = roomRepository.findLocationShareEventByRoomSeq(roomSeq);
         Assertions.assertThat(locationShareEventByRoomSeq).isNotNull();
     }
 }
