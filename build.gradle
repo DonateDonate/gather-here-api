@@ -11,6 +11,10 @@ java {
 	sourceCompatibility = '17'
 }
 
+tasks.withType(JavaCompile) {
+	options.compilerArgs.add("-parameters")
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -79,3 +83,4 @@ configurations {
 		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
 	}
 }
+

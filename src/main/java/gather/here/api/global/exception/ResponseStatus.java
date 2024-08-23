@@ -23,12 +23,14 @@ public enum ResponseStatus {
     ALREADY_ROOM_ENCOUNTER(2104,"already room encounter"),
     CLOSED_ROOM(2105,"this is closed room"),
     NOT_FOUND_ROOM_SEQ(2106,"not found room seq"),
-    DUPLICATE_SESSION_ID(2107,"duplicate session id"),
 
     /**
      * 3xxx: Location Share exception
      */
-
+    DUPLICATE_SESSION_ID(3101,"duplicate session id"),
+    DUPLICATE_WEB_SOCKET_AUTH_MEMBER_SEQ(3102,"duplicate webSocketAuth memberSeq"),
+    DUPLICATE_LOCATION_SHARE_EVENT_ROOM_SEQ(3103,"duplicate share event roomSeq"),
+    NOT_FOUND_LOCATION_SHARE_EVENT_BY_ROOM_SEQ(3104,"not found shareEvent by roomSeq"),
 
     /**
      *  8xxx : general exception

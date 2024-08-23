@@ -6,6 +6,7 @@ import gather.here.api.infra.persistence.redis.WebSocketAuthRedisRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class WebSocketAuthRepositoryImpl implements WebSocketAuthRepository {
@@ -16,8 +17,8 @@ public class WebSocketAuthRepositoryImpl implements WebSocketAuthRepository {
     }
 
     @Override
-    public WebSocketAuth findByMemberSeq(Long memberSeq) {
-        return webSocketAuthRedisRepository.findByMemberSeq(memberSeq);
+    public Optional<WebSocketAuth> findByMemberSeq(Long memberSeq) {
+        return webSocketAuthRedisRepository.findById(memberSeq);
     }
 
     @Override

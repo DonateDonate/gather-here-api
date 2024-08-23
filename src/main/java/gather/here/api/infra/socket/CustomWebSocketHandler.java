@@ -8,6 +8,8 @@ import gather.here.api.application.dto.response.GetLocationShareResponseDto;
 import gather.here.api.application.service.LocationShareService;
 import gather.here.api.application.service.TokenService;
 import gather.here.api.domain.security.CustomPrincipal;
+import gather.here.api.global.exception.BusinessException;
+import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +35,6 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     // 소켓 연결 확인
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        log.info("connection on ID ={}",session.getId());
-
         List<String> authorization = session.getHandshakeHeaders().get("Authorization");
 
         if(authorization == null  || authorization.get(authorization.size()-1) == null){
@@ -50,9 +50,12 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
             locationShareService.saveWebSocketAuth(session.getId(), memberSeq);
             sessionList.add(session);
 
-        }catch (Exception e){
+
+        }catch (LocationShareException e){
+            session.close(CloseStatus.NOT_ACCEPTABLE.withReason(e.getMessage()));
+
+        } catch (Exception e){
             //todo token expire error handling
-            e.printStackTrace();
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason(ResponseStatus.INVALID_ACCESS_TOKEN.getMessage()));
         }
     }
@@ -60,7 +63,6 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     // 소켓 통신 시 메세지의 전송을 다루는 부분
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        log.info("handle message {} ",session.getId() );
         ObjectMapper objectMapper = new ObjectMapper();
         String payload = message.getPayload();
         LocationShareEventRequestDto request = null;
@@ -71,7 +73,12 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage("잘못된 입력값"));
             return;
         }
-        handleLocationShareRequest(session, request);
+
+        try {
+            handleLocationShareRequest(session, request);
+        }catch (BusinessException e){
+            session.sendMessage(new TextMessage(JsonUtil.convertToJsonString(e.getResponseStatus())));
+        }
     }
 
     // 소켓 종료 확인

@@ -10,15 +10,14 @@ import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
+import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.MemberException;
 import gather.here.api.global.exception.ResponseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class LocationShareService {
@@ -29,11 +28,12 @@ public class LocationShareService {
 
     @Transactional
     public void saveWebSocketAuth(String sessionId,Long memberSeq) {
-        WebSocketAuth existWebSocketAuth = webSocketAuthRepository.findByMemberSeq(memberSeq);
+        Optional<WebSocketAuth> existWebSocketAuth= webSocketAuthRepository.findByMemberSeq(memberSeq);
 
-        if(existWebSocketAuth != null){
-            webSocketAuthRepository.deleteByMemberSeq(memberSeq);
+        if(existWebSocketAuth.isPresent()){
+            throw new LocationShareException(ResponseStatus.DUPLICATE_WEB_SOCKET_AUTH_MEMBER_SEQ,HttpStatus.CONFLICT);
         }
+
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
         webSocketAuthRepository.save(webSocketAuth);
     }
@@ -45,6 +45,12 @@ public class LocationShareService {
         Long memberSeq = webSocketAuth.getMemberSeq();
         Member member = memberRepository.findById(memberSeq)
                 .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
+
+        Optional<LocationShareEvent> existLocationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq());
+
+        if(existLocationShareEvent.isPresent()){
+            throw new LocationShareException(ResponseStatus.DUPLICATE_LOCATION_SHARE_EVENT_ROOM_SEQ, HttpStatus.CONFLICT);
+        }
 
         LocationShareEvent locationShareEvent = LocationShareEvent
                 .create(
@@ -68,19 +74,8 @@ public class LocationShareService {
         Member member = memberRepository.findById(memberSeq)
                 .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
 
-
-        //todo locationShareEvent null 에러
-        //LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq());
-        LocationShareEvent locationShareEvent = null;
-        Iterable<LocationShareEvent> allLocationEvents = roomRepository.findAllLocationEvents();
-        List<LocationShareEvent> locationShareEventList = StreamSupport.stream(allLocationEvents.spliterator(), false)
-                .collect(Collectors.toList());
-
-        for(LocationShareEvent location : locationShareEventList){
-            if(location.getRoomSeq() == member.getRoom().getSeq()){
-                locationShareEvent = location;
-            }
-        }
+        LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
+                .orElseThrow(() -> new LocationShareException(ResponseStatus.NOT_FOUND_LOCATION_SHARE_EVENT_BY_ROOM_SEQ,HttpStatus.CONFLICT));
 
         locationShareEvent.addMemberLocations(
                 member.getSeq(),
@@ -110,7 +105,7 @@ public class LocationShareService {
                 .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
 
         //todo ERROR -> score null로 찍힘
-        LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq());
+        LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq()).get();
 
         locationShareEvent.getMemberLocations()
                 .removeIf(memberLocation -> memberLocation.getSessionId().equals(sessionId));

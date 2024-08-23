@@ -1,10 +1,12 @@
 package gather.here.api.domain.entities;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
+@NoArgsConstructor
 @Getter
 @RedisHash(value = "webSocketAuth", timeToLive = 86400L)
 public class WebSocketAuth {

@@ -56,8 +56,6 @@ public class RoomService {
                 convertLocalDateTimeToString(room.getEncounterDate()),
                 room.getShareCode()
         );
-
-        //todo add redis create logic
     }
 
     @Transactional

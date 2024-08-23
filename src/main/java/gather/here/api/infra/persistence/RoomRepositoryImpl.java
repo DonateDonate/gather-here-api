@@ -31,8 +31,8 @@ public class RoomRepositoryImpl implements RoomRepository {
     }
 
     @Override
-    public LocationShareEvent findLocationShareEventByRoomSeq(Long roomSeq) {
-        return locationShareEventRedisRepository.findByRoomSeq(roomSeq);
+    public Optional<LocationShareEvent> findLocationShareEventByRoomSeq(Long roomSeq) {
+        return locationShareEventRedisRepository.findById(roomSeq);
     }
 
     @Override
