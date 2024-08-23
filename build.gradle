@@ -66,11 +66,8 @@ dependencies {
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-	// Embedded-Redis
-	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
-
-	//test-containers
-	testImplementation group: 'org.testcontainers', name: 'testcontainers', version: '1.17.2'
+// https://mvnrepository.com/artifact/com.github.codemonstur/embedded-redis
+	testImplementation group: 'com.github.codemonstur', name: 'embedded-redis', version: '1.4.3'
 
 }
 
