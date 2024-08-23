@@ -37,7 +37,7 @@ public class LocationShareService {
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
         webSocketAuthRepository.save(webSocketAuth);
     }
-    //todo 여기서 부터 테스트하기
+
     @Transactional
     public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId){
         WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
@@ -59,7 +59,6 @@ public class LocationShareService {
                 );
         roomRepository.saveLocationShareEvent(locationShareEvent);
     }
-
 
     @Transactional
     public GetLocationShareResponseDto joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId){
@@ -159,5 +158,4 @@ public class LocationShareService {
             }
         }
     }
-
 }
