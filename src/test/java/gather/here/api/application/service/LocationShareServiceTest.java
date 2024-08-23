@@ -53,7 +53,7 @@ class LocationShareServiceTest {
     public void duplicateSaveWebSocketAuthTest(){
         //arrange
         String sessionId = String.valueOf(UUID.randomUUID());
-        Long memberSeq = 1L;
+        Long memberSeq = 12341L;
         LocationShareService sut = locationShareService;
 
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
@@ -79,7 +79,7 @@ class LocationShareServiceTest {
 
         //arrange
         String sessionId = String.valueOf(UUID.randomUUID());
-        Long memberSeq = 1L;
+        Long memberSeq = 99999L;
         LocationShareService sut = locationShareService;
         WebSocketAuth actual = null;
 
@@ -97,7 +97,7 @@ class LocationShareServiceTest {
     public void duplicateCreateTypeHandleActionTest(){
 
         //arrange
-        String identity = "01012345678";
+        String identity = "01033550055";
         String password = "1234";
         String sessionId = String.valueOf(UUID.randomUUID());
         Float destinationLat = 45.2F;
@@ -167,7 +167,7 @@ class LocationShareServiceTest {
     public void successCreateTypeHandleAction(){
 
         //arrange
-        String identity = "01012345678";
+        String identity = "01023450019";
         String password = "1234";
         String sessionId = String.valueOf(UUID.randomUUID());
         Float destinationLat = 45.2F;
@@ -299,14 +299,14 @@ class LocationShareServiceTest {
         //arrange
         LocationShareService sut = locationShareService;
         //방장 member 추가
-        String createIdentity = "01012345678";
+        String createIdentity = "01011111111";
         String createPassword = "1234";
         String createSessionId = String.valueOf(UUID.randomUUID());
 
         MemberSignUpRequestDto createMemberRequest = new MemberSignUpRequestDto(createIdentity, createPassword);
         memberService.save(createMemberRequest);
 
-        String joinIdentity = "01012345679";
+        String joinIdentity = "01022222222";
         String joinPassword = "1234";
         String joinSessionId = String.valueOf(UUID.randomUUID());
 
