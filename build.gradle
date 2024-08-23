@@ -66,11 +66,16 @@ dependencies {
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-// https://mvnrepository.com/artifact/com.github.codemonstur/embedded-redis
-	testImplementation group: 'com.github.codemonstur', name: 'embedded-redis', version: '1.4.3'
-
+// https://mvnrepository.com/artifact/it.ozimov/embedded-redis
+	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.3'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+configurations {
+	all {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	}
 }
