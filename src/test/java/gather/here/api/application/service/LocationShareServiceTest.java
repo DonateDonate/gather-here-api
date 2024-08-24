@@ -371,7 +371,10 @@ class LocationShareServiceTest {
                 memberLocation -> memberLocation.getMemberSeq() == createMember.getSeq()
         ).findFirst();
 
+
+
         Assertions.assertThat(findJoinMember.isPresent()).isTrue();
+        Assertions.assertThat(findJoinMember).isNotNull();
         Assertions.assertThat(findJoinMember.get().getMemberSeq()).isEqualTo(joinMember.getSeq());
         Assertions.assertThat(findJoinMember.get().getSessionId()).isEqualTo(joinSessionId);
 
