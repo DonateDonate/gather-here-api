@@ -49,6 +49,7 @@ class LocationShareServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
+
     @DisplayName("sut는 중복된 memberSeq가 있으면 예외가 발생한다")
     @Test
     public void duplicateSaveWebSocketAuthTest(){
@@ -75,9 +76,6 @@ class LocationShareServiceTest {
     @DisplayName("sut는 성공적으로 webSocketAuth를 저장한다")
     @Test
     public void successWebSocketAuth(){
-
-        List<WebSocketAuth> all = webSocketAuthRepository.findAll();
-
         //arrange
         String sessionId = String.valueOf(UUID.randomUUID());
         Long memberSeq =  Utils.randomMemberSeq();
@@ -96,7 +94,6 @@ class LocationShareServiceTest {
     @DisplayName("sut는 locationShareEvent에 중복된 roomSeq값이 있으면 예외가 발생한다")
     @Test
     public void duplicateCreateTypeHandleActionTest(){
-
         //arrange
         String identity =  Utils.randomMemberId();
         String password = "1234";
@@ -551,4 +548,83 @@ class LocationShareServiceTest {
         Assertions.assertThat(actual.getScore().getGoldMemberSeq()).isEqualTo(createMember.getSeq());
         Assertions.assertThat(actual.getScore().getSilverMemberSeq()).isEqualTo(joinMember.getSeq());
     }
+
+    @Test
+    @DisplayName("sut는 성공적으로 memberSeq가 webSocket, locationShareEvent에 삭제된다")
+    @Transactional
+    public void successRemoveWebSocketAuthAndLocationShareMember(){
+        //arrange
+        LocationShareService sut  = locationShareService;
+        //createMember
+        String identity = Utils.randomMemberId();
+        String password = "1234";
+        String sessionId = String.valueOf(UUID.randomUUID());
+
+        MemberSignUpRequestDto createMemberRequest = new MemberSignUpRequestDto(identity, password);
+        memberService.save(createMemberRequest);
+
+
+        String joinIdentity = Utils.randomMemberId();
+        String joinPassword = "1234";
+        String joinSessionId = String.valueOf(UUID.randomUUID());
+
+        //join member 가입
+        MemberSignUpRequestDto joinMemberRequest = new MemberSignUpRequestDto(joinIdentity, joinPassword);
+        memberService.save(joinMemberRequest);
+
+        //create room
+        Float destinationLat = 45.2F;
+        Float destinationLng = 77.7F;
+        String destinationName = "산하네집";
+        String encounterDate = "2025-08-11 15:33";
+        RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
+                destinationLat,
+                destinationLng,
+                destinationName,
+                encounterDate
+        );
+        roomService.createRoom(
+                roomCreateRequestDto,
+                identity
+        );
+
+
+
+        //create webSocketAuth
+        Member member = memberRepository.findByIdentity(identity).get();
+        locationShareService.saveWebSocketAuth(sessionId,member.getSeq());
+        Member joinMember = memberRepository.findByIdentity(joinIdentity).get();
+        locationShareService.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
+
+        String shareCode = member.getRoom().getShareCode();
+        JoinRoomRequestDto joinRoomRequestDto = new JoinRoomRequestDto(shareCode);
+        roomService.joinRoom(joinRoomRequestDto,joinIdentity);
+
+        //create locationShareEvent
+        int createType =0;
+        Float presentLat = 12.3F;
+        Float presentLng = 46.2F;
+        Float destinationDistance = 41.4F;
+        LocationShareEventRequestDto createLocationShareEventRequest =
+                new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
+
+
+        locationShareService.createTypeHandleAction(createLocationShareEventRequest,sessionId);
+        int joinType =1;
+
+        LocationShareEventRequestDto joinLocationShareEventRequest =
+                new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
+        locationShareService.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
+
+
+        //act
+        sut.removeWebSocketAuthAndLocationShareMember(sessionId);
+        LocationShareEvent actualLocationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq()).get();
+        WebSocketAuth actualWebSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
+
+        //assert
+        Assertions.assertThat(actualLocationShareEvent.getMemberLocations().contains(member.getSeq())).isFalse();
+        Assertions.assertThat(actualWebSocketAuth).isNull();
+    }
+
 }

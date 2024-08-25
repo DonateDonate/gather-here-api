@@ -37,7 +37,7 @@ public class RoomRepositoryImpl implements RoomRepository {
 
     @Override
     public void updateLocationShareEvent(LocationShareEvent locationShareEvent){
-        locationShareEventRedisRepository.delete(locationShareEvent);
+        locationShareEventRedisRepository.deleteById(locationShareEvent.getRoomSeq());
         locationShareEventRedisRepository.save(locationShareEvent);
     }
 
@@ -46,10 +46,4 @@ public class RoomRepositoryImpl implements RoomRepository {
         return locationShareEventRedisRepository.findAll();
     }
 
-    @Override
-    public void removeLocationShareEventMember(LocationShareEvent locationShareEvent, Long memberSeq) {
-        locationShareEventRedisRepository.deleteById(locationShareEvent.getRoomSeq());
-        locationShareEvent.removeMemberLocation(memberSeq);
-        locationShareEventRedisRepository.save(locationShareEvent);
-    }
 }

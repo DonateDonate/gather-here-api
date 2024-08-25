@@ -108,6 +108,10 @@ public class LocationShareService {
 
         LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
                 .orElseThrow(() -> new LocationShareException(ResponseStatus.NOT_FOUND_ROOM_SEQ ,HttpStatus.CONFLICT));
+//
+//        if(locationShareEvent.getDestinationMemberList().contains(memberSeq)){
+//            // todo ?
+//        }
 
         locationShareEvent.getMemberLocations()
                 .removeIf(memberLocation -> memberLocation.getSessionId().equals(sessionId));
@@ -123,7 +127,7 @@ public class LocationShareService {
         );
 
         LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
-        updateScore(request.getDestinationDistance(), locationShareEvent, member.getSeq());
+        updateDestinationMember(request.getDestinationDistance(), locationShareEvent, member.getSeq());
         roomRepository.updateLocationShareEvent(locationShareEvent);
 
         return new GetLocationShareResponseDto(message,locationShareEvent.getSessionIdList());
@@ -131,7 +135,14 @@ public class LocationShareService {
 
     @Transactional
     public void removeWebSocketAuthAndLocationShareMember(String sessionId){
+        //todo 동시성 제어
+        // todo 메시지를 보낼꺼 ? -> 재실행 처리 어떤식으로 ? ex) session이 살아있는지 확인하는 api를 만들어서 처리?
         WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
+
+        if(webSocketAuth == null){
+            throw new LocationShareException(ResponseStatus.NOT_FOUND_SESSION_ID, HttpStatus.CONFLICT);
+        }
+
         webSocketAuthRepository.deleteByMemberSeq(webSocketAuth.getMemberSeq());
 
         Member member = memberRepository.findById(webSocketAuth.getMemberSeq())
@@ -139,24 +150,27 @@ public class LocationShareService {
 
         LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
                 .orElseThrow(()-> new LocationShareException(ResponseStatus.NOT_FOUND_ROOM_SEQ, HttpStatus.CONFLICT));
-        roomRepository.removeLocationShareEventMember(locationShareEvent,member.getSeq());
+
+        locationShareEvent.removeMemberLocation(member.getSeq());
+        roomRepository.updateLocationShareEvent(locationShareEvent);
     }
 
-
-    private void updateScore(Float destinationDistance, LocationShareEvent locationShareEvent,Long memberSeq) {
+    private void updateDestinationMember(Float destinationDistance, LocationShareEvent locationShareEvent,Long memberSeq) {
         final Float goalStandardDistance = 2F;
-        if (destinationDistance <= goalStandardDistance && !locationShareEvent.getScoreList().contains(memberSeq) ) {
+        if (destinationDistance <= goalStandardDistance ) {
             if (locationShareEvent.getScore() == null || locationShareEvent.getScore().getGoldMemberSeq() == null) {
                 locationShareEvent.setGoldMemberSeq(memberSeq);
                 return;
             }
-            if (locationShareEvent.getScore().getSilverMemberSeq() == null) {
+            if (locationShareEvent.getScore().getSilverMemberSeq() == null && !locationShareEvent.getScoreList().contains(memberSeq)) {
                 locationShareEvent.setSilverMemberSeq(memberSeq);
                 return;
             }
-            if (locationShareEvent.getScore().getBronzeMemberSeq() == null) {
+            if (locationShareEvent.getScore().getBronzeMemberSeq() == null && !locationShareEvent.getScoreList().contains(memberSeq)) {
                 locationShareEvent.setBronzeMemberSeq(memberSeq);
             }
         }
+
+        //locationShareEvent.addDestinationMemberList(memberSeq);
     }
 }

@@ -19,14 +19,13 @@ public class LocationShareEvent {
     private Long roomSeq;
     private List<MemberLocation> memberLocations;
     private Score score;
+    private List<Long> destinationMemberList;
 
     public static LocationShareEvent create(Long roomSeq, Long memberSeq, String sessionId, String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
         List<MemberLocation> memberLocations = new ArrayList<>();
-
         MemberLocation memberLocation = new MemberLocation(memberSeq,sessionId, nickname, imageUrl,presentLat,presentLng,destinationDistance);
         memberLocations.add(memberLocation);
-        LocationShareEvent locationShareEvent = new LocationShareEvent(roomSeq, memberLocations);
-        return locationShareEvent;
+        return new LocationShareEvent(roomSeq, memberLocations);
     }
 
     public List<String> getSessionIdList() {
@@ -43,7 +42,7 @@ public class LocationShareEvent {
         );
     }
 
-    public void addMemberLocations(Long memberSeq, String sessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
+    public void addMemberLocations(Long memberSeq, String sessionId, String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
         MemberLocation memberLocation = new MemberLocation(memberSeq, sessionId, nickname, imageUrl, presentLat, presentLng, destinationDistance);
         this.memberLocations.add(memberLocation);
     }
@@ -54,6 +53,14 @@ public class LocationShareEvent {
         ).collect(Collectors.toList());
 
         this.memberLocations = removeMemberLocations;
+    }
+
+    public void addDestinationMemberList(Long memberSeq){
+        this.destinationMemberList.add(memberSeq);
+    }
+
+    public void removeDestinationMemberList(Long memberSeq){
+        this.destinationMemberList.remove(memberSeq);
     }
 
     public void setGoldMemberSeq(Long memberSeq){
@@ -102,12 +109,6 @@ public class LocationShareEvent {
         private Long goldMemberSeq;
         private Long silverMemberSeq;
         private Long bronzeMemberSeq;
-
-        private Score(Long goldMemberSeq, Long silverMemberSeq, Long bronzeMemberSeq) {
-            this.goldMemberSeq = goldMemberSeq;
-            this.silverMemberSeq = silverMemberSeq;
-            this.bronzeMemberSeq = bronzeMemberSeq;
-        }
 
        private void setGoldMemberSeq(Long goldMemberSeq) {
            this.goldMemberSeq = goldMemberSeq;
