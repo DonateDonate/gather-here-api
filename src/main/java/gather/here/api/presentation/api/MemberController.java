@@ -69,7 +69,7 @@ public class MemberController {
             @ApiResponse(responseCode = "200", description = "성공", content = {@Content(schema = @Schema(implementation = UpdateImageResponseDto.class))})
     })
     public ResponseEntity<Object> saveImage(
-            @RequestPart MultipartFile imageFile,
+            @RequestPart("imageFile") MultipartFile imageFile,
             Authentication authentication
     ){
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();

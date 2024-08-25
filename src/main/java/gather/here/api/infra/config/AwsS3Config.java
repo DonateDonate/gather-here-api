@@ -13,10 +13,10 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 public class AwsS3Config {
-    @Value("${aws.s3.access.key}")
+    @Value("${aws.access.key}")
     private String accessKey;
 
-    @Value("${aws.s3.secret.key}")
+    @Value("${aws.secret.key}")
     private String secretKey;
 
     @Bean

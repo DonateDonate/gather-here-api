@@ -36,11 +36,6 @@ public class ServiceConfig {
     }
 
     @Bean
-    public FileService fileService(){
-        return new FileService();
-    }
-
-    @Bean
     public MemberService memberService(
             MemberRepository memberRepository,
             CryptoFactory cryptoFactory,

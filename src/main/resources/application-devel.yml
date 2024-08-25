@@ -39,7 +39,6 @@ redis:
   port: 6379
 
 aws:
-  s3:
     access:
       key: null
     secret:
