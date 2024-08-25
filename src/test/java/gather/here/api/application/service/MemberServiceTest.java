@@ -35,7 +35,7 @@ class MemberServiceTest {
         sut.save(memberSignUpRequestDto);
 
         //assert
-        Member actual = memberJpaRepository.findById(1L).get();
+        Member actual = memberJpaRepository.findByIdentity(id);
         Assertions.assertThat(actual).isNotNull();
         Assertions.assertThat(actual.getIdentity()).isEqualTo(id);
     }
