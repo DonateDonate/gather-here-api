@@ -52,7 +52,7 @@ public class LocationShareService {
             throw new LocationShareException(ResponseStatus.DUPLICATE_LOCATION_SHARE_EVENT_ROOM_SEQ, HttpStatus.CONFLICT);
         }
 
-        LocationShareEvent locationShareEvent = LocationShareEvent
+        LocationShareEvent locationShareEvent = new LocationShareEvent()
                 .create(
                         member.getRoom().getSeq(),
                         member.getSeq(),
@@ -108,10 +108,10 @@ public class LocationShareService {
 
         LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
                 .orElseThrow(() -> new LocationShareException(ResponseStatus.NOT_FOUND_ROOM_SEQ ,HttpStatus.CONFLICT));
-//
-//        if(locationShareEvent.getDestinationMemberList().contains(memberSeq)){
-//            // todo ?
-//        }
+
+        if(locationShareEvent.getDestinationMemberList() != null && locationShareEvent.getDestinationMemberList().contains(memberSeq)){
+            throw new LocationShareException(ResponseStatus.ALREADY_ARRIVED_MEMBER,HttpStatus.CONFLICT);
+        }
 
         locationShareEvent.getMemberLocations()
                 .removeIf(memberLocation -> memberLocation.getSessionId().equals(sessionId));
@@ -152,12 +152,14 @@ public class LocationShareService {
                 .orElseThrow(()-> new LocationShareException(ResponseStatus.NOT_FOUND_ROOM_SEQ, HttpStatus.CONFLICT));
 
         locationShareEvent.removeMemberLocation(member.getSeq());
+        locationShareEvent.removeDestinationMemberList(member.getSeq());
         roomRepository.updateLocationShareEvent(locationShareEvent);
     }
 
     private void updateDestinationMember(Float destinationDistance, LocationShareEvent locationShareEvent,Long memberSeq) {
         final Float goalStandardDistance = 2F;
         if (destinationDistance <= goalStandardDistance ) {
+            locationShareEvent.addDestinationMemberList(memberSeq);
             if (locationShareEvent.getScore() == null || locationShareEvent.getScore().getGoldMemberSeq() == null) {
                 locationShareEvent.setGoldMemberSeq(memberSeq);
                 return;
@@ -171,6 +173,5 @@ public class LocationShareService {
             }
         }
 
-        //locationShareEvent.addDestinationMemberList(memberSeq);
     }
 }

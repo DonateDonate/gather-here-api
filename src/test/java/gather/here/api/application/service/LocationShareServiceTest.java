@@ -136,7 +136,7 @@ class LocationShareServiceTest {
         LocationShareService sut = locationShareService;
 
         LocationShareEvent locationShareEvent
-                = LocationShareEvent.create(
+                = new LocationShareEvent().create(
                         member.getRoom().getSeq(),
                         member.getSeq(),
                         sessionId,
@@ -546,7 +546,9 @@ class LocationShareServiceTest {
 
         //assert
         Assertions.assertThat(actual.getScore().getGoldMemberSeq()).isEqualTo(createMember.getSeq());
+        Assertions.assertThat(actual.getDestinationMemberList().contains(createMember.getSeq())).isTrue();
         Assertions.assertThat(actual.getScore().getSilverMemberSeq()).isEqualTo(joinMember.getSeq());
+        Assertions.assertThat(actual.getDestinationMemberList().contains(joinMember.getSeq())).isTrue();
     }
 
     @Test
@@ -624,7 +626,7 @@ class LocationShareServiceTest {
 
         //assert
         Assertions.assertThat(actualLocationShareEvent.getMemberLocations().contains(member.getSeq())).isFalse();
+        Assertions.assertThat(actualLocationShareEvent.getDestinationMemberList().contains(member.getSeq())).isFalse();
         Assertions.assertThat(actualWebSocketAuth).isNull();
     }
-
 }

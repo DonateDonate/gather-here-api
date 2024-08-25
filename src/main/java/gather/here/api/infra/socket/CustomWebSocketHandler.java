@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gather.here.api.application.dto.request.LocationShareEventRequestDto;
 import gather.here.api.application.dto.response.GetLocationShareResponseDto;
+import gather.here.api.application.dto.response.TokenResponseDto;
 import gather.here.api.application.service.LocationShareService;
 import gather.here.api.application.service.TokenService;
 import gather.here.api.domain.security.CustomPrincipal;
@@ -12,8 +13,10 @@ import gather.here.api.global.exception.BusinessException;
 import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.util.JsonUtil;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -30,33 +33,58 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     private final TokenService tokenService;
     private final LocationShareService locationShareService;
 
+    @Value("${security.jwt.access-token.header.name}")
+    private String ACCESS_TOKEN_HEADER_NAME;
+
+    @Value("${security.jwt.refresh-token.header.name}")
+    private String REFRESH_TOKEN_HEADER_NAME;
+
+    @Value("${security.jwt.access-token.prefix}")
+    private String ACCESS_TOKEN_PREFIX;
+
     private final List<WebSocketSession> sessionList = new ArrayList<>();
 
-    // 소켓 연결 확인
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        List<String> authorization = session.getHandshakeHeaders().get("Authorization");
-
-        if(authorization == null  || authorization.get(authorization.size()-1) == null){
-            session.close(CloseStatus.NOT_ACCEPTABLE.withReason(ResponseStatus.EMPTY_ACCESS_TOKEN.getMessage()));
-            return;
-        }
-
         try {
-            String accessTokenTokenWithPrefix = authorization.get(0);
-            Authentication authentication = tokenService.accessTokenValidate(accessTokenTokenWithPrefix);
-            CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-            Long memberSeq = principal.getMemberSeq();
-            locationShareService.saveWebSocketAuth(session.getId(), memberSeq);
-            sessionList.add(session);
-
-        }catch (LocationShareException e){
+            String accessToken = extractAccessToken(session);
+            if (accessToken != null) {
+                connectHandle(session, accessToken);
+            } else {
+                session.close(CloseStatus.NOT_ACCEPTABLE.withReason(ResponseStatus.EMPTY_ACCESS_TOKEN.getMessage()));
+            }
+        } catch (LocationShareException e) {
+            session.close(CloseStatus.NOT_ACCEPTABLE.withReason(e.getResponseStatus().getMessage()));
+        }catch (JwtException e ){
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason(e.getMessage()));
-
-        } catch (Exception e){
-            //todo token expire error handling
-            session.close(CloseStatus.NOT_ACCEPTABLE.withReason(ResponseStatus.INVALID_ACCESS_TOKEN.getMessage()));
+        }catch (Exception e) {
+            session.close(CloseStatus.NOT_ACCEPTABLE.withReason(e.getMessage()));
         }
+    }
+
+    private String extractAccessToken(WebSocketSession session) throws Exception {
+        List<String> authorization = session.getHandshakeHeaders().get(ACCESS_TOKEN_HEADER_NAME);
+        List<String> refreshToken = session.getHandshakeHeaders().get(REFRESH_TOKEN_HEADER_NAME);
+
+        if (refreshToken != null && !refreshToken.isEmpty()) {
+            String token = refreshToken.get(refreshToken.size() - 1);
+            if (token != null) {
+                TokenResponseDto reissueResponse = tokenService.reissue(token);
+                session.sendMessage(new TextMessage(JsonUtil.convertToJsonString(reissueResponse)));
+                return  ACCESS_TOKEN_PREFIX+ " " +reissueResponse.getAccessToken();
+            }
+        } else if (authorization != null && !authorization.isEmpty()) {
+            return authorization.get(authorization.size() - 1);
+        }
+        return null;
+    }
+
+    private void connectHandle(WebSocketSession session, String accessTokenTokenWithPrefix) {
+        Authentication authentication = tokenService.accessTokenValidate(accessTokenTokenWithPrefix);
+        CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
+        Long memberSeq = principal.getMemberSeq();
+        locationShareService.saveWebSocketAuth(session.getId(), memberSeq);
+        sessionList.add(session);
     }
 
     // 소켓 통신 시 메세지의 전송을 다루는 부분
@@ -83,8 +111,11 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     // 소켓 종료 확인
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        sessionList.remove(session.getId());
-        locationShareService.removeWebSocketAuthAndLocationShareMember(session.getId());
+        //error handle 해야함
+        if(status.getCode() != 1003){
+            sessionList.remove(session.getId());
+            locationShareService.removeWebSocketAuthAndLocationShareMember(session.getId());
+        }
     }
 
     private void sendMessage(List<String> sessionIdList, String message) {
@@ -123,9 +154,5 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         }catch (Exception e){
             e.printStackTrace();
         }
-    }
-
-    private void handleConnectionCloseRequest(){
-
     }
 }

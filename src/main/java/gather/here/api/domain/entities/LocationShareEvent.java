@@ -17,14 +17,13 @@ public class LocationShareEvent {
 
     @Id
     private Long roomSeq;
-    private List<MemberLocation> memberLocations;
+    private List<MemberLocation> memberLocations = new ArrayList<>();
     private Score score;
-    private List<Long> destinationMemberList;
+    private List<Long> destinationMemberList = new ArrayList<>();
 
-    public static LocationShareEvent create(Long roomSeq, Long memberSeq, String sessionId, String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
-        List<MemberLocation> memberLocations = new ArrayList<>();
+    public LocationShareEvent create(Long roomSeq, Long memberSeq, String sessionId, String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
         MemberLocation memberLocation = new MemberLocation(memberSeq,sessionId, nickname, imageUrl,presentLat,presentLng,destinationDistance);
-        memberLocations.add(memberLocation);
+        this.memberLocations.add(memberLocation);
         return new LocationShareEvent(roomSeq, memberLocations);
     }
 
@@ -101,7 +100,6 @@ public class LocationShareEvent {
         }
 
     }
-
 
    @Getter
    @NoArgsConstructor
