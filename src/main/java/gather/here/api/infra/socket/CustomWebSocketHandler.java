@@ -50,7 +50,6 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
             locationShareService.saveWebSocketAuth(session.getId(), memberSeq);
             sessionList.add(session);
 
-
         }catch (LocationShareException e){
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason(e.getMessage()));
 
@@ -77,16 +76,15 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         try {
             handleLocationShareRequest(session, request);
         }catch (BusinessException e){
-            session.sendMessage(new TextMessage(JsonUtil.convertToJsonString(e.getResponseStatus())));
+            session.sendMessage(new TextMessage(e.getMessage()));
         }
     }
 
     // 소켓 종료 확인
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        log.info("connection close ={} ",session.getId() );
         sessionList.remove(session.getId());
-        locationShareService.removeWebSocketAuth(session.getId());
+        locationShareService.removeWebSocketAuthAndLocationShareMember(session.getId());
     }
 
     private void sendMessage(List<String> sessionIdList, String message) {
@@ -125,5 +123,9 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private void handleConnectionCloseRequest(){
+
     }
 }

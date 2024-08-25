@@ -383,5 +383,172 @@ class LocationShareServiceTest {
         Assertions.assertThat(findCreateMember.get().getSessionId()).isEqualTo(createSessionId);
     }
 
+    @Test
+    @DisplayName("sut는 접속한 memeber의 distance가 변경되면 locationShareEvent에 memberLocations 값이 변경된다")
+    @Transactional
+    public void distanceChangeTest(){
 
+        //arrange
+        LocationShareService sut = locationShareService;
+
+        //방장 member 추가
+        String createIdentity = Utils.randomMemberId();
+        String createPassword = "1234";
+        String createSessionId = String.valueOf(UUID.randomUUID());
+
+        MemberSignUpRequestDto createMemberRequest = new MemberSignUpRequestDto(createIdentity, createPassword);
+        memberService.save(createMemberRequest);
+
+        String joinIdentity = Utils.randomMemberId();
+        String joinPassword = "1234";
+        String joinSessionId = String.valueOf(UUID.randomUUID());
+
+        //join member 가입
+        MemberSignUpRequestDto joinMemberRequest = new MemberSignUpRequestDto(joinIdentity, joinPassword);
+        memberService.save(joinMemberRequest);
+
+        //roomMember -> room create
+        Float destinationLat = 45.2F;
+        Float destinationLng = 77.7F;
+        String destinationName = "산하네집";
+        String encounterDate = "2025-08-11 15:33";
+        RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
+                destinationLat,
+                destinationLng,
+                destinationName,
+                encounterDate
+        );
+        roomService.createRoom(
+                roomCreateRequestDto,
+                createIdentity
+        );
+
+        Member createMember = memberRepository.findByIdentity(createIdentity).get();
+        Member joinMember = memberRepository.findByIdentity(joinIdentity).get();
+
+        //join Member -> room join
+        String shareCode = createMember.getRoom().getShareCode();
+        JoinRoomRequestDto joinRoomRequestDto = new JoinRoomRequestDto(shareCode);
+        roomService.joinRoom(joinRoomRequestDto,joinIdentity);
+
+        locationShareService.saveWebSocketAuth(createSessionId,createMember.getSeq());
+        locationShareService.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
+
+        //roomMember -> create locationShareEvent
+        int createType =0;
+        Float presentLat = 12.3F;
+        Float presentLng = 46.2F;
+        Float destinationDistance = 41.4F;
+        LocationShareEventRequestDto createLocationShareEventRequest =
+                new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
+
+        locationShareService.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
+
+        int joinType =1;
+        LocationShareEventRequestDto joinLocationShareEventRequest =
+                new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
+        locationShareService.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
+
+        //act
+        int distanceChangeType = 2;
+        Float distanceChangePresentLat = 1F;
+        Float distanceChangePresentLng = 1F;
+        Float distanceChangeDestinationDistance = 20F;
+        LocationShareEventRequestDto distanceChangeLocationShareEventRequest =
+                new LocationShareEventRequestDto(distanceChangeType,distanceChangePresentLat,distanceChangePresentLng,distanceChangeDestinationDistance);
+        sut.distanceChangeHandleAction(distanceChangeLocationShareEventRequest,createSessionId);
+        LocationShareEvent actual = roomRepository.findLocationShareEventByRoomSeq(createMember.getRoom().getSeq()).get();
+
+        //assert
+        Assertions.assertThat(actual.getMemberLocations().size()).isEqualTo(2);
+        List<LocationShareEvent.MemberLocation> memberLocations = actual.getMemberLocations();
+        Optional<LocationShareEvent.MemberLocation> actualMember = memberLocations.stream().filter(memberLocation -> memberLocation.getMemberSeq() == createMember.getSeq()).findFirst();
+        Assertions.assertThat(actualMember.get().getPresentLat()).isEqualTo(distanceChangePresentLat);
+        Assertions.assertThat(actualMember.get().getPresentLng()).isEqualTo(distanceChangePresentLng);
+        Assertions.assertThat(actualMember.get().getDestinationDistance()).isEqualTo(distanceChangeDestinationDistance);
+    }
+
+    @Test
+    @DisplayName("sut는 금메달 은메달 동메달 순위로 score 들어간다")
+    @Transactional
+    public void setScoreTest(){
+
+        //arrange
+        LocationShareService sut = locationShareService;
+
+        //방장 member 추가
+        String createIdentity = Utils.randomMemberId();
+        String createPassword = "1234";
+        String createSessionId = String.valueOf(UUID.randomUUID());
+
+        MemberSignUpRequestDto createMemberRequest = new MemberSignUpRequestDto(createIdentity, createPassword);
+        memberService.save(createMemberRequest);
+
+        String joinIdentity = Utils.randomMemberId();
+        String joinPassword = "1234";
+        String joinSessionId = String.valueOf(UUID.randomUUID());
+
+        //join member 가입
+        MemberSignUpRequestDto joinMemberRequest = new MemberSignUpRequestDto(joinIdentity, joinPassword);
+        memberService.save(joinMemberRequest);
+
+        //roomMember -> room create
+        Float destinationLat = 45.2F;
+        Float destinationLng = 77.7F;
+        String destinationName = "산하네집";
+        String encounterDate = "2025-08-11 15:33";
+        RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
+                destinationLat,
+                destinationLng,
+                destinationName,
+                encounterDate
+        );
+        roomService.createRoom(
+                roomCreateRequestDto,
+                createIdentity
+        );
+
+        Member createMember = memberRepository.findByIdentity(createIdentity).get();
+        Member joinMember = memberRepository.findByIdentity(joinIdentity).get();
+
+        //join Member -> room join
+        String shareCode = createMember.getRoom().getShareCode();
+        JoinRoomRequestDto joinRoomRequestDto = new JoinRoomRequestDto(shareCode);
+        roomService.joinRoom(joinRoomRequestDto,joinIdentity);
+
+        locationShareService.saveWebSocketAuth(createSessionId,createMember.getSeq());
+        locationShareService.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
+
+        //roomMember -> create locationShareEvent
+        int createType =0;
+        Float presentLat = 12.3F;
+        Float presentLng = 46.2F;
+        Float destinationDistance = 41.4F;
+        LocationShareEventRequestDto createLocationShareEventRequest =
+                new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
+
+        locationShareService.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
+
+        int joinType =1;
+        LocationShareEventRequestDto joinLocationShareEventRequest =
+                new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
+        locationShareService.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
+
+        //act
+        int distanceChangeType = 2;
+        Float distanceChangePresentLat = 1F;
+        Float distanceChangePresentLng = 1F;
+        Float distanceChangeDestinationDistance = 1F;
+        LocationShareEventRequestDto distanceChangeLocationShareEventRequest =
+                new LocationShareEventRequestDto(distanceChangeType,distanceChangePresentLat,distanceChangePresentLng,distanceChangeDestinationDistance);
+        sut.distanceChangeHandleAction(distanceChangeLocationShareEventRequest,createSessionId);
+
+        sut.distanceChangeHandleAction(distanceChangeLocationShareEventRequest,joinSessionId);
+
+        LocationShareEvent actual = roomRepository.findLocationShareEventByRoomSeq(createMember.getRoom().getSeq()).get();
+
+        //assert
+        Assertions.assertThat(actual.getScore().getGoldMemberSeq()).isEqualTo(createMember.getSeq());
+        Assertions.assertThat(actual.getScore().getSilverMemberSeq()).isEqualTo(joinMember.getSeq());
+    }
 }

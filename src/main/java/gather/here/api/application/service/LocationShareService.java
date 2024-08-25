@@ -96,16 +96,18 @@ public class LocationShareService {
 
     @Transactional
     public GetLocationShareResponseDto distanceChangeHandleAction(LocationShareEventRequestDto request, String sessionId){
-        //있는 회원인지 확인하는 로직 추가
-
         WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
+
+        if(webSocketAuth == null){
+            throw new LocationShareException(ResponseStatus.NOT_FOUND_SESSION_ID, HttpStatus.CONFLICT);
+        }
 
         Long memberSeq = webSocketAuth.getMemberSeq();
         Member member = memberRepository.findById(memberSeq)
                 .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
 
-        //todo ERROR -> score null로 찍힘
-        LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq()).get();
+        LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
+                .orElseThrow(() -> new LocationShareException(ResponseStatus.NOT_FOUND_ROOM_SEQ ,HttpStatus.CONFLICT));
 
         locationShareEvent.getMemberLocations()
                 .removeIf(memberLocation -> memberLocation.getSessionId().equals(sessionId));
@@ -121,35 +123,39 @@ public class LocationShareService {
         );
 
         LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
-        updateScoreMessage(request.getDestinationDistance(), locationShareEvent, message, member.getSeq());
+        updateScore(request.getDestinationDistance(), locationShareEvent, member.getSeq());
         roomRepository.updateLocationShareEvent(locationShareEvent);
 
         return new GetLocationShareResponseDto(message,locationShareEvent.getSessionIdList());
     }
 
     @Transactional
-    public void removeWebSocketAuth(String sessionId){
+    public void removeWebSocketAuthAndLocationShareMember(String sessionId){
         WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
         webSocketAuthRepository.deleteByMemberSeq(webSocketAuth.getMemberSeq());
+
+        Member member = memberRepository.findById(webSocketAuth.getMemberSeq())
+                .orElseThrow(()-> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
+
+        LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
+                .orElseThrow(()-> new LocationShareException(ResponseStatus.NOT_FOUND_ROOM_SEQ, HttpStatus.CONFLICT));
+        roomRepository.removeLocationShareEventMember(locationShareEvent,member.getSeq());
     }
 
-    private void updateScoreMessage(Float destinationDistance, LocationShareEvent locationShareEvent, LocationShareMessage message, Long memberSeq) {
+
+    private void updateScore(Float destinationDistance, LocationShareEvent locationShareEvent,Long memberSeq) {
         final Float goalStandardDistance = 2F;
-        if (destinationDistance <= goalStandardDistance) {
+        if (destinationDistance <= goalStandardDistance && !locationShareEvent.getScoreList().contains(memberSeq) ) {
             if (locationShareEvent.getScore() == null || locationShareEvent.getScore().getGoldMemberSeq() == null) {
-                LocationShareEvent.Score score = new LocationShareEvent.Score();
-                score.setGoldMemberSeq(memberSeq);
-                locationShareEvent.setScore(score);
+                locationShareEvent.setGoldMemberSeq(memberSeq);
                 return;
             }
             if (locationShareEvent.getScore().getSilverMemberSeq() == null) {
-                locationShareEvent.getScore().setSilverMemberSeq(memberSeq);
-                message.getScoreRes().setSilverMemberSeq(memberSeq);
+                locationShareEvent.setSilverMemberSeq(memberSeq);
                 return;
             }
             if (locationShareEvent.getScore().getBronzeMemberSeq() == null) {
-                locationShareEvent.getScore().setBronzeMemberSeq(memberSeq);
-                message.getScoreRes().setBronzeMemberSeq(memberSeq);
+                locationShareEvent.setBronzeMemberSeq(memberSeq);
             }
         }
     }

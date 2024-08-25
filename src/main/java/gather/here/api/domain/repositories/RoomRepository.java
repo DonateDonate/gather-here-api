@@ -12,4 +12,5 @@ public interface RoomRepository {
     Optional<LocationShareEvent> findLocationShareEventByRoomSeq(Long roomSeq);
     void updateLocationShareEvent(LocationShareEvent locationShareEvent);
     Iterable<LocationShareEvent> findAllLocationEvents();
+    void removeLocationShareEventMember(LocationShareEvent locationShareEvent,Long memberSeq);
 }

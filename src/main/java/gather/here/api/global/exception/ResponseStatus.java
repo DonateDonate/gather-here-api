@@ -31,6 +31,7 @@ public enum ResponseStatus {
     DUPLICATE_WEB_SOCKET_AUTH_MEMBER_SEQ(3102,"duplicate webSocketAuth memberSeq"),
     DUPLICATE_LOCATION_SHARE_EVENT_ROOM_SEQ(3103,"duplicate share event roomSeq"),
     NOT_FOUND_LOCATION_SHARE_EVENT_BY_ROOM_SEQ(3104,"not found shareEvent by roomSeq"),
+    NOT_FOUND_SESSION_ID(3105,"not found session id"),
 
     /**
      *  8xxx : general exception

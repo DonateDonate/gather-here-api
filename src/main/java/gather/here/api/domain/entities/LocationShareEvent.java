@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,6 @@ public class LocationShareEvent {
         MemberLocation memberLocation = new MemberLocation(memberSeq,sessionId, nickname, imageUrl,presentLat,presentLng,destinationDistance);
         memberLocations.add(memberLocation);
         LocationShareEvent locationShareEvent = new LocationShareEvent(roomSeq, memberLocations);
-        locationShareEvent.setScore(new Score());
         return locationShareEvent;
     }
 
@@ -35,20 +35,37 @@ public class LocationShareEvent {
                 .map(MemberLocation::getSessionId)
                 .collect(Collectors.toList());
     }
+    public List<Long> getScoreList(){
+        return Arrays.asList(
+                this.score.goldMemberSeq,
+                this.score.getSilverMemberSeq(),
+                this.score.getBronzeMemberSeq()
+        );
+    }
 
     public void addMemberLocations(Long memberSeq, String sessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
         MemberLocation memberLocation = new MemberLocation(memberSeq, sessionId, nickname, imageUrl, presentLat, presentLng, destinationDistance);
         this.memberLocations.add(memberLocation);
     }
 
-    public void setScore(Score score){
-        this.score = score;
+    public void removeMemberLocation(Long memberSeq){
+        List<MemberLocation> removeMemberLocations = this.getMemberLocations().stream().filter(
+                memberLocation -> !memberLocation.getMemberSeq().equals(memberSeq)
+        ).collect(Collectors.toList());
+
+        this.memberLocations = removeMemberLocations;
     }
 
-    private LocationShareEvent(Long roomSeq, List<MemberLocation> memberLocations, Score score) {
-        this.roomSeq = roomSeq;
-        this.memberLocations = memberLocations;
-        this.score = score;
+    public void setGoldMemberSeq(Long memberSeq){
+        Score score = new Score();
+        score.setGoldMemberSeq(memberSeq);
+        this.score =score;
+    }
+    public void setSilverMemberSeq(Long memberSeq){
+        this.score.setSilverMemberSeq(memberSeq);
+    }
+    public void setBronzeMemberSeq(Long memberSeq){
+        this.score.setBronzeMemberSeq(memberSeq);
     }
 
     private LocationShareEvent(Long roomSeq, List<MemberLocation> memberLocations) {
@@ -66,7 +83,7 @@ public class LocationShareEvent {
         private Float presentLng;
         private Float destinationDistance;
 
-        public MemberLocation(Long memberSeq, String sessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance) {
+        private MemberLocation(Long memberSeq, String sessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance) {
             this.memberSeq = memberSeq;
             this.sessionId = sessionId;
             this.nickname = nickname;
@@ -86,21 +103,21 @@ public class LocationShareEvent {
         private Long silverMemberSeq;
         private Long bronzeMemberSeq;
 
-        public Score(Long goldMemberSeq, Long silverMemberSeq, Long bronzeMemberSeq) {
+        private Score(Long goldMemberSeq, Long silverMemberSeq, Long bronzeMemberSeq) {
             this.goldMemberSeq = goldMemberSeq;
             this.silverMemberSeq = silverMemberSeq;
             this.bronzeMemberSeq = bronzeMemberSeq;
         }
 
-       public void setGoldMemberSeq(Long goldMemberSeq) {
+       private void setGoldMemberSeq(Long goldMemberSeq) {
            this.goldMemberSeq = goldMemberSeq;
        }
 
-       public void setSilverMemberSeq(Long silverMemberSeq) {
+       private void setSilverMemberSeq(Long silverMemberSeq) {
            this.silverMemberSeq = silverMemberSeq;
        }
 
-       public void setBronzeMemberSeq(Long bronzeMemberSeq) {
+       private void setBronzeMemberSeq(Long bronzeMemberSeq) {
            this.bronzeMemberSeq = bronzeMemberSeq;
        }
    }

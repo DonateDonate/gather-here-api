@@ -45,4 +45,11 @@ public class RoomRepositoryImpl implements RoomRepository {
     public Iterable<LocationShareEvent> findAllLocationEvents() {
         return locationShareEventRedisRepository.findAll();
     }
+
+    @Override
+    public void removeLocationShareEventMember(LocationShareEvent locationShareEvent, Long memberSeq) {
+        locationShareEventRedisRepository.deleteById(locationShareEvent.getRoomSeq());
+        locationShareEvent.removeMemberLocation(memberSeq);
+        locationShareEventRedisRepository.save(locationShareEvent);
+    }
 }
