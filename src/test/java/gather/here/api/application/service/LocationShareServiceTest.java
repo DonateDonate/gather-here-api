@@ -1,6 +1,6 @@
 package gather.here.api.application.service;
 
-import gather.here.api.Utils;
+import gather.here.api.Utils.Utils;
 import gather.here.api.application.dto.request.JoinRoomRequestDto;
 import gather.here.api.application.dto.request.LocationShareEventRequestDto;
 import gather.here.api.application.dto.request.MemberSignUpRequestDto;

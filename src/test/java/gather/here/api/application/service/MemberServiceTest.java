@@ -1,6 +1,6 @@
 package gather.here.api.application.service;
 
-import gather.here.api.Utils;
+import gather.here.api.Utils.Utils;
 import gather.here.api.application.dto.request.MemberSignUpRequestDto;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.global.exception.MemberException;

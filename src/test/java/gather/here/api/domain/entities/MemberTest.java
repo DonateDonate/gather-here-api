@@ -1,6 +1,6 @@
 package gather.here.api.domain.entities;
 
-import gather.here.api.Utils;
+import gather.here.api.Utils.Utils;
 import gather.here.api.global.exception.BusinessException;
 import gather.here.api.global.exception.MemberException;
 import org.assertj.core.api.Assertions;

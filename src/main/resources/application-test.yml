@@ -1,0 +1,49 @@
+# Spring Configuration
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+    username: sanha
+    password: ''
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+
+# Security Configuration
+security:
+  salt: 10billion
+
+  jwt:
+    secret: 6rmA7IKw7ZWY6rmA7KKF66+86rmA64+E7Jew7J2Y7LKr7ZSE66Gc7KCd7Yq47ISx6rO16riw7JuQ
+    access-token:
+      minute: 1800
+      prefix: Bearer
+      header:
+        name: Authorization
+
+    refresh-token:
+      minute: 86400000
+      prefix: Bearer
+      header:
+        name: Refresh-token
+
+redis:
+  host: localhost
+  port: 6379
+
+aws:
+  access:
+    key: null
+  secret:
+    key: null
