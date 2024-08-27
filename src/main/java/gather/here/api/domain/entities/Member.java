@@ -41,8 +41,6 @@ public class Member extends BaseTime {
     @Comment("푸쉬알림 토큰")
     private String pushToken;
 
-    @Comment("socket session id")
-    private String socketId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_seq")

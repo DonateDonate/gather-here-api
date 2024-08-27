@@ -50,15 +50,6 @@ public class Room extends BaseTime {
     @Comment("초대 코드")
     private String shareCode;
 
-    @Comment("금메달 맴버")
-    private Long goldMemberSeq;
-
-    @Comment("은메달 맴버")
-    private Long silverMemberSeq;
-
-    @Comment("동메달 맴버")
-    private Long bronzeMemberSeq;
-
     @OneToMany(mappedBy = "room")
     private List<Member> memberList = new ArrayList<>();
 
