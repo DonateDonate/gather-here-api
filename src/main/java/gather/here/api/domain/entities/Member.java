@@ -78,12 +78,12 @@ public class Member extends BaseTime {
         this.nickname = newNickname;
     }
 
-    public void modifyPassword(String newPassword){
-        if(newPassword.length()< 4 || newPassword.length() > 8){
+    public void modifyPassword(String password,String encodedPassword){
+        if(password.length()< 4 || password.length() > 8){
             throw new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.CONFLICT);
         }
 
-        this.password = newPassword;
+        this.password = encodedPassword;
     }
 
     public void setImageKey(String imageKey){
