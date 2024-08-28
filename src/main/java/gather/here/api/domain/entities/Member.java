@@ -79,6 +79,8 @@ public class Member extends BaseTime {
     }
 
     public void modifyPassword(String password,String encodedPassword){
+        System.out.println("password = " + password);
+        System.out.println("encodedPassword = " + encodedPassword);
             if (password.length() < 4 || password.length() > 8) {
                 throw new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.CONFLICT);
             }

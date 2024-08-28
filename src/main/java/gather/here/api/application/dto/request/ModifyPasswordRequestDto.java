@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ModifyPasswordRequestDto {
-    @Schema(description = "Member 새로운 비밀번호 ", example = "12!123")
+    @Schema(description = "Member 새로운 비밀번호 ", example = "12341234")
     private String password;
 }
