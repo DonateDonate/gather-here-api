@@ -56,7 +56,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         } catch (LocationShareException e) {
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason(String.valueOf(e.getResponseStatus().getCode())));
         }catch (JwtException e ){
-            session.close(CloseStatus.NOT_ACCEPTABLE.withReason(e.getMessage()));
+            session.close(CloseStatus.NOT_ACCEPTABLE.withReason(String.valueOf(ResponseStatus.INVALID_ACCESS_TOKEN.getCode())));
         }
     }
 

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Schema(title = "room join dto")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

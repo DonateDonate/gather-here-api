@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Schema(title = "member sign up dto")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+@Schema(title = "room exit dto")
 @Getter
 public class ExitRoomRequestDto {
 

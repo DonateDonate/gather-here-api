@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Schema(title = "Member password modify dto")
 @Getter
 @NoArgsConstructor
 public class ModifyPasswordRequestDto {

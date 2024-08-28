@@ -63,7 +63,7 @@ public class LocationShareMessage {
 
     @Getter
      public static class MemberLocationRes{
-        private Long MemberSeq;
+        private Long memberSeq;
         private String nickname;
         private String imageUrl;
         private Float presentLat;
@@ -71,7 +71,7 @@ public class LocationShareMessage {
         private Float destinationDistance;
 
         public MemberLocationRes(Long memberSeq, String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance) {
-            MemberSeq = memberSeq;
+            this.memberSeq = memberSeq;
             this.nickname = nickname;
             this.imageUrl = imageUrl;
             this.presentLat = presentLat;
