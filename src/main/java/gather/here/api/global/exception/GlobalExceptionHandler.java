@@ -22,7 +22,7 @@ public class GlobalExceptionHandler   {
 
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<Object> handleBusinessException(BusinessException e) {
-        log.error("[BusinessException] cause: {}, message: {}", NestedExceptionUtils.getMostSpecificCause(e),e.getMessage());
+        log.error("[BusinessException] code: {}, message: {}",e.getResponseStatus().getCode(),e.getResponseStatus().getMessage());
         HttpStatus httpStatus = e.getHttpStatus();
         ResponseStatus responseStatus = e.getResponseStatus();
         CustomResponseBody customResponseBody = new CustomResponseBody(responseStatus.getMessage(), responseStatus.getCode());
