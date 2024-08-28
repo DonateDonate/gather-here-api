@@ -51,13 +51,11 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
             if (accessToken != null) {
                 connectHandle(session, accessToken);
             } else {
-                session.close(CloseStatus.NOT_ACCEPTABLE.withReason(ResponseStatus.EMPTY_ACCESS_TOKEN.getMessage()));
+                session.close(CloseStatus.NOT_ACCEPTABLE.withReason(String.valueOf(ResponseStatus.EMPTY_ACCESS_TOKEN.getCode())));
             }
         } catch (LocationShareException e) {
-            session.close(CloseStatus.NOT_ACCEPTABLE.withReason(e.getResponseStatus().getMessage()));
+            session.close(CloseStatus.NOT_ACCEPTABLE.withReason(String.valueOf(e.getResponseStatus().getCode())));
         }catch (JwtException e ){
-            session.close(CloseStatus.NOT_ACCEPTABLE.withReason(e.getMessage()));
-        }catch (Exception e) {
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason(e.getMessage()));
         }
     }
@@ -96,8 +94,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         try {
             request = objectMapper.readValue(payload, LocationShareEventRequestDto.class);
         }catch (JsonParseException e){
-            //todo error 처리
-            session.sendMessage(new TextMessage("잘못된 입력값"));
+            session.sendMessage(new TextMessage(ResponseStatus.INVALID_INPUT.getMessage()));
             return;
         }
 
@@ -111,11 +108,12 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     // 소켓 종료 확인
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        //error handle 해야함
-        if(status.getCode() != 1003){
-            sessionList.remove(session.getId());
-            locationShareService.removeWebSocketAuthAndLocationShareMember(session.getId());
-        }
+        /**
+         * service layer에서 발생하는 code에 따른 분기처리 필요
+         */
+        sessionList.remove(session.getId());
+        locationShareService.removeWebSocketAuthAndLocationShareMember(session.getId());
+
     }
 
     private void sendMessage(List<String> sessionIdList, String message) {

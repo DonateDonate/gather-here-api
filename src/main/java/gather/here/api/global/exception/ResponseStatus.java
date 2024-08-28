@@ -56,9 +56,6 @@ public enum ResponseStatus {
     EXPIRE_REFRESH_TOKEN(9106,"expire refresh token"),
     TOKEN_TYPE_ERROR(9107, "invalid token type error");
 
-
-
-
     private int code;
     private String message;
 

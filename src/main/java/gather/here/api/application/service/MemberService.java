@@ -60,7 +60,7 @@ public class MemberService {
         Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
                 ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
         );
-        member.setPassword(request.getPassword());
+        member.modifyPassword(request.getPassword());
     }
 
     @Transactional

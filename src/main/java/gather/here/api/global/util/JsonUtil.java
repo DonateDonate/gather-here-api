@@ -18,4 +18,8 @@ public class JsonUtil {
             return null;
         }
     }
+    public static <T> T convertJsonStringToObject(String jsonString, Class<T> clazz) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(jsonString, clazz);
+    }
 }
