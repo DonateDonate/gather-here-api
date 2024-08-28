@@ -4,9 +4,11 @@ package gather.here.api.application.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @Getter
+@NoArgsConstructor
 public class GetMemberResponseDto {
     @Schema(description = "member nickname", example = "행복한 동그랑땡")
     private String nickname;
