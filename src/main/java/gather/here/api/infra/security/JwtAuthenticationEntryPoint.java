@@ -51,7 +51,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         if(exception instanceof BusinessException) {
             sendErrorResponse(response, ((BusinessException) exception).getResponseStatus());
             return;
-            // 유효한 토큰이 아닌 경우
         }
 
         sendErrorResponse(response,ResponseStatus.EMPTY_ACCESS_TOKEN);
@@ -67,6 +66,4 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.getWriter().write(body);
     }
-
-
 }

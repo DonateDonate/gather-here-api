@@ -19,6 +19,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
         Member member = memberRepository.findByIdentity(username)
                 .orElseThrow(() -> new UsernameNotFoundException(ResponseStatus.NOT_FOUND.getMessage()));
 
+        if(!member.isActive()){
+            throw new UsernameNotFoundException(ResponseStatus.NOT_FOUND.getMessage());
+        }
+
         return User.builder()
                 .username(member.getIdentity())
                 .password(member.getPassword())
