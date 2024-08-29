@@ -35,7 +35,7 @@ public class MemberController {
             Authentication authentication
 ){
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        GetMemberResponseDto member = memberService.getMember(principal.getIdentity());
+        GetMemberResponseDto member = memberService.getMember(principal.getMemberSeq());
         return new ResponseEntity<>(member,HttpStatus.OK);
     }
 
@@ -46,7 +46,7 @@ public class MemberController {
             @Valid @RequestBody ModifyNicknameRequestDto request
             ){
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        memberService.modifyNickname(request, principal.getIdentity());
+        memberService.modifyNickname(request, principal.getMemberSeq());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -58,7 +58,7 @@ public class MemberController {
             @Valid @RequestBody ModifyPasswordRequestDto request
     ){
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        memberService.modifyPassword(request, principal.getIdentity());
+        memberService.modifyPassword(request, principal.getMemberSeq());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -73,7 +73,7 @@ public class MemberController {
             Authentication authentication
     ){
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        UpdateImageResponseDto response = memberService.updateMemberImage(imageFile, principal.getIdentity());
+        UpdateImageResponseDto response = memberService.updateMemberImage(imageFile, principal.getMemberSeq());
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

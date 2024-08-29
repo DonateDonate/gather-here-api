@@ -12,6 +12,7 @@ import gather.here.api.domain.security.CryptoFactory;
 import gather.here.api.global.exception.MemberException;
 import gather.here.api.global.exception.ResponseStatus;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,48 +37,35 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public GetMemberResponseDto getMember(String memberIdentity){
-        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
-                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
-        );
-        String imageUrl = null;
-        if(member.getImageKey() !=null) {
-             imageUrl = fileFactory.getImageUrl(member.getImageKey());
-        }
+    public GetMemberResponseDto getMember(Long memberSeq){
+        Member member = findByMemberSeq(memberSeq);
+        String imageUrl = StringUtils.isNotEmpty(member.getImageKey()) ? fileFactory.getImageUrl(member.getImageKey()) : null;
+
         return new GetMemberResponseDto(member.getNickname(), member.getIdentity(), imageUrl);
     }
 
     @Transactional
-    public void modifyNickname(ModifyNicknameRequestDto request, String memberIdentity){
-        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
-                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
-        );
+    public void modifyNickname(ModifyNicknameRequestDto request, Long memberSeq){
+        Member member = findByMemberSeq(memberSeq);
         member.setNickname(request.getNickname());
     }
 
     @Transactional
-    public void modifyPassword(ModifyPasswordRequestDto request, String memberIdentity){
-        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
-                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
-        );
+    public void modifyPassword(ModifyPasswordRequestDto request, Long memberSeq){
+        Member member = findByMemberSeq(memberSeq);
         String encodedPassword = cryptoFactory.passwordEncoder(request.getPassword());
         member.modifyPassword(request.getPassword(),encodedPassword);
     }
 
     @Transactional
-    public void cancelAccount(String memberIdentity){
-        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
-                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
-        );
+    public void cancelAccount(Long memberSeq){
+        Member member = findByMemberSeq(memberSeq);
         member.cancelAccount();
     }
 
     @Transactional
-    public UpdateImageResponseDto updateMemberImage(MultipartFile multipartFile, String memberIdentity){
-        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
-                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
-        );
-
+    public UpdateImageResponseDto updateMemberImage(MultipartFile multipartFile, Long memberSeq){
+        Member member = findByMemberSeq(memberSeq);
         if(member.getImageKey() != null){
             fileFactory.deleteFile(member.getImageKey());
         }
@@ -85,5 +73,11 @@ public class MemberService {
 
         member.setImageKey(imageKey);
         return new UpdateImageResponseDto(fileFactory.getImageUrl(imageKey));
+    }
+
+    private Member findByMemberSeq(Long memberSeq) {
+       return memberRepository.findBySeq(memberSeq).orElseThrow(
+                ()-> new MemberException(ResponseStatus.NOT_FOUND_MEMBER,HttpStatus.BAD_REQUEST)
+        );
     }
 }

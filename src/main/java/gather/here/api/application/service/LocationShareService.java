@@ -43,7 +43,7 @@ public class LocationShareService {
         WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
-        Member member = memberRepository.findById(memberSeq)
+        Member member = memberRepository.findBySeq(memberSeq)
                 .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
 
         Optional<LocationShareEvent> existLocationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq());
@@ -71,7 +71,7 @@ public class LocationShareService {
         WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
-        Member member = memberRepository.findById(memberSeq)
+        Member member = memberRepository.findBySeq(memberSeq)
                 .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
 
         LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
@@ -103,7 +103,7 @@ public class LocationShareService {
         }
 
         Long memberSeq = webSocketAuth.getMemberSeq();
-        Member member = memberRepository.findById(memberSeq)
+        Member member = memberRepository.findBySeq(memberSeq)
                 .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
 
         LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
@@ -145,7 +145,7 @@ public class LocationShareService {
 
         webSocketAuthRepository.deleteByMemberSeq(webSocketAuth.getMemberSeq());
 
-        Member member = memberRepository.findById(webSocketAuth.getMemberSeq())
+        Member member = memberRepository.findBySeq(webSocketAuth.getMemberSeq())
                 .orElseThrow(()-> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
 
         LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())

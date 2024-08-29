@@ -41,7 +41,7 @@ public class RoomController {
             Authentication authentication
     ){
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        RoomCreateResponseDto response = roomService.createRoom(request, principal.getIdentity());
+        RoomCreateResponseDto response = roomService.createRoom(request, principal.getMemberSeq());
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
@@ -55,7 +55,7 @@ public class RoomController {
             Authentication authentication
     ){
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        JoinRoomResponseDto response = roomService.joinRoom(request, principal.getIdentity());
+        JoinRoomResponseDto response = roomService.joinRoom(request, principal.getMemberSeq());
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
@@ -69,7 +69,7 @@ public class RoomController {
             Authentication authentication
     ){
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        roomService.exitRoom(request, principal.getIdentity());
+        roomService.exitRoom(request, principal.getMemberSeq());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

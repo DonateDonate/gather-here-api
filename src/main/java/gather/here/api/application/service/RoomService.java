@@ -34,10 +34,10 @@ public class RoomService {
     private final FileFactory fileFactory;
 
     @Transactional
-    public RoomCreateResponseDto createRoom(RoomCreateRequestDto request, String memberIdentity){
-        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
-                () -> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.BAD_REQUEST));
-
+    public RoomCreateResponseDto createRoom(RoomCreateRequestDto request, Long memberSeq){
+        Member member = memberRepository.findBySeq(memberSeq).orElseThrow(
+                ()-> new MemberException(ResponseStatus.NOT_FOUND_MEMBER,HttpStatus.BAD_REQUEST)
+        );
         Room room = Room.create(
                 request.getDestinationLat(),
                 request.getDestinationLng(),
@@ -59,11 +59,10 @@ public class RoomService {
     }
 
     @Transactional
-    public JoinRoomResponseDto joinRoom(JoinRoomRequestDto request, String memberIdentity){
-        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
-                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
+    public JoinRoomResponseDto joinRoom(JoinRoomRequestDto request, Long memberSeq){
+        Member member = memberRepository.findBySeq(memberSeq).orElseThrow(
+                ()-> new MemberException(ResponseStatus.NOT_FOUND_MEMBER,HttpStatus.BAD_REQUEST)
         );
-
         if(member.getRoom() != null){
             throw new RoomException(ResponseStatus.ALREADY_ROOM_ENCOUNTER,HttpStatus.CONFLICT);
         }
@@ -89,9 +88,9 @@ public class RoomService {
     }
 
     @Transactional
-    public void exitRoom(ExitRoomRequestDto request, String memberIdentity){
-        Member member = memberRepository.findByIdentity(memberIdentity).orElseThrow(
-                ()-> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD,HttpStatus.BAD_REQUEST)
+    public void exitRoom(ExitRoomRequestDto request, Long memberSeq){
+        Member member = memberRepository.findBySeq(memberSeq).orElseThrow(
+                ()-> new MemberException(ResponseStatus.NOT_FOUND_MEMBER,HttpStatus.BAD_REQUEST)
         );
 
         if(member.getRoom().getSeq() != request.getRoomSeq()){

@@ -13,6 +13,7 @@ public enum ResponseStatus {
     UNCORRECTED_MEMBER_ID_PASSWORD(1102, "uncorrected member id or password"),
     UNCORRECTED_MEMBER_NICKNAME(1103, "uncorrected member nickname"),
     UNCORRECTED_MEMBER_SEQ(1104,"uncorrected member seq"),
+    NOT_FOUND_MEMBER(1105,"not found member"),
 
     /**
      * 2xxx: room exception

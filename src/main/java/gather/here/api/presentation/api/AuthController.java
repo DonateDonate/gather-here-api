@@ -48,7 +48,7 @@ public class AuthController {
             Authentication authentication
     ){
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        memberService.cancelAccount(principal.getIdentity());
+        memberService.cancelAccount(principal.getMemberSeq());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

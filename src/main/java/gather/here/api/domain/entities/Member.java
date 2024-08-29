@@ -72,7 +72,7 @@ public class Member extends BaseTime {
     }
 
     public void setNickname(String newNickname){
-        if(newNickname.length()<1 || newNickname.length()>8){
+        if(StringUtils.isEmpty(newNickname) || newNickname.length()>8){
             throw new MemberException(ResponseStatus.UNCORRECTED_MEMBER_NICKNAME, HttpStatus.CONFLICT);
         }
         this.nickname = newNickname;
