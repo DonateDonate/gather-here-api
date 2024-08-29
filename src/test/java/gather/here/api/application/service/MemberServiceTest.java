@@ -166,9 +166,6 @@ class MemberServiceTest {
         Assertions.assertThat(member.isActive()).isFalse();
     }
 
-
-
-
     private String createMember() {
         String id = Utils.randomMemberId();
         String password = "12341234";
@@ -176,6 +173,7 @@ class MemberServiceTest {
         memberService.save(memberSignUpRequestDto);
         return id;
     }
+
 
 
 

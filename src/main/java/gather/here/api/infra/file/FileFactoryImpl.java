@@ -1,6 +1,8 @@
 package gather.here.api.infra.file;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import gather.here.api.domain.file.FileFactory;
@@ -43,6 +45,12 @@ public class FileFactoryImpl implements FileFactory {
 
     @Override
     public void deleteFile(String imageKey) {
+        try {
+            DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest("gatherhere-bucket", imageKey);
+            amazonS3Client.deleteObject(deleteObjectRequest);
+        }catch (AmazonServiceException e){
+            e.printStackTrace();
+        }
 
     }
 }

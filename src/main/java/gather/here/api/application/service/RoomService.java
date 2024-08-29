@@ -83,8 +83,6 @@ public class RoomService {
                 convertLocalDateTimeToString(room.getEncounterDate()),
                 room.getShareCode()
         );
-
-        //todo add join redis room logic
     }
 
     @Transactional
@@ -109,8 +107,4 @@ public class RoomService {
         return StreamSupport.stream(allLocationEvents.spliterator(), false)
                 .collect(Collectors.toList());
     }
-
-
-
-
 }

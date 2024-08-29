@@ -67,6 +67,7 @@ public class LocationShareEvent {
         score.setGoldMemberSeq(memberSeq);
         this.score =score;
     }
+
     public void setSilverMemberSeq(Long memberSeq){
         this.score.setSilverMemberSeq(memberSeq);
     }
@@ -78,6 +79,7 @@ public class LocationShareEvent {
         this.roomSeq = roomSeq;
         this.memberLocations = memberLocations;
     }
+
     @NoArgsConstructor
     @Getter
     public static class MemberLocation{

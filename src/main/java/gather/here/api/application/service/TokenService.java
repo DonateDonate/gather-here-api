@@ -59,6 +59,7 @@ public class TokenService {
     public Authentication accessTokenValidate(String accessTokenTokenWithPrefix){
         return accessTokenFactory.validate(accessTokenTokenWithPrefix,getKey());
     }
+
     @Transactional
     public String refreshTokenGenerate(Authentication authentication){
         String identity = authentication.getName();
@@ -89,7 +90,6 @@ public class TokenService {
 
         return new TokenResponseDto(newAccessToken, newRefreshToken);
     }
-
 
     private Key getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(JWT_SECRET);

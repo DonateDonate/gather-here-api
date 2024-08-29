@@ -157,7 +157,7 @@ public class LocationShareService {
     }
 
     private void updateDestinationMember(Float destinationDistance, LocationShareEvent locationShareEvent,Long memberSeq) {
-        final Float goalStandardDistance = 2F;
+        final Float goalStandardDistance = 10F;
         if (destinationDistance <= goalStandardDistance ) {
             locationShareEvent.addDestinationMemberList(memberSeq);
             if (locationShareEvent.getScore() == null || locationShareEvent.getScore().getGoldMemberSeq() == null) {
