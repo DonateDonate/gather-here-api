@@ -105,7 +105,7 @@ class LocationShareServiceTest {
         MemberSignUpRequestDto memberSignUpRequestDto = new MemberSignUpRequestDto(identity, password);
         memberService.save(memberSignUpRequestDto);
 
-        Member member = memberRepository.findByIdentity(identity).get();
+        Member member = memberRepository.findByIdentityAndIsActiveTrue(identity).get();
 
 
         //room create
@@ -175,7 +175,7 @@ class LocationShareServiceTest {
         MemberSignUpRequestDto memberSignUpRequestDto = new MemberSignUpRequestDto(identity, password);
         memberService.save(memberSignUpRequestDto);
 
-        Member member = memberRepository.findByIdentity(identity).get();
+        Member member = memberRepository.findByIdentityAndIsActiveTrue(identity).get();
 
         //room create
         RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
@@ -235,8 +235,8 @@ class LocationShareServiceTest {
         MemberSignUpRequestDto joinMemberRequest = new MemberSignUpRequestDto(joinIdentity, joinPassword);
         memberService.save(joinMemberRequest);
 
-        Member createMember = memberRepository.findByIdentity(createIdentity).get();
-        Member joinMember = memberRepository.findByIdentity(joinIdentity).get();
+        Member createMember = memberRepository.findByIdentityAndIsActiveTrue(createIdentity).get();
+        Member joinMember = memberRepository.findByIdentityAndIsActiveTrue(joinIdentity).get();
 
         //roomMember -> room create
         Float destinationLat = 45.2F;
@@ -311,8 +311,8 @@ class LocationShareServiceTest {
         MemberSignUpRequestDto joinMemberRequest = new MemberSignUpRequestDto(joinIdentity, joinPassword);
         memberService.save(joinMemberRequest);
 
-        Member createMember = memberRepository.findByIdentity(createIdentity).get();
-        Member joinMember = memberRepository.findByIdentity(joinIdentity).get();
+        Member createMember = memberRepository.findByIdentityAndIsActiveTrue(createIdentity).get();
+        Member joinMember = memberRepository.findByIdentityAndIsActiveTrue(joinIdentity).get();
 
         //roomMember -> room create
         Float destinationLat = 45.2F;
@@ -404,8 +404,8 @@ class LocationShareServiceTest {
         MemberSignUpRequestDto joinMemberRequest = new MemberSignUpRequestDto(joinIdentity, joinPassword);
         memberService.save(joinMemberRequest);
 
-        Member createMember = memberRepository.findByIdentity(createIdentity).get();
-        Member joinMember = memberRepository.findByIdentity(joinIdentity).get();
+        Member createMember = memberRepository.findByIdentityAndIsActiveTrue(createIdentity).get();
+        Member joinMember = memberRepository.findByIdentityAndIsActiveTrue(joinIdentity).get();
 
         //roomMember -> room create
         Float destinationLat = 45.2F;
@@ -490,8 +490,8 @@ class LocationShareServiceTest {
         MemberSignUpRequestDto joinMemberRequest = new MemberSignUpRequestDto(joinIdentity, joinPassword);
         memberService.save(joinMemberRequest);
 
-        Member createMember = memberRepository.findByIdentity(createIdentity).get();
-        Member joinMember = memberRepository.findByIdentity(joinIdentity).get();
+        Member createMember = memberRepository.findByIdentityAndIsActiveTrue(createIdentity).get();
+        Member joinMember = memberRepository.findByIdentityAndIsActiveTrue(joinIdentity).get();
 
         //roomMember -> room create
         Float destinationLat = 45.2F;
@@ -577,8 +577,8 @@ class LocationShareServiceTest {
         MemberSignUpRequestDto joinMemberRequest = new MemberSignUpRequestDto(joinIdentity, joinPassword);
         memberService.save(joinMemberRequest);
 
-        Member createMember = memberRepository.findByIdentity(createIdentity).get();
-        Member joinMember = memberRepository.findByIdentity(joinIdentity).get();
+        Member createMember = memberRepository.findByIdentityAndIsActiveTrue(createIdentity).get();
+        Member joinMember = memberRepository.findByIdentityAndIsActiveTrue(joinIdentity).get();
 
         //create room
         Float destinationLat = 45.2F;

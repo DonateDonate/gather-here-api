@@ -17,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import static gather.here.api.domain.entities.Member.assertMemberIdentity;
+import static gather.here.api.domain.entities.Member.assertPassword;
+
 
 @RequiredArgsConstructor
 public class MemberService {
@@ -26,19 +29,26 @@ public class MemberService {
     private final FileFactory fileFactory;
 
     @Transactional
-    public void save(MemberSignUpRequestDto request){
-        boolean isExistMember = memberRepository.findByIdentity(request.getIdentity()).isPresent();
+    public void save(MemberSignUpRequestDto request) {
+        boolean isExistMember = memberRepository.findByIdentityAndIsActiveTrue(request.getIdentity())
+                .isPresent();
+        assertRequest(request, isExistMember);
 
-        if(isExistMember){
-            throw new MemberException(ResponseStatus.DUPLICATE_MEMBER_ID, HttpStatus.CONFLICT);
-        }
         String encodedPassword = cryptoFactory.passwordEncoder(request.getPassword());
-        Member member = Member.create(request.getIdentity(),request.getPassword(),encodedPassword);
+        Member member = Member.create(request.getIdentity(), encodedPassword);
         memberRepository.save(member);
     }
 
+    private static void assertRequest(MemberSignUpRequestDto request, boolean isExistMember) {
+        if (isExistMember) {
+            throw new MemberException(ResponseStatus.DUPLICATE_MEMBER_ID, HttpStatus.FORBIDDEN);
+        }
+        assertPassword(request.getPassword());
+        assertMemberIdentity(request.getIdentity());
+    }
+
     public GetMemberResponseDto getMember(Long memberSeq){
-        Member member = findByMemberSeq(memberSeq);
+        Member member = memberRepository.getBySeq(memberSeq);
         String imageUrl = StringUtils.isNotEmpty(member.getImageKey()) ? fileFactory.getImageUrl(member.getImageKey()) : null;
 
         return new GetMemberResponseDto(member.getNickname(), member.getIdentity(), imageUrl);
@@ -46,26 +56,26 @@ public class MemberService {
 
     @Transactional
     public void modifyNickname(ModifyNicknameRequestDto request, Long memberSeq){
-        Member member = findByMemberSeq(memberSeq);
+        Member member = memberRepository.getBySeq(memberSeq);
         member.setNickname(request.getNickname());
     }
 
     @Transactional
     public void modifyPassword(ModifyPasswordRequestDto request, Long memberSeq){
-        Member member = findByMemberSeq(memberSeq);
+        Member member = memberRepository.getBySeq(memberSeq);
         String encodedPassword = cryptoFactory.passwordEncoder(request.getPassword());
         member.modifyPassword(request.getPassword(),encodedPassword);
     }
 
     @Transactional
     public void cancelAccount(Long memberSeq){
-        Member member = findByMemberSeq(memberSeq);
+        Member member = memberRepository.getBySeq(memberSeq);
         member.cancelAccount();
     }
 
     @Transactional
     public UpdateImageResponseDto updateMemberImage(MultipartFile multipartFile, Long memberSeq){
-        Member member = findByMemberSeq(memberSeq);
+        Member member = memberRepository.getBySeq(memberSeq);
         if(member.getImageKey() != null){
             fileFactory.deleteFile(member.getImageKey());
         }
@@ -75,9 +85,5 @@ public class MemberService {
         return new UpdateImageResponseDto(fileFactory.getImageUrl(imageKey));
     }
 
-    private Member findByMemberSeq(Long memberSeq) {
-       return memberRepository.findBySeq(memberSeq).orElseThrow(
-                ()-> new MemberException(ResponseStatus.NOT_FOUND_MEMBER,HttpStatus.BAD_REQUEST)
-        );
-    }
+
 }

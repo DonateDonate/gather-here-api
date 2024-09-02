@@ -19,7 +19,7 @@ class MemberTest {
         Member actual = null;
 
         //act
-        actual = Member.create(id,password,encodedPassword);
+        actual = Member.create(id,encodedPassword);
 
         //assert
         Assertions.assertThat(actual.getIdentity()).isEqualTo(id);
@@ -37,7 +37,7 @@ class MemberTest {
 
         //act
         try {
-            Member member = Member.create(id, password, encodedPassword);
+            Member.assertMemberIdentity(id);
         } catch (BusinessException e){
             actual = e;
         }
@@ -46,7 +46,7 @@ class MemberTest {
         //assert
         Assertions.assertThat(actual).isNotNull();
         Assertions.assertThat(actual).isInstanceOf(MemberException.class);
-        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(9101);
+        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(1106);
     }
     @DisplayName("sut는 password의 길이가 4글자 이상 8글자 이하가 아니면 예외가 발생한다")
     @Test
@@ -54,12 +54,11 @@ class MemberTest {
         //arrange
         String id = "1";
         String password = "1";
-        String encodedPassword = "12";
         BusinessException actual = null;
 
         //act
         try {
-            Member member = Member.create(id, password, encodedPassword);
+            Member.assertPassword(password);
         } catch (BusinessException e){
             actual = e;
         }
@@ -68,7 +67,7 @@ class MemberTest {
         //assert
         Assertions.assertThat(actual).isNotNull();
         Assertions.assertThat(actual).isInstanceOf(MemberException.class);
-        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(9101);
+        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(1107);
     }
 
 }

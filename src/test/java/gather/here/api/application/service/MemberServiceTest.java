@@ -5,6 +5,8 @@ import gather.here.api.application.dto.request.MemberSignUpRequestDto;
 import gather.here.api.application.dto.request.ModifyNicknameRequestDto;
 import gather.here.api.application.dto.request.ModifyPasswordRequestDto;
 import gather.here.api.application.dto.response.GetMemberResponseDto;
+import gather.here.api.domain.dobules.CryptoFactoryStub;
+import gather.here.api.domain.dobules.FileFactoryStub;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.global.exception.MemberException;
@@ -50,7 +52,7 @@ class MemberServiceTest {
         sut.save(memberSignUpRequestDto);
 
         //assert
-        Member actual = memberRepository.findByIdentity(id).get();
+        Member actual = memberRepository.findByIdentityAndIsActiveTrue(id).get();
         Assertions.assertThat(actual).isNotNull();
         Assertions.assertThat(actual.getIdentity()).isEqualTo(id);
     }
@@ -63,7 +65,7 @@ class MemberServiceTest {
         String id =Utils.randomMemberId();
         String password = "12341234";
 
-        Member member = Member.create(id, password, password);
+        Member member = Member.create(id, password);
         memberRepository.save(member);
 
         MemberSignUpRequestDto memberSignUpRequestDto = new MemberSignUpRequestDto(id,password);
@@ -88,7 +90,7 @@ class MemberServiceTest {
         //arrange
         String id = createMember();
         MemberService sut = memberService;
-        Member member = memberRepository.findByIdentity(id).get();
+        Member member = memberRepository.findByIdentityAndIsActiveTrue(id).get();
 
 
         //act
@@ -100,18 +102,23 @@ class MemberServiceTest {
 
     @DisplayName("sut는 member의 imagekey가 null이 아니면 imageUrl를 포함시켜 반환한다")
     @Test
-    public void getMemberContainImageUrlTest(){
-        //arrange
+    public void getMemberContainImageUrlTest() {
+        //Arrange
         String id = createMember();
-        MemberService sut = memberService;
-        Member member = memberRepository.findByIdentity(id).get();
-        member.setImageKey(String.valueOf(UUID.randomUUID()));
+        var sut = new MemberService(
+                memberRepository,
+                new CryptoFactoryStub(),
+                new FileFactoryStub()
+        );
+        Member member = memberRepository.findByIdentityAndIsActiveTrue(id).get();
+        member.setImageKey(UUID.randomUUID().toString());
 
-        //act
+        //Act
         GetMemberResponseDto response = sut.getMember(member.getSeq());
 
-        //assert
+        //Assert
         Assertions.assertThat(response.getProfileImageUrl()).isNotNull();
+        Assertions.assertThat(response.getProfileImageUrl()).isNotEmpty();
     }
 
     @DisplayName("sut는 성공적으로 닉네임을 변경한다")
@@ -120,12 +127,12 @@ class MemberServiceTest {
         //arrange
         MemberService sut = memberService;
         String memberIdentity = createMember();
-        Member member = memberRepository.findByIdentity(memberIdentity).get();
+        Member member = memberRepository.findByIdentityAndIsActiveTrue(memberIdentity).get();
         String newNickname = "spring";
         ModifyNicknameRequestDto request = new ModifyNicknameRequestDto(newNickname);
         //act
         sut.modifyNickname(request,member.getSeq());
-        Member modifyNicknameMember = memberRepository.findByIdentity(memberIdentity).get();
+        Member modifyNicknameMember = memberRepository.findByIdentityAndIsActiveTrue(memberIdentity).get();
 
         //assert
         Assertions.assertThat(modifyNicknameMember.getSeq()).isEqualTo(member.getSeq());
@@ -138,13 +145,13 @@ class MemberServiceTest {
         //arrange
         MemberService sut = memberService;
         String memberIdentity = createMember();
-        Member member = memberRepository.findByIdentity(memberIdentity).get();
+        Member member = memberRepository.findByIdentityAndIsActiveTrue(memberIdentity).get();
         String newPassword = "12341";
         ModifyPasswordRequestDto request = new ModifyPasswordRequestDto(newPassword);
 
         //act
         sut.modifyPassword(request,member.getSeq());
-        Member modifyPasswordMember = memberRepository.findByIdentity(memberIdentity).get();
+        Member modifyPasswordMember = memberRepository.findByIdentityAndIsActiveTrue(memberIdentity).get();
         //assert
         Assertions.assertThat(
                 passwordEncoder.matches(newPassword, modifyPasswordMember.getPassword())).isTrue();
@@ -157,7 +164,7 @@ class MemberServiceTest {
         String member2 = createMember();
         MemberService sut = memberService;
         String memberIdentity = createMember();
-        Member member = memberRepository.findByIdentity(memberIdentity).get();
+        Member member = memberRepository.findByIdentityAndIsActiveTrue(memberIdentity).get();
 
         //act
         sut.cancelAccount(member.getSeq());
@@ -173,9 +180,4 @@ class MemberServiceTest {
         memberService.save(memberSignUpRequestDto);
         return id;
     }
-
-
-
-
-
 }

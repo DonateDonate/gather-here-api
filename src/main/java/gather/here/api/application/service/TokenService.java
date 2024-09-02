@@ -48,8 +48,8 @@ public class TokenService {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String identity = userDetails.getUsername();
 
-        Long memberSeq = memberRepository.findByIdentity(identity)
-                .orElseThrow(() -> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.CONFLICT))
+        Long memberSeq = memberRepository.findByIdentityAndIsActiveTrue(identity)
+                .orElseThrow(() -> new MemberException(ResponseStatus.NOT_FOUND_MEMBER, HttpStatus.FORBIDDEN))
                 .getSeq();
 
         String accessToken = accessTokenFactory.generate(identity,memberSeq, getKey(), ACCESS_TOKEN_MINUTE);
@@ -74,8 +74,8 @@ public class TokenService {
         Authentication authentication = refreshTokenFactory.validate(refreshTokenWithPrefix, getKey());
         String identity =  authentication.getName();
 
-        Long memberSeq = memberRepository.findByIdentity(identity)
-                .orElseThrow(() -> new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.CONFLICT))
+        Long memberSeq = memberRepository.findByIdentityAndIsActiveTrue(identity)
+                .orElseThrow(() -> new MemberException(ResponseStatus.INCORRECT_ACCOUNT, HttpStatus.FORBIDDEN))
                 .getSeq();
 
         Optional<String> savedRefresh = refreshTokenFactory.find(identity);

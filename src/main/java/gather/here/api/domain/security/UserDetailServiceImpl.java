@@ -16,11 +16,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Member member = memberRepository.findByIdentity(username)
-                .orElseThrow(() -> new UsernameNotFoundException(ResponseStatus.NOT_FOUND.getMessage()));
+        Member member = memberRepository.findByIdentityAndIsActiveTrue(username)
+                .orElseThrow(() -> new UsernameNotFoundException(ResponseStatus.NOT_FOUND_MEMBER.getMessage()));
 
         if(!member.isActive()){
-            throw new UsernameNotFoundException(ResponseStatus.NOT_FOUND.getMessage());
+            throw new UsernameNotFoundException(ResponseStatus.NOT_FOUND_MEMBER.getMessage());
         }
 
         return User.builder()

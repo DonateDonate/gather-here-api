@@ -7,7 +7,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -20,7 +19,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     private final ObjectMapper objectMapper;
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        CustomResponseBody errorResponse = new CustomResponseBody(ResponseStatus.UNCORRECTED_MEMBER_ID_PASSWORD.getMessage(), ResponseStatus.UNCORRECTED_MEMBER_ID_PASSWORD.getCode());
+        CustomResponseBody errorResponse = new CustomResponseBody(ResponseStatus.INCORRECT_ACCOUNT.getMessage(), ResponseStatus.INCORRECT_ACCOUNT.getCode());
 
         String body = objectMapper.writeValueAsString(errorResponse);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

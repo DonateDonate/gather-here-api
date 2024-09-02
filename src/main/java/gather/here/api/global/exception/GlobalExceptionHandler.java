@@ -34,7 +34,7 @@ public class GlobalExceptionHandler   {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error("[HttpMessageNotReadableException] cause: {}, message: {}", NestedExceptionUtils.getMostSpecificCause(e),e.getMessage());
-        CustomResponseBody customResponseBody = new CustomResponseBody(ResponseStatus.INVALID_INPUT.getMessage(), ResponseStatus.INVALID_INPUT.getCode());
+        CustomResponseBody customResponseBody = new CustomResponseBody(ResponseStatus.INVALID_REQUEST.getMessage(), ResponseStatus.INVALID_REQUEST.getCode());
         return new ResponseEntity<>(customResponseBody, // body
                 HttpStatus.BAD_REQUEST);
     }
@@ -50,8 +50,8 @@ public class GlobalExceptionHandler   {
             errors.add(fieldError.getField() + " " + fieldError.getDefaultMessage());
         }
         CustomResponseBody customResponseBody = new CustomResponseBody(
-                ResponseStatus.INVALID_INPUT.getMessage(),
-                ResponseStatus.INVALID_INPUT.getCode(),
+                ResponseStatus.INVALID_REQUEST.getMessage(),
+                ResponseStatus.INVALID_REQUEST.getCode(),
                 errors);
 
         return new ResponseEntity<>(customResponseBody, // body
@@ -61,7 +61,6 @@ public class GlobalExceptionHandler   {
     //모든 에러 -> 하위 에러에서 못받을 때
     @ExceptionHandler(Exception.class)
     public ResponseEntity handleException(Exception e){
-        // NestedExceptionUtils.getMostSpecificCause() -> 가장 구체적인 원인, 즉 가장 근본 원인을 찾아서 반환
         log.error("[Exception] cause: {} , message: {}", NestedExceptionUtils.getMostSpecificCause(e), e.getMessage());
         CustomResponseBody customResponseBody = new CustomResponseBody(ResponseStatus.INTERNAL_SERVER_ERROR.getMessage(), ResponseStatus.INTERNAL_SERVER_ERROR.getCode());
         return new ResponseEntity<>(customResponseBody, // body

@@ -94,7 +94,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         try {
             request = objectMapper.readValue(payload, LocationShareEventRequestDto.class);
         }catch (JsonParseException e){
-            session.sendMessage(new TextMessage(ResponseStatus.INVALID_INPUT.getMessage()));
+            session.sendMessage(new TextMessage(ResponseStatus.INVALID_REQUEST.getMessage()));
             return;
         }
 
@@ -108,6 +108,8 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     // 소켓 종료 확인
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        int code = status.getCode();
+
         /**
          * service layer에서 발생하는 code에 따른 분기처리 필요
          */

@@ -67,11 +67,11 @@ public class Room extends BaseTime {
         LocalDateTime convertedToLocalDateTime = convertToLocalDateTime(encounterDate);
 
         if(convertedToLocalDateTime == null){
-            throw new RoomException(ResponseStatus.ENCOUNTER_DATE_INVALID, HttpStatus.CONFLICT);
+            throw new RoomException(ResponseStatus.INCORRECT_ENCOUNTER_DATE, HttpStatus.CONFLICT);
         }
 
         if(isPastSeoulTime(convertedToLocalDateTime)){
-            throw new RoomException(ResponseStatus.PAST_DATE_INVALID, HttpStatus.CONFLICT);
+            throw new RoomException(ResponseStatus.INCORRECT_ENCOUNTER_DATE, HttpStatus.CONFLICT);
         }
 
         Room room = Room.builder()

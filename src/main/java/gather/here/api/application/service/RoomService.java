@@ -13,7 +13,6 @@ import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
-import gather.here.api.global.exception.MemberException;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.RoomException;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +34,12 @@ public class RoomService {
 
     @Transactional
     public RoomCreateResponseDto createRoom(RoomCreateRequestDto request, Long memberSeq){
-        Member member = memberRepository.findBySeq(memberSeq).orElseThrow(
-                ()-> new MemberException(ResponseStatus.NOT_FOUND_MEMBER,HttpStatus.BAD_REQUEST)
-        );
+        Member member = memberRepository.getBySeq(memberSeq);
+
+        /**
+         * todo member1 room1
+         */
+
         Room room = Room.create(
                 request.getDestinationLat(),
                 request.getDestinationLng(),
@@ -60,18 +62,16 @@ public class RoomService {
 
     @Transactional
     public JoinRoomResponseDto joinRoom(JoinRoomRequestDto request, Long memberSeq){
-        Member member = memberRepository.findBySeq(memberSeq).orElseThrow(
-                ()-> new MemberException(ResponseStatus.NOT_FOUND_MEMBER,HttpStatus.BAD_REQUEST)
-        );
+        Member member = memberRepository.getBySeq(memberSeq);
         if(member.getRoom() != null){
-            throw new RoomException(ResponseStatus.ALREADY_ROOM_ENCOUNTER,HttpStatus.CONFLICT);
+            throw new RoomException(ResponseStatus.ALREADY_ROOM_ENCOUNTER,HttpStatus.FORBIDDEN);
         }
 
         Room room = roomRepository.findByShareCode(request.getShareCode()).orElseThrow(
-                ()-> new RoomException(ResponseStatus.NOT_FOUND_SHARE_CODE,HttpStatus.UNAUTHORIZED));
+                ()-> new RoomException(ResponseStatus.NOT_FOUND_SHARE_CODE,HttpStatus.FORBIDDEN));
 
         if(room.getStatus() != 1){
-            throw new RoomException(ResponseStatus.CLOSED_ROOM,HttpStatus.CONFLICT);
+            throw new RoomException(ResponseStatus.CLOSED_ROOM,HttpStatus.FORBIDDEN);
         }
 
         member.setRoom(room);
@@ -87,13 +87,15 @@ public class RoomService {
 
     @Transactional
     public void exitRoom(ExitRoomRequestDto request, Long memberSeq){
-        Member member = memberRepository.findBySeq(memberSeq).orElseThrow(
-                ()-> new MemberException(ResponseStatus.NOT_FOUND_MEMBER,HttpStatus.BAD_REQUEST)
-        );
+        Member member = memberRepository.getBySeq(memberSeq);
 
         if(member.getRoom().getSeq() != request.getRoomSeq()){
-            throw new RoomException(ResponseStatus.NOT_FOUND_ROOM_SEQ,HttpStatus.BAD_REQUEST);
+            throw new RoomException(ResponseStatus.NOT_FOUND_ROOM_SEQ,HttpStatus.FORBIDDEN);
         }
+
+        /**
+         * todo room 마지막으로 나가면 room status 변경해야함
+         */
 
         member.setRoom(null);
     }

@@ -140,5 +140,4 @@ class SecurityTest {
         MemberSignUpRequestDto signUpRequestDto = new MemberSignUpRequestDto(identity,password);
         memberService.save(signUpRequestDto);
     }
-
 }

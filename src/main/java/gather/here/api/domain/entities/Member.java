@@ -56,33 +56,36 @@ public class Member extends BaseTime {
         this.isActive = true;
     }
 
-    public static Member create(String id, String password,String encodedPassword){
-        if(password.length()<4 || password.length() >8){
-            throw new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.CONFLICT);
-        }
-
-        if(id.length() != 11){
-            throw new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.CONFLICT);
-        }
-
-        return new Member(id,encodedPassword,getRandomNickname());
+    public static Member create(String id, String password) {
+        return new Member(id, password, getRandomNickname());
     }
-    public void setRoom(Room room){
+
+    public static void assertPassword(String password) {
+        if(password.length()<4 || password.length() >8){
+            throw new MemberException(ResponseStatus.INCORRECT_PASSWORD, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public static void assertMemberIdentity(String identity) {
+        if(identity.length() != 11){
+            throw new MemberException(ResponseStatus.INCORRECT_IDENTITY, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public void setRoom(Room room) {
         this.room = room;
     }
 
     public void setNickname(String newNickname){
         if(StringUtils.isEmpty(newNickname) || newNickname.length()>8){
-            throw new MemberException(ResponseStatus.UNCORRECTED_MEMBER_NICKNAME, HttpStatus.CONFLICT);
+            throw new MemberException(ResponseStatus.UNCORRECTED_MEMBER_NICKNAME, HttpStatus.BAD_REQUEST);
         }
         this.nickname = newNickname;
     }
 
     public void modifyPassword(String password,String encodedPassword){
-        System.out.println("password = " + password);
-        System.out.println("encodedPassword = " + encodedPassword);
             if (password.length() < 4 || password.length() > 8) {
-                throw new MemberException(ResponseStatus.INVALID_IDENTITY_PASSWORD, HttpStatus.CONFLICT);
+                throw new MemberException(ResponseStatus.INCORRECT_PASSWORD, HttpStatus.BAD_REQUEST);
             }
 
             this.password = encodedPassword;
@@ -90,7 +93,7 @@ public class Member extends BaseTime {
 
     public void setImageKey(String imageKey){
         if(StringUtils.isEmpty(imageKey)){
-            throw new MemberException(ResponseStatus.INVALID_INPUT, HttpStatus.CONFLICT);
+            throw new MemberException(ResponseStatus.INCORRECT_IMAGE_KEY, HttpStatus.BAD_REQUEST);
         }
         this.imageKey = imageKey;
     }

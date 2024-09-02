@@ -11,7 +11,6 @@ import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import gather.here.api.global.exception.LocationShareException;
-import gather.here.api.global.exception.MemberException;
 import gather.here.api.global.exception.ResponseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,9 +28,12 @@ public class LocationShareService {
     @Transactional
     public void saveWebSocketAuth(String sessionId,Long memberSeq) {
         Optional<WebSocketAuth> existWebSocketAuth= webSocketAuthRepository.findByMemberSeq(memberSeq);
-
+        /**
+         * 비 정상적인 앱 종료로 인하여 재 요청이 들어올 수 있음
+         * 그래서 member table에 roomSeq가 있으면 기존에 있던 session은 지우고 재 발급을 해줘야함
+         */
         if(existWebSocketAuth.isPresent()){
-            throw new LocationShareException(ResponseStatus.DUPLICATE_WEB_SOCKET_AUTH_MEMBER_SEQ,HttpStatus.CONFLICT);
+            throw new LocationShareException(ResponseStatus.DUPLICATE_WEB_SOCKET_AUTH_MEMBER_SEQ,HttpStatus.FORBIDDEN);
         }
 
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
@@ -39,17 +41,15 @@ public class LocationShareService {
     }
 
     @Transactional
-    public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId){
+    public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
         WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
-        Member member = memberRepository.findBySeq(memberSeq)
-                .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
-
+        Member member = memberRepository.getBySeq(memberSeq);
         Optional<LocationShareEvent> existLocationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq());
 
-        if(existLocationShareEvent.isPresent()){
-            throw new LocationShareException(ResponseStatus.DUPLICATE_LOCATION_SHARE_EVENT_ROOM_SEQ, HttpStatus.CONFLICT);
+        if (existLocationShareEvent.isPresent()) {
+            throw new LocationShareException(ResponseStatus.DUPLICATE_LOCATION_SHARE_EVENT_ROOM_SEQ, HttpStatus.FORBIDDEN);
         }
 
         LocationShareEvent locationShareEvent = new LocationShareEvent()
@@ -71,11 +71,9 @@ public class LocationShareService {
         WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
-        Member member = memberRepository.findBySeq(memberSeq)
-                .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
-
+        Member member = memberRepository.getBySeq(memberSeq);
         LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
-                .orElseThrow(() -> new LocationShareException(ResponseStatus.NOT_FOUND_LOCATION_SHARE_EVENT_BY_ROOM_SEQ,HttpStatus.CONFLICT));
+                .orElseThrow(() -> new LocationShareException(ResponseStatus.NOT_FOUND_LOCATION_SHARE_EVENT,HttpStatus.CONFLICT));
 
         locationShareEvent.addMemberLocations(
                 member.getSeq(),
@@ -95,22 +93,20 @@ public class LocationShareService {
     }
 
     @Transactional
-    public GetLocationShareResponseDto distanceChangeHandleAction(LocationShareEventRequestDto request, String sessionId){
+    public GetLocationShareResponseDto distanceChangeHandleAction(LocationShareEventRequestDto request, String sessionId) {
         WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
 
-        if(webSocketAuth == null){
-            throw new LocationShareException(ResponseStatus.NOT_FOUND_SESSION_ID, HttpStatus.CONFLICT);
+        if (webSocketAuth == null) {
+            throw new LocationShareException(ResponseStatus.NOT_FOUND_SESSION_ID, HttpStatus.FORBIDDEN);
         }
 
         Long memberSeq = webSocketAuth.getMemberSeq();
-        Member member = memberRepository.findBySeq(memberSeq)
-                .orElseThrow(() -> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
-
+        Member member = memberRepository.getBySeq(memberSeq);
         LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
-                .orElseThrow(() -> new LocationShareException(ResponseStatus.NOT_FOUND_ROOM_SEQ ,HttpStatus.CONFLICT));
+                .orElseThrow(() -> new LocationShareException(ResponseStatus.NOT_FOUND_LOCATION_SHARE_EVENT, HttpStatus.FORBIDDEN));
 
-        if(locationShareEvent.getDestinationMemberList() != null && locationShareEvent.getDestinationMemberList().contains(memberSeq)){
-            throw new LocationShareException(ResponseStatus.ALREADY_ARRIVED_MEMBER,HttpStatus.CONFLICT);
+        if (locationShareEvent.getDestinationMemberList() != null && locationShareEvent.getDestinationMemberList().contains(memberSeq)) {
+            throw new LocationShareException(ResponseStatus.ALREADY_ARRIVED_MEMBER, HttpStatus.FORBIDDEN);
         }
 
         locationShareEvent.getMemberLocations()
@@ -130,26 +126,20 @@ public class LocationShareService {
         updateDestinationMember(request.getDestinationDistance(), locationShareEvent, member.getSeq());
         roomRepository.updateLocationShareEvent(locationShareEvent);
 
-        return new GetLocationShareResponseDto(message,locationShareEvent.getSessionIdList());
+        return new GetLocationShareResponseDto(message, locationShareEvent.getSessionIdList());
     }
 
     @Transactional
     public void removeWebSocketAuthAndLocationShareMember(String sessionId){
-        //todo 동시성 제어
-        // todo 메시지를 보낼꺼 ? -> 재실행 처리 어떤식으로 ? ex) session이 살아있는지 확인하는 api를 만들어서 처리?
         WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
 
         if(webSocketAuth == null){
-            throw new LocationShareException(ResponseStatus.NOT_FOUND_SESSION_ID, HttpStatus.CONFLICT);
+            throw new LocationShareException(ResponseStatus.NOT_FOUND_SESSION_ID, HttpStatus.FORBIDDEN);
         }
-
         webSocketAuthRepository.deleteByMemberSeq(webSocketAuth.getMemberSeq());
-
-        Member member = memberRepository.findBySeq(webSocketAuth.getMemberSeq())
-                .orElseThrow(()-> new MemberException(ResponseStatus.UNCORRECTED_MEMBER_SEQ, HttpStatus.CONFLICT));
-
+        Member member = memberRepository.getBySeq(webSocketAuth.getMemberSeq());
         LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
-                .orElseThrow(()-> new LocationShareException(ResponseStatus.NOT_FOUND_ROOM_SEQ, HttpStatus.CONFLICT));
+                .orElseThrow(()-> new LocationShareException(ResponseStatus.NOT_FOUND_LOCATION_SHARE_EVENT, HttpStatus.FORBIDDEN));
 
         locationShareEvent.removeMemberLocation(member.getSeq());
         locationShareEvent.removeDestinationMemberList(member.getSeq());

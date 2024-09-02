@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface MemberRepository {
      Member save(Member member);
-     Optional<Member> findByIdentity(String identity);
-     Optional<Member> findBySeq(Long memberSeq);
+     Optional<Member> findByIdentityAndIsActiveTrue(String identity);
+     Member getBySeq(Long memberSeq);
 }
