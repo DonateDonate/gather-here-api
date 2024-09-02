@@ -9,7 +9,6 @@ import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.Room;
 import gather.here.api.domain.entities.WebSocketAuth;
-import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
@@ -30,7 +29,6 @@ public class RoomService {
     private final MemberRepository memberRepository;
     private final RoomRepository roomRepository;
     private final WebSocketAuthRepository webSocketAuthRepository;
-    private final FileFactory fileFactory;
 
     @Transactional
     public RoomCreateResponseDto createRoom(RoomCreateRequestDto request, Long memberSeq){
@@ -67,12 +65,7 @@ public class RoomService {
             throw new RoomException(ResponseStatus.ALREADY_ROOM_ENCOUNTER,HttpStatus.FORBIDDEN);
         }
 
-        Room room = roomRepository.findByShareCode(request.getShareCode()).orElseThrow(
-                ()-> new RoomException(ResponseStatus.NOT_FOUND_SHARE_CODE,HttpStatus.FORBIDDEN));
-
-        if(room.getStatus() != 1){
-            throw new RoomException(ResponseStatus.CLOSED_ROOM,HttpStatus.FORBIDDEN);
-        }
+        Room room = roomRepository.getByShareCode(request.getShareCode());
 
         member.setRoom(room);
         return new JoinRoomResponseDto(
@@ -89,7 +82,7 @@ public class RoomService {
     public void exitRoom(ExitRoomRequestDto request, Long memberSeq){
         Member member = memberRepository.getBySeq(memberSeq);
 
-        if(member.getRoom().getSeq() != request.getRoomSeq()){
+        if(!member.getRoom().getSeq().equals(request.getRoomSeq())){
             throw new RoomException(ResponseStatus.NOT_FOUND_ROOM_SEQ,HttpStatus.FORBIDDEN);
         }
 

@@ -2,11 +2,13 @@ package gather.here.api.infra.persistence;
 
 import gather.here.api.domain.entities.WebSocketAuth;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
+import gather.here.api.global.exception.ResponseStatus;
+import gather.here.api.global.exception.WebSocketAuthException;
 import gather.here.api.infra.persistence.redis.WebSocketAuthRedisRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 public class WebSocketAuthRepositoryImpl implements WebSocketAuthRepository {
@@ -17,8 +19,10 @@ public class WebSocketAuthRepositoryImpl implements WebSocketAuthRepository {
     }
 
     @Override
-    public Optional<WebSocketAuth> findByMemberSeq(Long memberSeq) {
-        return webSocketAuthRedisRepository.findById(memberSeq);
+    public WebSocketAuth getByMemberSeq(Long memberSeq) {
+        return webSocketAuthRedisRepository.findById(memberSeq).orElseThrow(
+                () -> new WebSocketAuthException(ResponseStatus.NOT_FOUND_ROOM_SEQ , HttpStatus.FORBIDDEN)
+        );
     }
 
     @Override
@@ -27,8 +31,12 @@ public class WebSocketAuthRepositoryImpl implements WebSocketAuthRepository {
     }
 
     @Override
-    public WebSocketAuth findBySessionId(String sessionId) {
-        return webSocketAuthRedisRepository.findBySessionId(sessionId);
+    public WebSocketAuth getBySessionId(String sessionId) {
+        WebSocketAuth webSocketAuth = webSocketAuthRedisRepository.findBySessionId(sessionId);
+        if(webSocketAuth == null){
+            throw new WebSocketAuthException(ResponseStatus.NOT_FOUND_SESSION_ID, HttpStatus.FORBIDDEN);
+        }
+        return webSocketAuth;
     }
 
     @Override

@@ -3,9 +3,12 @@ package gather.here.api.infra.persistence;
 import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Room;
 import gather.here.api.domain.repositories.RoomRepository;
+import gather.here.api.global.exception.LocationShareException;
+import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.infra.persistence.jpa.RoomJpaRepository;
 import gather.here.api.infra.persistence.redis.LocationShareEventRedisRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 import java.util.Optional;
 
@@ -20,9 +23,14 @@ public class RoomRepositoryImpl implements RoomRepository {
         roomJpaRepository.save(room);
     }
 
+
     @Override
-    public Optional<Room> findByShareCode(String shareCode){
-        return Optional.ofNullable(roomJpaRepository.findByShareCode(shareCode));
+    public Room getByShareCode(String shareCode) {
+        Room room = roomJpaRepository.findByShareCode(shareCode);
+        if(room == null){
+            throw new LocationShareException(ResponseStatus.NOT_FOUND_SHARE_CODE, HttpStatus.FORBIDDEN);
+        }
+        return room;
     }
 
     @Override
@@ -33,6 +41,13 @@ public class RoomRepositoryImpl implements RoomRepository {
     @Override
     public Optional<LocationShareEvent> findLocationShareEventByRoomSeq(Long roomSeq) {
         return locationShareEventRedisRepository.findById(roomSeq);
+    }
+
+    @Override
+    public LocationShareEvent getLocationShareEventByRoomSeq(Long roomSeq) {
+        return locationShareEventRedisRepository.findById(roomSeq).orElseThrow(
+                () -> new LocationShareException(ResponseStatus.NOT_FOUND_LOCATION_SHARE_EVENT,HttpStatus.FORBIDDEN)
+        );
     }
 
     @Override

@@ -35,7 +35,6 @@ public enum ResponseStatus {
     NOT_FOUND_SESSION_ID(3105,"등록되지 않은 sessionId입니다"),
     ALREADY_ARRIVED_MEMBER(3106,"이미 목적지에 도착한 member입니다"),
 
-
     /**
      *  8xxx : general exception
      */

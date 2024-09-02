@@ -27,14 +27,15 @@ public class LocationShareService {
 
     @Transactional
     public void saveWebSocketAuth(String sessionId,Long memberSeq) {
-        Optional<WebSocketAuth> existWebSocketAuth= webSocketAuthRepository.findByMemberSeq(memberSeq);
+        //WebSocketAuth existWebSocketAuth= webSocketAuthRepository.getByMemberSeq(memberSeq);
         /**
          * 비 정상적인 앱 종료로 인하여 재 요청이 들어올 수 있음
+         * room이 살아있고 member room이 값이 있으면
          * 그래서 member table에 roomSeq가 있으면 기존에 있던 session은 지우고 재 발급을 해줘야함
          */
-        if(existWebSocketAuth.isPresent()){
-            throw new LocationShareException(ResponseStatus.DUPLICATE_WEB_SOCKET_AUTH_MEMBER_SEQ,HttpStatus.FORBIDDEN);
-        }
+//        if(existWebSocketAuth.isPresent()){
+//            throw new LocationShareException(ResponseStatus.DUPLICATE_WEB_SOCKET_AUTH_MEMBER_SEQ,HttpStatus.FORBIDDEN);
+//        }
 
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
         webSocketAuthRepository.save(webSocketAuth);
@@ -42,7 +43,7 @@ public class LocationShareService {
 
     @Transactional
     public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
-        WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
+        WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
         Member member = memberRepository.getBySeq(memberSeq);
@@ -68,12 +69,11 @@ public class LocationShareService {
 
     @Transactional
     public GetLocationShareResponseDto joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId){
-        WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
+        WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
         Member member = memberRepository.getBySeq(memberSeq);
-        LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
-                .orElseThrow(() -> new LocationShareException(ResponseStatus.NOT_FOUND_LOCATION_SHARE_EVENT,HttpStatus.CONFLICT));
+        LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
 
         locationShareEvent.addMemberLocations(
                 member.getSeq(),
@@ -94,24 +94,15 @@ public class LocationShareService {
 
     @Transactional
     public GetLocationShareResponseDto distanceChangeHandleAction(LocationShareEventRequestDto request, String sessionId) {
-        WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
-
-        if (webSocketAuth == null) {
-            throw new LocationShareException(ResponseStatus.NOT_FOUND_SESSION_ID, HttpStatus.FORBIDDEN);
-        }
-
+        WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
         Long memberSeq = webSocketAuth.getMemberSeq();
         Member member = memberRepository.getBySeq(memberSeq);
-        LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
-                .orElseThrow(() -> new LocationShareException(ResponseStatus.NOT_FOUND_LOCATION_SHARE_EVENT, HttpStatus.FORBIDDEN));
-
+        LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
         if (locationShareEvent.getDestinationMemberList() != null && locationShareEvent.getDestinationMemberList().contains(memberSeq)) {
             throw new LocationShareException(ResponseStatus.ALREADY_ARRIVED_MEMBER, HttpStatus.FORBIDDEN);
         }
-
         locationShareEvent.getMemberLocations()
                 .removeIf(memberLocation -> memberLocation.getSessionId().equals(sessionId));
-
         locationShareEvent.addMemberLocations(
                 member.getSeq(),
                 sessionId,
@@ -131,15 +122,10 @@ public class LocationShareService {
 
     @Transactional
     public void removeWebSocketAuthAndLocationShareMember(String sessionId){
-        WebSocketAuth webSocketAuth = webSocketAuthRepository.findBySessionId(sessionId);
-
-        if(webSocketAuth == null){
-            throw new LocationShareException(ResponseStatus.NOT_FOUND_SESSION_ID, HttpStatus.FORBIDDEN);
-        }
+        WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
         webSocketAuthRepository.deleteByMemberSeq(webSocketAuth.getMemberSeq());
         Member member = memberRepository.getBySeq(webSocketAuth.getMemberSeq());
-        LocationShareEvent locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq())
-                .orElseThrow(()-> new LocationShareException(ResponseStatus.NOT_FOUND_LOCATION_SHARE_EVENT, HttpStatus.FORBIDDEN));
+        LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
 
         locationShareEvent.removeMemberLocation(member.getSeq());
         locationShareEvent.removeDestinationMemberList(member.getSeq());
