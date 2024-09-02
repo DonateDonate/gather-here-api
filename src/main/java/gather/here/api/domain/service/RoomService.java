@@ -1,4 +1,4 @@
-package gather.here.api.application.service;
+package gather.here.api.domain.service;
 
 import gather.here.api.application.dto.request.ExitRoomRequestDto;
 import gather.here.api.application.dto.request.JoinRoomRequestDto;
@@ -33,11 +33,6 @@ public class RoomService {
     @Transactional
     public RoomCreateResponseDto createRoom(RoomCreateRequestDto request, Long memberSeq){
         Member member = memberRepository.getBySeq(memberSeq);
-
-        /**
-         * todo member1 room1
-         */
-
         Room room = Room.create(
                 request.getDestinationLat(),
                 request.getDestinationLng(),
@@ -64,7 +59,6 @@ public class RoomService {
         if(member.getRoom() != null){
             throw new RoomException(ResponseStatus.ALREADY_ROOM_ENCOUNTER,HttpStatus.FORBIDDEN);
         }
-
         Room room = roomRepository.getByShareCode(request.getShareCode());
 
         member.setRoom(room);
@@ -79,18 +73,19 @@ public class RoomService {
     }
 
     @Transactional
-    public void exitRoom(ExitRoomRequestDto request, Long memberSeq){
+    public void exitRoom(ExitRoomRequestDto request, Long memberSeq) {
+
         Member member = memberRepository.getBySeq(memberSeq);
 
-        if(!member.getRoom().getSeq().equals(request.getRoomSeq())){
-            throw new RoomException(ResponseStatus.NOT_FOUND_ROOM_SEQ,HttpStatus.FORBIDDEN);
+        if (!member.getRoom().getSeq().equals(request.getRoomSeq())) {
+            throw new RoomException(ResponseStatus.NOT_FOUND_ROOM_SEQ, HttpStatus.FORBIDDEN);
         }
-
-        /**
-         * todo room 마지막으로 나가면 room status 변경해야함
-         */
-
-        member.setRoom(null);
+        List<Member> memberList = member.getRoom().getMemberList();
+        if (memberList.size() == 1 && memberList.get(0).getSeq() == memberSeq) {
+            Room room = member.getRoom();
+            room.closeRoom();
+        }
+        member.exitRoom();
     }
 
     public List<WebSocketAuth> findByAllWebSocketAuth(){

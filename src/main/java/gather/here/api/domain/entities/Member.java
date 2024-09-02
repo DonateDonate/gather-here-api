@@ -76,6 +76,10 @@ public class Member extends BaseTime {
         this.room = room;
     }
 
+    public void exitRoom(){
+        this.room = null;
+    }
+
     public void setNickname(String newNickname){
         if(StringUtils.isEmpty(newNickname) || newNickname.length()>8){
             throw new MemberException(ResponseStatus.UNCORRECTED_MEMBER_NICKNAME, HttpStatus.BAD_REQUEST);

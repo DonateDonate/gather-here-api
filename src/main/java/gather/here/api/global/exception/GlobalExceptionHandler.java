@@ -22,7 +22,6 @@ public class GlobalExceptionHandler   {
 
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<Object> handleBusinessException(BusinessException e) {
-        e.printStackTrace();
         log.error("[BusinessException] code: {}, message: {}",e.getResponseStatus().getCode(),e.getResponseStatus().getMessage());
         HttpStatus httpStatus = e.getHttpStatus();
         ResponseStatus responseStatus = e.getResponseStatus();

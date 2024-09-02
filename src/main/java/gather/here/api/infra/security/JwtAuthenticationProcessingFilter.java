@@ -1,7 +1,7 @@
 package gather.here.api.infra.security;
 
 import gather.here.api.application.dto.response.TokenResponseDto;
-import gather.here.api.application.service.TokenService;
+import gather.here.api.domain.service.TokenService;
 import gather.here.api.global.exception.AuthException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;

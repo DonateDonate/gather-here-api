@@ -1,6 +1,5 @@
 package gather.here.api.infra.config;
 
-import gather.here.api.application.service.*;
 import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.AppInfoRepository;
 import gather.here.api.domain.repositories.MemberRepository;
@@ -9,6 +8,7 @@ import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import gather.here.api.domain.security.AccessTokenFactory;
 import gather.here.api.domain.security.CryptoFactory;
 import gather.here.api.domain.security.RefreshTokenFactory;
+import gather.here.api.domain.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

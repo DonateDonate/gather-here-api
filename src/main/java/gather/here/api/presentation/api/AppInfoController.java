@@ -1,7 +1,7 @@
 package gather.here.api.presentation.api;
 
 import gather.here.api.application.dto.response.GetAppInfoResponseDto;
-import gather.here.api.application.service.AppInfoService;
+import gather.here.api.domain.service.AppInfoService;
 import gather.here.api.domain.entities.AppInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

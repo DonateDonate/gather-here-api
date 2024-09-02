@@ -1,4 +1,4 @@
-package gather.here.api.application.service;
+package gather.here.api.domain.service;
 
 import gather.here.api.Utils.Utils;
 import gather.here.api.application.dto.request.MemberSignUpRequestDto;

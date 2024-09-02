@@ -88,9 +88,14 @@ public class Room extends BaseTime {
         return room;
     }
 
+    public void closeRoom(){
+        this.status = 9;
+    }
+
     private static String makeShareCode(){
         return String.valueOf(UUID.randomUUID()).substring(0,4);
     }
+
 
     public void addMemberList(Member member){
         this.memberList.add(member);

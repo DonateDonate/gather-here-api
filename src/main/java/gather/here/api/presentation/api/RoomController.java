@@ -5,7 +5,7 @@ import gather.here.api.application.dto.request.JoinRoomRequestDto;
 import gather.here.api.application.dto.request.RoomCreateRequestDto;
 import gather.here.api.application.dto.response.JoinRoomResponseDto;
 import gather.here.api.application.dto.response.RoomCreateResponseDto;
-import gather.here.api.application.service.RoomService;
+import gather.here.api.domain.service.RoomService;
 import gather.here.api.domain.security.CustomPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

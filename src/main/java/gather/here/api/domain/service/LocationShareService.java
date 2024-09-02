@@ -1,4 +1,4 @@
-package gather.here.api.application.service;
+package gather.here.api.domain.service;
 
 import gather.here.api.application.dto.request.LocationShareEventRequestDto;
 import gather.here.api.application.dto.response.GetLocationShareResponseDto;
@@ -12,6 +12,7 @@ import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.ResponseStatus;
+import gather.here.api.global.exception.RoomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,17 +27,15 @@ public class LocationShareService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public void saveWebSocketAuth(String sessionId,Long memberSeq) {
-        //WebSocketAuth existWebSocketAuth= webSocketAuthRepository.getByMemberSeq(memberSeq);
-        /**
-         * 비 정상적인 앱 종료로 인하여 재 요청이 들어올 수 있음
-         * room이 살아있고 member room이 값이 있으면
-         * 그래서 member table에 roomSeq가 있으면 기존에 있던 session은 지우고 재 발급을 해줘야함
-         */
-//        if(existWebSocketAuth.isPresent()){
-//            throw new LocationShareException(ResponseStatus.DUPLICATE_WEB_SOCKET_AUTH_MEMBER_SEQ,HttpStatus.FORBIDDEN);
-//        }
-
+    public void saveWebSocketAuth(String sessionId, Long memberSeq) {
+        Member member = memberRepository.getBySeq(memberSeq);
+        if(member.getRoom() == null || member.getRoom().getStatus() == 9){
+            throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
+        }
+        Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
+        if(existWebSocketAuth.isPresent()){
+            webSocketAuthRepository.deleteByMemberSeq(memberSeq);
+        }
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
         webSocketAuthRepository.save(webSocketAuth);
     }
@@ -68,7 +67,7 @@ public class LocationShareService {
     }
 
     @Transactional
-    public GetLocationShareResponseDto joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId){
+    public GetLocationShareResponseDto joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
@@ -89,7 +88,7 @@ public class LocationShareService {
 
         LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
 
-        return new GetLocationShareResponseDto(message,locationShareEvent.getSessionIdList());
+        return new GetLocationShareResponseDto(message, locationShareEvent.getSessionIdList());
     }
 
     @Transactional
@@ -121,7 +120,7 @@ public class LocationShareService {
     }
 
     @Transactional
-    public void removeWebSocketAuthAndLocationShareMember(String sessionId){
+    public void removeWebSocketAuthAndLocationShareMember(String sessionId) {
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
         webSocketAuthRepository.deleteByMemberSeq(webSocketAuth.getMemberSeq());
         Member member = memberRepository.getBySeq(webSocketAuth.getMemberSeq());
@@ -148,6 +147,5 @@ public class LocationShareService {
                 locationShareEvent.setBronzeMemberSeq(memberSeq);
             }
         }
-
     }
 }

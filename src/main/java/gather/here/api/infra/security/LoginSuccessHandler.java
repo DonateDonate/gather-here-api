@@ -1,6 +1,6 @@
 package gather.here.api.infra.security;
 
-import gather.here.api.application.service.TokenService;
+import gather.here.api.domain.service.TokenService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

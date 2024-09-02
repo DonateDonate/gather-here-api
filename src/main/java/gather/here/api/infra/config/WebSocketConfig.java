@@ -1,7 +1,7 @@
 package gather.here.api.infra.config;
 
-import gather.here.api.application.service.LocationShareService;
-import gather.here.api.application.service.TokenService;
+import gather.here.api.domain.service.LocationShareService;
+import gather.here.api.domain.service.TokenService;
 import gather.here.api.infra.socket.CustomWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

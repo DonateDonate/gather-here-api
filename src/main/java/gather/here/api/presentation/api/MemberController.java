@@ -4,7 +4,7 @@ import gather.here.api.application.dto.request.ModifyNicknameRequestDto;
 import gather.here.api.application.dto.request.ModifyPasswordRequestDto;
 import gather.here.api.application.dto.response.GetMemberResponseDto;
 import gather.here.api.application.dto.response.UpdateImageResponseDto;
-import gather.here.api.application.service.MemberService;
+import gather.here.api.domain.service.MemberService;
 import gather.here.api.domain.security.CustomPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

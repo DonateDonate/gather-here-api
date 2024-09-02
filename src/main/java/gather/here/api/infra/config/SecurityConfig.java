@@ -1,7 +1,7 @@
 package gather.here.api.infra.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gather.here.api.application.service.TokenService;
+import gather.here.api.domain.service.TokenService;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.security.UserDetailServiceImpl;
 import gather.here.api.infra.crypto.CustomPasswordEncoder;

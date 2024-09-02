@@ -6,11 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gather.here.api.application.dto.request.LocationShareEventRequestDto;
 import gather.here.api.application.dto.response.GetLocationShareResponseDto;
 import gather.here.api.application.dto.response.TokenResponseDto;
-import gather.here.api.application.service.LocationShareService;
-import gather.here.api.application.service.TokenService;
+import gather.here.api.domain.service.LocationShareService;
+import gather.here.api.domain.service.TokenService;
 import gather.here.api.domain.security.CustomPrincipal;
 import gather.here.api.global.exception.BusinessException;
-import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.util.JsonUtil;
 import io.jsonwebtoken.JwtException;
@@ -53,7 +52,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
             } else {
                 session.close(CloseStatus.NOT_ACCEPTABLE.withReason(String.valueOf(ResponseStatus.EMPTY_ACCESS_TOKEN.getCode())));
             }
-        } catch (LocationShareException e) {
+        } catch (BusinessException e) {
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason(String.valueOf(e.getResponseStatus().getCode())));
         }catch (JwtException e ){
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason(String.valueOf(ResponseStatus.INVALID_ACCESS_TOKEN.getCode())));
@@ -155,4 +154,6 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
             e.printStackTrace();
         }
     }
+
+
 }

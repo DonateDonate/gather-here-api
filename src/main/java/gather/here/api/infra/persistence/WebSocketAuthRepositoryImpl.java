@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class WebSocketAuthRepositoryImpl implements WebSocketAuthRepository {
@@ -18,11 +19,8 @@ public class WebSocketAuthRepositoryImpl implements WebSocketAuthRepository {
         webSocketAuthRedisRepository.save(webSocketAuth);
     }
 
-    @Override
-    public WebSocketAuth getByMemberSeq(Long memberSeq) {
-        return webSocketAuthRedisRepository.findById(memberSeq).orElseThrow(
-                () -> new WebSocketAuthException(ResponseStatus.NOT_FOUND_ROOM_SEQ , HttpStatus.FORBIDDEN)
-        );
+    public Optional<WebSocketAuth> findMemberSeq(Long memberSeq) {
+        return webSocketAuthRedisRepository.findById(memberSeq);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package gather.here.api.presentation.api;
 
 import gather.here.api.application.dto.request.RoomCreateRequestDto;
-import gather.here.api.application.service.RoomService;
+import gather.here.api.domain.service.RoomService;
 import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.WebSocketAuth;
 import jakarta.validation.Valid;
