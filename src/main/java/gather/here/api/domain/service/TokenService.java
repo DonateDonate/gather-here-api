@@ -1,6 +1,6 @@
 package gather.here.api.domain.service;
 
-import gather.here.api.application.dto.response.TokenResponseDto;
+import gather.here.api.domain.service.dto.response.TokenResponseDto;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.security.AccessTokenFactory;
 import gather.here.api.domain.security.RefreshTokenFactory;

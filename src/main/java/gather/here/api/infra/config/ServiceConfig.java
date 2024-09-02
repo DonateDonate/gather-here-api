@@ -1,5 +1,6 @@
 package gather.here.api.infra.config;
 
+import gather.here.api.application.service.SplashService;
 import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.AppInfoRepository;
 import gather.here.api.domain.repositories.MemberRepository;
@@ -57,4 +58,8 @@ public class ServiceConfig {
         return new LocationShareService(webSocketAuthRepository,memberRepository,fileFactory,roomRepository);
     }
 
+    @Bean
+    public SplashService splashService(AppInfoService appInfoService, MemberService memberService) {
+        return new SplashService(appInfoService,memberService);
+    }
 }

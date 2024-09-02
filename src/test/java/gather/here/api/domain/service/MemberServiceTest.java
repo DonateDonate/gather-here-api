@@ -1,10 +1,10 @@
 package gather.here.api.domain.service;
 
 import gather.here.api.Utils.Utils;
-import gather.here.api.application.dto.request.MemberSignUpRequestDto;
-import gather.here.api.application.dto.request.ModifyNicknameRequestDto;
-import gather.here.api.application.dto.request.ModifyPasswordRequestDto;
-import gather.here.api.application.dto.response.GetMemberResponseDto;
+import gather.here.api.domain.service.dto.request.MemberSignUpRequestDto;
+import gather.here.api.domain.service.dto.request.ModifyNicknameRequestDto;
+import gather.here.api.domain.service.dto.request.ModifyPasswordRequestDto;
+import gather.here.api.domain.service.dto.response.GetMemberResponseDto;
 import gather.here.api.domain.dobules.CryptoFactoryStub;
 import gather.here.api.domain.dobules.FileFactoryStub;
 import gather.here.api.domain.entities.Member;
@@ -105,7 +105,7 @@ class MemberServiceTest {
     public void getMemberContainImageUrlTest() {
         //Arrange
         String id = createMember();
-        var sut = new MemberService(
+        MemberService sut = new MemberService(
                 memberRepository,
                 new CryptoFactoryStub(),
                 new FileFactoryStub()
@@ -161,7 +161,6 @@ class MemberServiceTest {
     @Test
     public void successCancelAccountTest(){
         //arrange
-        String member2 = createMember();
         MemberService sut = memberService;
         String memberIdentity = createMember();
         Member member = memberRepository.findByIdentityAndIsActiveTrue(memberIdentity).get();

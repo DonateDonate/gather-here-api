@@ -1,10 +1,10 @@
 package gather.here.api.domain.service;
 
-import gather.here.api.application.dto.request.MemberSignUpRequestDto;
-import gather.here.api.application.dto.request.ModifyNicknameRequestDto;
-import gather.here.api.application.dto.request.ModifyPasswordRequestDto;
-import gather.here.api.application.dto.response.GetMemberResponseDto;
-import gather.here.api.application.dto.response.UpdateImageResponseDto;
+import gather.here.api.domain.service.dto.request.MemberSignUpRequestDto;
+import gather.here.api.domain.service.dto.request.ModifyNicknameRequestDto;
+import gather.here.api.domain.service.dto.request.ModifyPasswordRequestDto;
+import gather.here.api.domain.service.dto.response.GetMemberResponseDto;
+import gather.here.api.domain.service.dto.response.UpdateImageResponseDto;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.MemberRepository;
@@ -84,6 +84,11 @@ public class MemberService {
         member.setImageKey(imageKey);
         return new UpdateImageResponseDto(fileFactory.getImageUrl(imageKey));
     }
-
-
+    public boolean isJoinRoom(Long memberSeq) {
+        Member member = memberRepository.getBySeq(memberSeq);
+        if (member.getRoom() != null && member.getRoom().getStatus() == 1) {
+            return true;
+        }
+        return false;
+    }
 }

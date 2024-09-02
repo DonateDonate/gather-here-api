@@ -1,10 +1,5 @@
 package gather.here.api.domain.service;
 
-import gather.here.api.application.dto.request.ExitRoomRequestDto;
-import gather.here.api.application.dto.request.JoinRoomRequestDto;
-import gather.here.api.application.dto.request.RoomCreateRequestDto;
-import gather.here.api.application.dto.response.JoinRoomResponseDto;
-import gather.here.api.application.dto.response.RoomCreateResponseDto;
 import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.Room;
@@ -12,6 +7,11 @@ import gather.here.api.domain.entities.WebSocketAuth;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
+import gather.here.api.domain.service.dto.request.ExitRoomRequestDto;
+import gather.here.api.domain.service.dto.request.JoinRoomRequestDto;
+import gather.here.api.domain.service.dto.request.RoomCreateRequestDto;
+import gather.here.api.domain.service.dto.response.JoinRoomResponseDto;
+import gather.here.api.domain.service.dto.response.RoomCreateResponseDto;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.RoomException;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class RoomService {
     private final WebSocketAuthRepository webSocketAuthRepository;
 
     @Transactional
-    public RoomCreateResponseDto createRoom(RoomCreateRequestDto request, Long memberSeq){
+    public RoomCreateResponseDto createRoom(RoomCreateRequestDto request, Long memberSeq) {
         Member member = memberRepository.getBySeq(memberSeq);
         Room room = Room.create(
                 request.getDestinationLat(),
@@ -54,10 +54,10 @@ public class RoomService {
     }
 
     @Transactional
-    public JoinRoomResponseDto joinRoom(JoinRoomRequestDto request, Long memberSeq){
+    public JoinRoomResponseDto joinRoom(JoinRoomRequestDto request, Long memberSeq) {
         Member member = memberRepository.getBySeq(memberSeq);
-        if(member.getRoom() != null){
-            throw new RoomException(ResponseStatus.ALREADY_ROOM_ENCOUNTER,HttpStatus.FORBIDDEN);
+        if (member.getRoom() != null) {
+            throw new RoomException(ResponseStatus.ALREADY_ROOM_ENCOUNTER, HttpStatus.FORBIDDEN);
         }
         Room room = roomRepository.getByShareCode(request.getShareCode());
 
@@ -88,7 +88,7 @@ public class RoomService {
         member.exitRoom();
     }
 
-    public List<WebSocketAuth> findByAllWebSocketAuth(){
+    public List<WebSocketAuth> findByAllWebSocketAuth() {
         return webSocketAuthRepository.findAll();
     }
 
@@ -98,3 +98,4 @@ public class RoomService {
                 .collect(Collectors.toList());
     }
 }
+

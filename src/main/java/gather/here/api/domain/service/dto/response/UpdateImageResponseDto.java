@@ -1,4 +1,4 @@
-package gather.here.api.application.dto.response;
+package gather.here.api.domain.service.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

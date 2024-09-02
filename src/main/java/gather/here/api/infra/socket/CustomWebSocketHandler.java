@@ -3,9 +3,9 @@ package gather.here.api.infra.socket;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gather.here.api.application.dto.request.LocationShareEventRequestDto;
-import gather.here.api.application.dto.response.GetLocationShareResponseDto;
-import gather.here.api.application.dto.response.TokenResponseDto;
+import gather.here.api.domain.service.dto.request.LocationShareEventRequestDto;
+import gather.here.api.domain.service.dto.response.GetLocationShareResponseDto;
+import gather.here.api.domain.service.dto.response.TokenResponseDto;
 import gather.here.api.domain.service.LocationShareService;
 import gather.here.api.domain.service.TokenService;
 import gather.here.api.domain.security.CustomPrincipal;

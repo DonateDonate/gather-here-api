@@ -1,4 +1,4 @@
-package gather.here.api.application.dto.request;
+package gather.here.api.domain.service.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -6,11 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Schema(title = "member sign up dto")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
-public class MemberSignUpRequestDto {
+@NoArgsConstructor
+@AllArgsConstructor
+public class MemberSignInRequestDto {
     @NotNull(message = "필수 항목입니다.")
     @Schema(description = "Member ID (11자리 핸드폰번호 '-' 제외)", example = "01012345678")
     private String identity;

@@ -1,7 +1,7 @@
 package gather.here.api.presentation.api;
 
-import gather.here.api.application.dto.request.MemberSignInRequestDto;
-import gather.here.api.application.dto.request.MemberSignUpRequestDto;
+import gather.here.api.domain.service.dto.request.MemberSignInRequestDto;
+import gather.here.api.domain.service.dto.request.MemberSignUpRequestDto;
 import gather.here.api.domain.service.MemberService;
 import gather.here.api.domain.security.CustomPrincipal;
 import io.swagger.v3.oas.annotations.Operation;

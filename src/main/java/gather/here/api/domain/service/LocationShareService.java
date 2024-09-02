@@ -1,8 +1,8 @@
 package gather.here.api.domain.service;
 
-import gather.here.api.application.dto.request.LocationShareEventRequestDto;
-import gather.here.api.application.dto.response.GetLocationShareResponseDto;
-import gather.here.api.application.dto.response.LocationShareMessage;
+import gather.here.api.domain.service.dto.request.LocationShareEventRequestDto;
+import gather.here.api.domain.service.dto.response.GetLocationShareResponseDto;
+import gather.here.api.domain.service.dto.response.LocationShareMessage;
 import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.WebSocketAuth;

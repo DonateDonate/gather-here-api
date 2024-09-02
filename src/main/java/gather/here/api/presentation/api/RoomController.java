@@ -1,10 +1,10 @@
 package gather.here.api.presentation.api;
 
-import gather.here.api.application.dto.request.ExitRoomRequestDto;
-import gather.here.api.application.dto.request.JoinRoomRequestDto;
-import gather.here.api.application.dto.request.RoomCreateRequestDto;
-import gather.here.api.application.dto.response.JoinRoomResponseDto;
-import gather.here.api.application.dto.response.RoomCreateResponseDto;
+import gather.here.api.domain.service.dto.request.ExitRoomRequestDto;
+import gather.here.api.domain.service.dto.request.JoinRoomRequestDto;
+import gather.here.api.domain.service.dto.request.RoomCreateRequestDto;
+import gather.here.api.domain.service.dto.response.JoinRoomResponseDto;
+import gather.here.api.domain.service.dto.response.RoomCreateResponseDto;
 import gather.here.api.domain.service.RoomService;
 import gather.here.api.domain.security.CustomPrincipal;
 import io.swagger.v3.oas.annotations.Operation;

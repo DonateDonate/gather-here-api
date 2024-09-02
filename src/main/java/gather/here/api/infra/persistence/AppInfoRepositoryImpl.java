@@ -10,7 +10,7 @@ public class AppInfoRepositoryImpl implements AppInfoRepository {
 
     private final AppInfoJpaRepository appInfoJpaRepository;
     @Override
-    public AppInfo findByLatestAppInfo() {
+    public AppInfo getByLatestAppInfo() {
         return appInfoJpaRepository.findTop1ByOrderBySeqDesc();
     }
 
