@@ -44,7 +44,8 @@ public class TokenService {
     private final RefreshTokenFactory refreshTokenFactory;
     private final MemberRepository memberRepository;
 
-    public String accessTokenGenerate(Authentication authentication){
+    public String accessTokenGenerate(Authentication authentication) {
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String identity = userDetails.getUsername();
 
@@ -52,12 +53,13 @@ public class TokenService {
                 .orElseThrow(() -> new MemberException(ResponseStatus.NOT_FOUND_MEMBER, HttpStatus.FORBIDDEN))
                 .getSeq();
 
-        String accessToken = accessTokenFactory.generate(identity,memberSeq, getKey(), ACCESS_TOKEN_MINUTE);
-        return withTokenPrefix(accessToken,ACCESS_TOKEN_PREFIX);
+        String accessToken = accessTokenFactory.generate(identity, memberSeq, getKey(), ACCESS_TOKEN_MINUTE);
+        return withTokenPrefix(accessToken, ACCESS_TOKEN_PREFIX);
     }
 
-    public Authentication accessTokenValidate(String accessTokenTokenWithPrefix){
-        return accessTokenFactory.validate(accessTokenTokenWithPrefix,getKey());
+    public Authentication accessTokenValidate(String accessTokenTokenWithPrefix) {
+
+        return accessTokenFactory.validate(accessTokenTokenWithPrefix, getKey());
     }
 
     @Transactional
@@ -69,10 +71,11 @@ public class TokenService {
         return withTokenPrefix(refreshToken,REFRESH_TOKEN_PREFIX);
     }
 
-    public TokenResponseDto reissue(String refreshTokenWithPrefix){
-        String refreshToken = removePrefix(refreshTokenWithPrefix,REFRESH_TOKEN_PREFIX);
+    public TokenResponseDto reissue(String refreshTokenWithPrefix) {
+
+        String refreshToken = removePrefix(refreshTokenWithPrefix, REFRESH_TOKEN_PREFIX);
         Authentication authentication = refreshTokenFactory.validate(refreshTokenWithPrefix, getKey());
-        String identity =  authentication.getName();
+        String identity = authentication.getName();
 
         Long memberSeq = memberRepository.findByIdentityAndIsActiveTrue(identity)
                 .orElseThrow(() -> new MemberException(ResponseStatus.INCORRECT_ACCOUNT, HttpStatus.FORBIDDEN))
@@ -80,12 +83,12 @@ public class TokenService {
 
         Optional<String> savedRefresh = refreshTokenFactory.find(identity);
 
-        if(savedRefresh.isEmpty() || !refreshToken.equals(savedRefresh.get())){
+        if (savedRefresh.isEmpty() || !refreshToken.equals(savedRefresh.get())) {
             refreshTokenFactory.delete(identity);
-            throw new AuthException(ResponseStatus.INVALID_REFRESH_TOKEN,HttpStatus.UNAUTHORIZED);
+            throw new AuthException(ResponseStatus.INVALID_REFRESH_TOKEN, HttpStatus.UNAUTHORIZED);
         }
 
-        String newAccessToken = accessTokenFactory.generate(identity, memberSeq,getKey(), ACCESS_TOKEN_MINUTE);
+        String newAccessToken = accessTokenFactory.generate(identity, memberSeq, getKey(), ACCESS_TOKEN_MINUTE);
         String newRefreshToken = refreshTokenFactory.generate(identity, getKey(), REFRESH_TOKEN_MINUTE);
 
         return new TokenResponseDto(newAccessToken, newRefreshToken);

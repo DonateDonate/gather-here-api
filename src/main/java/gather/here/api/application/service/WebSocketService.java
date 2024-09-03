@@ -53,37 +53,40 @@ public class WebSocketService {
 
         } catch (BusinessException e) {
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason(String.valueOf(e.getResponseStatus().getCode())));
-        }catch (JwtException e ){
+        } catch (JwtException e) {
             session.close(CloseStatus.NOT_ACCEPTABLE.withReason(String.valueOf(ResponseStatus.INVALID_ACCESS_TOKEN.getCode())));
         }
     }
 
-    public void messageHandle(WebSocketSession session, TextMessage message) throws IOException{
+    public void messageHandle(WebSocketSession session, TextMessage message) throws IOException {
+
         ObjectMapper objectMapper = new ObjectMapper();
         String payload = message.getPayload();
         LocationShareEventRequestDto request = null;
         try {
             request = objectMapper.readValue(payload, LocationShareEventRequestDto.class);
-        }catch (JsonParseException e){
+        } catch (JsonParseException e) {
             session.sendMessage(new TextMessage(ResponseStatus.INVALID_REQUEST.getMessage()));
             return;
         }
         try {
             handleLocationShareRequest(session, request);
-        }catch (BusinessException e){
+        } catch (BusinessException e) {
             session.sendMessage(new TextMessage(e.getMessage()));
         }
     }
 
-    public void connectClosedHandle(WebSocketSession session, CloseStatus status) throws Exception{
+    public void connectClosedHandle(WebSocketSession session, CloseStatus status) throws Exception {
+
         int code = status.getCode();
-        if(code == 1000){
+        if (code == 1000) {
             sessionList.remove(session.getId());
             locationShareService.removeWebSocketAuthAndLocationShareMember(session.getId());
         }
     }
 
-    private String extractAccessToken(WebSocketSession session){
+    private String extractAccessToken(WebSocketSession session) {
+
         List<String> authorization = session.getHandshakeHeaders().get(ACCESS_TOKEN_HEADER_NAME);
         List<String> refreshToken = session.getHandshakeHeaders().get(REFRESH_TOKEN_HEADER_NAME);
 
@@ -92,8 +95,8 @@ public class WebSocketService {
             TokenResponseDto reissueResponse = tokenService.reissue(token);
             try {
                 session.sendMessage(new TextMessage(JsonUtil.convertToJsonString(reissueResponse)));
-                return  ACCESS_TOKEN_PREFIX+ " " +reissueResponse.getAccessToken();
-            }catch (IOException e){
+                return ACCESS_TOKEN_PREFIX + " " + reissueResponse.getAccessToken();
+            } catch (IOException e) {
                 throw new LocationShareException(ResponseStatus.INVALID_REQUEST, HttpStatus.FORBIDDEN);
             }
         } else if (authorization != null && !authorization.isEmpty()) {
@@ -103,6 +106,7 @@ public class WebSocketService {
     }
 
     private void handleLocationShareRequest(WebSocketSession session, LocationShareEventRequestDto request) {
+
         try {
             if (request.getType() == 0) {
                 locationShareService.createTypeHandleAction(request, session.getId());
@@ -123,6 +127,7 @@ public class WebSocketService {
     }
 
     private void sendMessage(List<String> sessionIdList, String message) {
+
         try {
             for (String id : sessionIdList) {
                 for (WebSocketSession webSocketSession : sessionList) {
