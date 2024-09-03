@@ -1,7 +1,6 @@
 package gather.here.api.infra.config;
 
-import gather.here.api.domain.service.LocationShareService;
-import gather.here.api.domain.service.TokenService;
+import gather.here.api.application.service.WebSocketService;
 import gather.here.api.infra.socket.CustomWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,17 +14,16 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
-    private final TokenService tokenService;
-    private final LocationShareService locationShareService;
+    private final WebSocketService webSocketService;
 
     @Bean
-    public WebSocketHandler customWebSocketHandler(TokenService tokenService,LocationShareService locationShareService){
-        return new CustomWebSocketHandler(tokenService,locationShareService);
+    public WebSocketHandler customWebSocketHandler(WebSocketService webSocketService){
+        return new CustomWebSocketHandler(webSocketService);
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(customWebSocketHandler(tokenService,locationShareService),"/location/share")
+        registry.addHandler(customWebSocketHandler(webSocketService),"/location/share")
                 .setAllowedOrigins("*");
     }
 }

@@ -30,6 +30,7 @@ import java.util.List;
 public class WebSocketService {
     private final TokenService tokenService;
     private final LocationShareService locationShareService;
+
     @Value("${security.jwt.access-token.header.name}")
     private String ACCESS_TOKEN_HEADER_NAME;
 

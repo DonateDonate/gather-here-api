@@ -12,7 +12,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 @RequiredArgsConstructor
 @Slf4j
 public class CustomWebSocketHandler extends TextWebSocketHandler {
-    private WebSocketService webSocketService;
+    private final WebSocketService webSocketService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
