@@ -32,7 +32,7 @@ export const options = {
     scenarios: {
         spike: {
             executor: 'constant-vus',
-            vus: 300,
+            vus: 200,
             duration: '1s',
         },
     },

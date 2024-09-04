@@ -72,6 +72,11 @@ dependencies {
 
 // https://mvnrepository.com/artifact/it.ozimov/embedded-redis
 	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.3'
+
+	//actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 tasks.named('test') {
