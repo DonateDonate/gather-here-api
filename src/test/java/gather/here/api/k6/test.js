@@ -16,7 +16,7 @@ export const options = {
             vus: 200,
             duration: '1s',
         },
-    },
+    }
 };
 
 export default function () {
@@ -25,5 +25,4 @@ export default function () {
     check(signupRes,{
         'signup status is 200': (r) => r.status === 200
     });
-    sleep(1);
 }
