@@ -48,9 +48,9 @@ jobs:
           port: ${{ secrets.SANHA_DEV_SERVER_SSH_PORT }}
           timeout: 60s
           script: |
-            docker stop gatherhere || exit /b 0
-            docker rm gatherhere || exit /b 0
-            docker pull kimsanha/gatherhere:latest || exit /b 0
+            docker stop gatherhere || exit /b 0 ^
+            docker rm gatherhere || exit /b 0 ^
+            docker pull kimsanha/gatherhere:latest || exit /b 0 ^
             docker run -d -p 8080:8080 --name gatherhere kimsanha/gatherhere:latest
             
           
