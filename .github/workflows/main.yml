@@ -4,7 +4,7 @@ on:
     branches: [ devel ]
 jobs:
   server-deploy:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
@@ -16,14 +16,14 @@ jobs:
 
       - name: Create application yml file
         run: |
-          New-Item -ItemType Directory -Force -Path .\src\main\resources
-          [System.IO.File]::WriteAllText(".\src\main\resources\application-devel.yml", [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.APPLICATION_YML }}")))
+          mkdir -p ./src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > ./src/main/resources/application-devel.yml
 
       - name: Verify application yml file
-        run: type .\src\main\resources\application-devel.yml
+        run: cat ./src/main/resources/application-devel.yml
 
       - name: Grant execute permission for gradlew
-        run: icacls gradlew /grant:r Everyone:(RX)
+        run: chmod +x gradlew
 
       - name: Build with Gradle
         run: ./gradlew clean build
