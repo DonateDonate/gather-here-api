@@ -50,5 +50,5 @@ jobs:
           script: |
             docker stop gatherhere || true
             docker rm gatherhere || true
-            docker pull kimsanha/gatherhere:latest
+            docker pull kimsanha/gatherhere:latest || true
             docker run -d -p 8080:8080 --name gatherhere kimsanha/gatherhere:latest
