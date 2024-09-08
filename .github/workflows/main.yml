@@ -4,7 +4,7 @@ on:
     branches: [ devel ]
 jobs:
   server-deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
