@@ -16,14 +16,14 @@ jobs:
 
       - name: Create application yml file
         run: |
-          mkdir -p ./src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > ./src/main/resources/application-devel.yml
+          New-Item -ItemType Directory -Force -Path .\src\main\resources
+          [System.IO.File]::WriteAllText(".\src\main\resources\application-devel.yml", [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.APPLICATION_YML }}")))
 
       - name: Verify application yml file
-        run: cat ./src/main/resources/application-devel.yml
+        run: type .\src\main\resources\application-devel.yml
 
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: icacls gradlew /grant:r Everyone:(RX)
 
       - name: Build with Gradle
         run: ./gradlew clean build
