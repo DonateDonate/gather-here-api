@@ -27,6 +27,7 @@ public class TestController {
 
     @GetMapping("/test/ping")
     public String ping(){
+        log.info("pong");
         return "pong";
     }
 
