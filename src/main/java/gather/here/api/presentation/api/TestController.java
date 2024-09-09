@@ -25,13 +25,9 @@ public class TestController {
         return "auth ok";
     }
 
-    private int cnt = 0;
-
     @GetMapping("/test/ping")
-    public String ping(){
-        cnt++;
-        log.info("pong ={}",cnt);
-        return "pong";
+    public ResponseEntity ping(){
+        return new ResponseEntity("pong",HttpStatus.OK) ;
     }
 
     @PostMapping("/test/empty-test")
