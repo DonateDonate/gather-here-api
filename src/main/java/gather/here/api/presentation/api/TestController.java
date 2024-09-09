@@ -25,9 +25,12 @@ public class TestController {
         return "auth ok";
     }
 
+    private int cnt = 0;
+
     @GetMapping("/test/ping")
     public String ping(){
-        log.info("pong");
+        cnt++;
+        log.info("pong ={}",cnt);
         return "pong";
     }
 
