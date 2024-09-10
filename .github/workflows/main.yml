@@ -39,7 +39,7 @@ jobs:
           docker build -t kimsanha/gatherhere .
           docker push kimsanha/gatherhere
 
-      - name: docker stop
+      - name: docker remove / run
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.SANHA_DEV_SERVER_HOST }}
@@ -47,38 +47,10 @@ jobs:
           password: ${{ secrets.SANHA_DEV_SERVER_PASSWORD }}
           port: ${{ secrets.SANHA_DEV_SERVER_SSH_PORT }}
           timeout: 60s
-          script: docker stop gatherhere
-
-      - name: docke rm p
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.SANHA_DEV_SERVER_HOST }}
-          username: ${{ secrets.SANHA_DEV_SERVER_USERNAME }}
-          password: ${{ secrets.SANHA_DEV_SERVER_PASSWORD }}
-          port: ${{ secrets.SANHA_DEV_SERVER_SSH_PORT }}
-          timeout: 60s
-          script: docker rm gatherhere
-
-      - name: docker pull
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.SANHA_DEV_SERVER_HOST }}
-          username: ${{ secrets.SANHA_DEV_SERVER_USERNAME }}
-          password: ${{ secrets.SANHA_DEV_SERVER_PASSWORD }}
-          port: ${{ secrets.SANHA_DEV_SERVER_SSH_PORT }}
-          timeout: 60s
-          script: docker pull kimsanha/gatherhere:latest
-
-      - name: docker run
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.SANHA_DEV_SERVER_HOST }}
-          username: ${{ secrets.SANHA_DEV_SERVER_USERNAME }}
-          password: ${{ secrets.SANHA_DEV_SERVER_PASSWORD }}
-          port: ${{ secrets.SANHA_DEV_SERVER_SSH_PORT }}
-          timeout: 60s
-          script: docker run -d -p 8080:8080 --name gatherhere kimsanha/gatherhere:latest
-
-          
+          script: |
+                  docker stop gatherhere
+                  docker rm gatherhere
+                  docker pull kimsanha/gatherhere:latest
+                  docker run -d -p 8080:8080 --name gatherhere kimsanha/gatherhere:latest
             
             
