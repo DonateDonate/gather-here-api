@@ -129,7 +129,7 @@ public class LocationShareService {
         locationShareEvent.removeMemberLocation(member.getSeq());
         locationShareEvent.removeDestinationMemberList(member.getSeq());
 
-        if(locationShareEvent.getMemberLocations().size() == 1){
+        if(locationShareEvent.getMemberLocations().isEmpty()){
             roomRepository.deleteLocationShareEvent(locationShareEvent);
         }else{
             roomRepository.updateLocationShareEvent(locationShareEvent);
