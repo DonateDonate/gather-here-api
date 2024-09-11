@@ -17,8 +17,8 @@ class RoomTest {
     @Test
     public void statusTest(){
         //arrange
-        Float destinationLat = 1F;
-        Float destinationLng = 2F;
+        Double destinationLat = 1.0;
+        Double destinationLng = 2.0;
         String destinationName = "사나몬 집";
         Room sut = null;
 
@@ -44,8 +44,8 @@ class RoomTest {
     public void shareCodeValidTest(){
 
         //arrange
-        Float destinationLat = 1F;
-        Float destinationLng = 2F;
+        Double destinationLat = 1.0;
+        Double destinationLng = 2.0;
         String destinationName = "사나몬 집";
         Room sut = null;
 
@@ -71,8 +71,8 @@ class RoomTest {
     @Test
     public void encounterDateFormatTest(){
         //arrange
-        Float destinationLat = 1F;
-        Float destinationLng = 2F;
+        Double destinationLat = 1.0;
+        Double destinationLng = 2.0;
         String destinationName = "사나몬 집";
         Room sut = null;
         RoomException actual = null;
@@ -97,8 +97,8 @@ class RoomTest {
     public void isEncounterDateInPastTest(){
 
         //arrange
-        Float destinationLat = 1F;
-        Float destinationLng = 2F;
+        Double destinationLat = 1.0;
+        Double destinationLng = 2.0;
         String destinationName = "사나몬 집";
         Room sut = null;
         RoomException actual = null;

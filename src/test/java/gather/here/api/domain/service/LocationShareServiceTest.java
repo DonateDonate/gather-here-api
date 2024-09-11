@@ -81,8 +81,8 @@ class LocationShareServiceTest {
         String sessionId = String.valueOf(UUID.randomUUID());
         Member member = createMember();
 
-        Float destinationLat = 45.2F;
-        Float destinationLng = 77.7F;
+        Double destinationLat = 45.2;
+        Double destinationLng = 77.7;
         String destinationName = "산하네집";
         String encounterDate = "2025-08-11 15:33";
         Room room = Room.create(destinationLat,destinationLng,destinationName,encounterDate,member);
@@ -109,8 +109,8 @@ class LocationShareServiceTest {
         String identity =  Utils.randomMemberId();
         String password = "1234";
         String sessionId = String.valueOf(UUID.randomUUID());
-        Float destinationLat = 45.2F;
-        Float destinationLng = 77.7F;
+        Double destinationLat = 45.2;
+        Double destinationLng = 77.7;
         String destinationName = "산하네집";
         String encounterDate = "2025-08-11 15:33";
         LocationShareException actual = null;
@@ -137,9 +137,9 @@ class LocationShareServiceTest {
         locationShareService.saveWebSocketAuth(sessionId,member.getSeq());
 
         int type =0;
-        Float presentLat = 12.3F;
-        Float presentLng = 46.2F;
-        Float destinationDistance = 41.4F;
+        Double presentLat = 12.3;
+        Double presentLng = 46.2;
+        Double destinationDistance = 41.4;
         LocationShareEventRequestDto request =
                 new LocationShareEventRequestDto(type,presentLat,presentLng,destinationDistance);
 
@@ -179,8 +179,8 @@ class LocationShareServiceTest {
         String identity = Utils.randomMemberId();
         String password = "1234";
         String sessionId = String.valueOf(UUID.randomUUID());
-        Float destinationLat = 45.2F;
-        Float destinationLng = 77.7F;
+        Double destinationLat = 45.2;
+        Double destinationLng = 77.7;
         String destinationName = "산하네집";
         String encounterDate = "2025-08-11 15:33";
         LocationShareEvent actual = null;
@@ -207,9 +207,9 @@ class LocationShareServiceTest {
         locationShareService.saveWebSocketAuth(sessionId,member.getSeq());
 
         int type =0;
-        Float presentLat = 12.3F;
-        Float presentLng = 46.2F;
-        Float destinationDistance = 41.4F;
+        Double presentLat = 12.1;
+        Double presentLng = 46.2;
+        Double destinationDistance = 41.4;
         LocationShareEventRequestDto request =
                 new LocationShareEventRequestDto(type,presentLat,presentLng,destinationDistance);
 
@@ -253,8 +253,8 @@ class LocationShareServiceTest {
         Member joinMember = memberRepository.findByIdentityAndIsActiveTrue(joinIdentity).get();
 
         //roomMember -> room create
-        Float destinationLat = 45.2F;
-        Float destinationLng = 77.7F;
+        Double destinationLat = 45.2;
+        Double destinationLng = 77.7;
         String destinationName = "산하네집";
         String encounterDate = "2025-08-11 15:33";
         RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
@@ -279,9 +279,9 @@ class LocationShareServiceTest {
 
         //roomMember -> create locationShareEvent
         int createType =0;
-        Float presentLat = 12.3F;
-        Float presentLng = 46.2F;
-        Float destinationDistance = 41.4F;
+        Double presentLat = 12.3;
+        Double presentLng = 46.2;
+        Double destinationDistance = 41.4;
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
@@ -329,8 +329,8 @@ class LocationShareServiceTest {
         Member joinMember = memberRepository.findByIdentityAndIsActiveTrue(joinIdentity).get();
 
         //roomMember -> room create
-        Float destinationLat = 45.2F;
-        Float destinationLng = 77.7F;
+        Double destinationLat = 45.2;
+        Double destinationLng = 77.7;
         String destinationName = "산하네집";
         String encounterDate = "2025-08-11 15:33";
         RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
@@ -355,9 +355,9 @@ class LocationShareServiceTest {
 
         //roomMember -> create locationShareEvent
         int createType =0;
-        Float presentLat = 12.3F;
-        Float presentLng = 46.2F;
-        Float destinationDistance = 41.4F;
+        Double presentLat = 12.3;
+        Double presentLng = 46.2;
+        Double destinationDistance = 41.4;
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
@@ -421,8 +421,8 @@ class LocationShareServiceTest {
         Member joinMember = memberRepository.findByIdentityAndIsActiveTrue(joinIdentity).get();
 
         //roomMember -> room create
-        Float destinationLat = 45.2F;
-        Float destinationLng = 77.7F;
+        Double destinationLat = 45.2;
+        Double destinationLng = 77.7;
         String destinationName = "산하네집";
         String encounterDate = "2025-08-11 15:33";
         RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
@@ -447,9 +447,9 @@ class LocationShareServiceTest {
 
         //roomMember -> create locationShareEvent
         int createType =0;
-        Float presentLat = 12.3F;
-        Float presentLng = 46.2F;
-        Float destinationDistance = 41.4F;
+        Double presentLat = 12.3;
+        Double presentLng = 46.2;
+        Double destinationDistance = 41.4;
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
@@ -462,9 +462,9 @@ class LocationShareServiceTest {
 
         //act
         int distanceChangeType = 2;
-        Float distanceChangePresentLat = 1F;
-        Float distanceChangePresentLng = 1F;
-        Float distanceChangeDestinationDistance = 20F;
+        Double distanceChangePresentLat = 1.1;
+        Double distanceChangePresentLng = 1.2;
+        Double distanceChangeDestinationDistance = 20.1;
         LocationShareEventRequestDto distanceChangeLocationShareEventRequest =
                 new LocationShareEventRequestDto(distanceChangeType,distanceChangePresentLat,distanceChangePresentLng,distanceChangeDestinationDistance);
         sut.distanceChangeHandleAction(distanceChangeLocationShareEventRequest,createSessionId);
@@ -507,8 +507,8 @@ class LocationShareServiceTest {
         Member joinMember = memberRepository.findByIdentityAndIsActiveTrue(joinIdentity).get();
 
         //roomMember -> room create
-        Float destinationLat = 45.2F;
-        Float destinationLng = 77.7F;
+        Double destinationLat = 45.2;
+        Double destinationLng = 77.7;
         String destinationName = "산하네집";
         String encounterDate = "2025-08-11 15:33";
         RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
@@ -534,9 +534,9 @@ class LocationShareServiceTest {
 
         //roomMember -> create locationShareEvent
         int createType =0;
-        Float presentLat = 12.3F;
-        Float presentLng = 46.2F;
-        Float destinationDistance = 41.4F;
+        Double presentLat = 12.3;
+        Double presentLng = 46.2;
+        Double destinationDistance = 41.4;
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
@@ -549,9 +549,9 @@ class LocationShareServiceTest {
 
         //act
         int distanceChangeType = 2;
-        Float distanceChangePresentLat = 1F;
-        Float distanceChangePresentLng = 1F;
-        Float distanceChangeDestinationDistance = 1F;
+        Double distanceChangePresentLat = 1.1;
+        Double distanceChangePresentLng = 1.2;
+        Double distanceChangeDestinationDistance = 1.3;
         LocationShareEventRequestDto distanceChangeLocationShareEventRequest =
                 new LocationShareEventRequestDto(distanceChangeType,distanceChangePresentLat,distanceChangePresentLng,distanceChangeDestinationDistance);
         sut.distanceChangeHandleAction(distanceChangeLocationShareEventRequest,createSessionId);
@@ -593,8 +593,8 @@ class LocationShareServiceTest {
         Member joinMember = memberRepository.findByIdentityAndIsActiveTrue(joinIdentity).get();
 
         //create room
-        Float destinationLat = 45.2F;
-        Float destinationLng = 77.7F;
+        Double destinationLat = 45.2;
+        Double destinationLng = 77.7;
         String destinationName = "산하네집";
         String encounterDate = "2025-08-11 15:33";
         RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
@@ -618,9 +618,9 @@ class LocationShareServiceTest {
 
         //create locationShareEvent
         int createType =0;
-        Float presentLat = 12.3F;
-        Float presentLng = 46.2F;
-        Float destinationDistance = 41.4F;
+        Double presentLat = 12.3;
+        Double presentLng = 46.2;
+        Double destinationDistance = 41.4;
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
         locationShareService.createTypeHandleAction(createLocationShareEventRequest,createSessionId);

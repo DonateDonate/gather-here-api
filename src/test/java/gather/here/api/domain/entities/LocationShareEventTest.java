@@ -19,9 +19,9 @@ class LocationShareEventTest {
         String sessionId = String.valueOf(UUID.randomUUID());
         String nickName = "spring";
         String imageUrl = "https://test/"+UUID.randomUUID();
-        Float presentLat = 34F;
-        Float presentLng = 32F;
-        Float destinationDistance = 200F;
+        Double presentLat = 34.0;
+        Double presentLng = 32.0;
+        Double destinationDistance = 200.0;
 
         //act
         LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
@@ -48,9 +48,9 @@ class LocationShareEventTest {
         String sessionId = String.valueOf(UUID.randomUUID());
         String nickName = "spring";
         String imageUrl = "https://test/"+UUID.randomUUID();
-        Float presentLat = 34F;
-        Float presentLng = 32F;
-        Float destinationDistance = 200F;
+        Double presentLat = 34.6;
+        Double presentLng = 32.2;
+        Double destinationDistance = 200.2;
 
         LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
 
@@ -59,9 +59,9 @@ class LocationShareEventTest {
         String addSessionId = String.valueOf(UUID.randomUUID());
         String addNickName = "spring";
         String addImageUrl = "https://test/"+UUID.randomUUID();
-        Float addPresentLat = 34F;
-        Float addPresentLng = 32F;
-        Float addDestinationDistance = 200F;
+        Double addPresentLat = 34.2;
+        Double addPresentLng = 32.4;
+        Double addDestinationDistance = 200.2;
 
         locationShareEvent.addMemberLocations(
                 addMemberSeq,
@@ -90,9 +90,9 @@ class LocationShareEventTest {
         String sessionId = String.valueOf(UUID.randomUUID());
         String nickName = "spring";
         String imageUrl = "https://test/"+UUID.randomUUID();
-        Float presentLat = 34F;
-        Float presentLng = 32F;
-        Float destinationDistance = 200F;
+        Double presentLat = 34.1;
+        Double presentLng = 32.1;
+        Double destinationDistance = 200.2;
 
         LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
 
@@ -100,9 +100,9 @@ class LocationShareEventTest {
         String addSessionId = String.valueOf(UUID.randomUUID());
         String addNickName = "spring";
         String addImageUrl = "https://test/"+UUID.randomUUID();
-        Float addPresentLat = 34F;
-        Float addPresentLng = 32F;
-        Float addDestinationDistance = 200F;
+        Double addPresentLat = 34.2;
+        Double addPresentLng = 32.3;
+        Double addDestinationDistance = 200.5;
 
         locationShareEvent.addMemberLocations(
                 addMemberSeq,
@@ -133,9 +133,9 @@ class LocationShareEventTest {
         String sessionId = String.valueOf(UUID.randomUUID());
         String nickName = "spring";
         String imageUrl = "https://test/"+UUID.randomUUID();
-        Float presentLat = 34F;
-        Float presentLng = 32F;
-        Float destinationDistance = 200F;
+        Double presentLat = 34.2;
+        Double presentLng = 32.4;
+        Double destinationDistance = 200.5;
 
         LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
 
@@ -158,9 +158,9 @@ class LocationShareEventTest {
         String sessionId = String.valueOf(UUID.randomUUID());
         String nickName = "spring";
         String imageUrl = "https://test/"+UUID.randomUUID();
-        Float presentLat = 34F;
-        Float presentLng = 32F;
-        Float destinationDistance = 200F;
+        Double presentLat = 34.5;
+        Double presentLng = 32.6;
+        Double destinationDistance = 200.2;
 
         LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
 
@@ -182,9 +182,9 @@ class LocationShareEventTest {
         String sessionId = String.valueOf(UUID.randomUUID());
         String nickName = "spring";
         String imageUrl = "https://test/"+UUID.randomUUID();
-        Float presentLat = 34F;
-        Float presentLng = 32F;
-        Float destinationDistance = 200F;
+        Double presentLat = 3.2;
+        Double presentLng = 32.4;
+        Double destinationDistance = 200.5;
 
         Long silverMemberSeq = 2L;
         Long bronzeMemberSeq = 3L;

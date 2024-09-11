@@ -131,8 +131,8 @@ public class LocationShareService {
         roomRepository.updateLocationShareEvent(locationShareEvent);
     }
 
-    private void updateDestinationMember(Float destinationDistance, LocationShareEvent locationShareEvent,Long memberSeq) {
-        final Float goalStandardDistance = 10F;
+    private void updateDestinationMember(Double destinationDistance, LocationShareEvent locationShareEvent,Long memberSeq) {
+        final Double goalStandardDistance = 10.0;
         if (destinationDistance <= goalStandardDistance ) {
             locationShareEvent.addDestinationMemberList(memberSeq);
             if (locationShareEvent.getScore() == null || locationShareEvent.getScore().getGoldMemberSeq() == null) {

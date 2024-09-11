@@ -11,10 +11,10 @@ public class RoomCreateResponseDto {
     private Long roomSeq;
 
     @Schema(description = "목적지 위도", example = "37.25")
-    private Float destinationLat;
+    private Double destinationLat;
 
     @Schema(description = "목적지 경도", example = "23.4")
-    private Float destinationLng;
+    private Double destinationLng;
 
     @Schema(description = "목적지 이름 (스타벅스 선릉점 또는 서울 강남구 테헤란로 426)", example = "스타벅스 선릉점")
     private String destinationName;

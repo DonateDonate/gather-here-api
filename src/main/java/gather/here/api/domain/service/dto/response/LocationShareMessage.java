@@ -66,11 +66,11 @@ public class LocationShareMessage {
         private Long memberSeq;
         private String nickname;
         private String imageUrl;
-        private Float presentLat;
-        private Float presentLng;
-        private Float destinationDistance;
+        private Double presentLat;
+        private Double presentLng;
+        private Double destinationDistance;
 
-        public MemberLocationRes(Long memberSeq, String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance) {
+        public MemberLocationRes(Long memberSeq, String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance) {
             this.memberSeq = memberSeq;
             this.nickname = nickname;
             this.imageUrl = imageUrl;

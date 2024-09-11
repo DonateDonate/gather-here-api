@@ -16,11 +16,11 @@ public class RoomCreateRequestDto {
 
     @NotNull(message = "필수 항목입니다.")
     @Schema(description = "목적지 위도", example = "37.25")
-    private Float destinationLat;
+    private Double destinationLat;
 
     @NotNull(message = "필수 항목입니다.")
     @Schema(description = "목적지 경도", example = "23.4")
-    private Float destinationLng;
+    private Double destinationLng;
 
     @NotNull(message = "필수 항목입니다.")
     @Schema(description = "목적지 이름 (스타벅스 선릉점 또는 서울 강남구 테헤란로 426)", example = "스타벅스 선릉점")

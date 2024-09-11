@@ -11,10 +11,10 @@ public class JoinRoomResponseDto {
     private Long roomSeq;
 
     @Schema(description = "목적지 위도", example = "37.25")
-    private Float destinationLat;
+    private Double destinationLat;
 
     @Schema(description = "목적지 경도", example = "23.4")
-    private Float destinationLng;
+    private Double destinationLng;
 
     @Schema(description = "목적이 이름 (ex) 스타벅스 선릉역점 없으면 주소)", example = "스타벅스 선릉역점")
     private String destinationName;

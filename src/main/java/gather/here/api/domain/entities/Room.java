@@ -33,10 +33,10 @@ public class Room extends BaseTime {
     private Long seq;
 
     @Comment("목적지 위도")
-    private Float destinationLat;
+    private Double destinationLat;
 
     @Comment("목적지 경도")
-    private Float destinationLng;
+    private Double destinationLng;
 
     @Comment("목적지 이름")
     private String destinationName;
@@ -54,7 +54,7 @@ public class Room extends BaseTime {
     private List<Member> memberList = new ArrayList<>();
 
     @Builder
-    private Room(Float destinationLat, Float destinationLng, String destinationName,int status, LocalDateTime encounterDate, String shareCode) {
+    private Room(Double destinationLat, Double destinationLng, String destinationName,int status, LocalDateTime encounterDate, String shareCode) {
         this.destinationLat = destinationLat;
         this.destinationLng = destinationLng;
         this.destinationName = destinationName;
@@ -63,7 +63,7 @@ public class Room extends BaseTime {
         this.shareCode = shareCode;
     }
 
-    public static Room create(Float destinationLat, Float destinationLng, String destinationName,String encounterDate, Member member){
+    public static Room create(Double destinationLat, Double destinationLng, String destinationName,String encounterDate, Member member){
         LocalDateTime convertedToLocalDateTime = convertToLocalDateTime(encounterDate);
 
         if(convertedToLocalDateTime == null){

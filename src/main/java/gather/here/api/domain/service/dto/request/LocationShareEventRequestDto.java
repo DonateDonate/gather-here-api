@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @Getter
 public class LocationShareEventRequestDto {
     private int type;
-    private Float presentLat;
-    private Float presentLng;
-    private Float destinationDistance;
+    private Double presentLat;
+    private Double presentLng;
+    private Double destinationDistance;
 
-    public LocationShareEventRequestDto(int type, Float presentLat, Float presentLng, Float destinationDistance) {
+    public LocationShareEventRequestDto(int type, Double presentLat, Double presentLng, Double destinationDistance) {
         this.type = type;
         this.presentLat = presentLat;
         this.presentLng = presentLng;

@@ -21,7 +21,7 @@ public class LocationShareEvent {
     private Score score;
     private List<Long> destinationMemberList = new ArrayList<>();
 
-    public LocationShareEvent create(Long roomSeq, Long memberSeq, String sessionId, String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
+    public LocationShareEvent create(Long roomSeq, Long memberSeq, String sessionId, String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance){
         MemberLocation memberLocation = new MemberLocation(memberSeq,sessionId, nickname, imageUrl,presentLat,presentLng,destinationDistance);
         this.memberLocations.add(memberLocation);
         return new LocationShareEvent(roomSeq, memberLocations);
@@ -41,7 +41,7 @@ public class LocationShareEvent {
         );
     }
 
-    public void addMemberLocations(Long memberSeq, String sessionId, String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance){
+    public void addMemberLocations(Long memberSeq, String sessionId, String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance){
         MemberLocation memberLocation = new MemberLocation(memberSeq, sessionId, nickname, imageUrl, presentLat, presentLng, destinationDistance);
         this.memberLocations.add(memberLocation);
     }
@@ -87,11 +87,11 @@ public class LocationShareEvent {
         private String sessionId;
         private String nickname;
         private String imageUrl;
-        private Float presentLat;
-        private Float presentLng;
-        private Float destinationDistance;
+        private Double presentLat;
+        private Double presentLng;
+        private Double destinationDistance;
 
-        private MemberLocation(Long memberSeq, String sessionId,String nickname, String imageUrl, Float presentLat, Float presentLng, Float destinationDistance) {
+        private MemberLocation(Long memberSeq, String sessionId,String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance) {
             this.memberSeq = memberSeq;
             this.sessionId = sessionId;
             this.nickname = nickname;
