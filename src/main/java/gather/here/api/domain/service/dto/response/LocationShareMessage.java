@@ -20,7 +20,7 @@ public class LocationShareMessage {
                     memberLocation.getMemberSeq(),
                     memberLocation.getNickname(),
                     memberLocation.getImageUrl(),
-                    memberLocation.getPresentLat(),memberLocation.getPresentLat(),memberLocation.getDestinationDistance())
+                    memberLocation.getPresentLat(),memberLocation.getPresentLng(),memberLocation.getDestinationDistance())
             );
         }
         if(locationShareEvent.getScore() != null){
