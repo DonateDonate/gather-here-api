@@ -14,6 +14,8 @@ import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.RoomException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class LocationShareService {
+    private static final Logger log = LoggerFactory.getLogger(LocationShareService.class);
     private final WebSocketAuthRepository webSocketAuthRepository;
     private final MemberRepository memberRepository;
     private final FileFactory fileFactory;
@@ -28,6 +31,7 @@ public class LocationShareService {
 
     @Transactional
     public void saveWebSocketAuth(String sessionId, Long memberSeq) {
+        log.info("save sessionId ={}",sessionId);
         Member member = memberRepository.getBySeq(memberSeq);
         if(member.getRoom() == null || member.getRoom().getStatus() == 9){
             throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
@@ -42,6 +46,7 @@ public class LocationShareService {
 
     @Transactional
     public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
+       log.info("create = {} ",sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
@@ -68,6 +73,7 @@ public class LocationShareService {
 
     @Transactional
     public GetLocationShareResponseDto joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
+        log.info("join sessionid = {}",sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
