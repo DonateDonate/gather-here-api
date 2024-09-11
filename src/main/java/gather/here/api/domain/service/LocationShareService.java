@@ -128,7 +128,15 @@ public class LocationShareService {
 
         locationShareEvent.removeMemberLocation(member.getSeq());
         locationShareEvent.removeDestinationMemberList(member.getSeq());
-        roomRepository.updateLocationShareEvent(locationShareEvent);
+
+        if(locationShareEvent.getMemberLocations().size() == 1){
+            roomRepository.deleteLocationShareEvent(locationShareEvent);
+        }else{
+            roomRepository.updateLocationShareEvent(locationShareEvent);
+        }
+        /**
+         * 모든 메시지 보내기
+         */
     }
 
     private void updateDestinationMember(Double destinationDistance, LocationShareEvent locationShareEvent,Long memberSeq) {

@@ -61,4 +61,8 @@ public class RoomRepositoryImpl implements RoomRepository {
         return locationShareEventRedisRepository.findAll();
     }
 
+    @Override
+    public void deleteLocationShareEvent(LocationShareEvent locationShareEvent) {
+        locationShareEventRedisRepository.deleteById(locationShareEvent.getRoomSeq());
+    }
 }
