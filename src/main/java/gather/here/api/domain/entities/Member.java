@@ -101,7 +101,6 @@ public class Member extends BaseTime {
         }
         this.imageKey = imageKey;
     }
-
     public void cancelAccount(){
         this.isActive  = false;
     }

@@ -33,6 +33,9 @@ public class RoomService {
     @Transactional
     public RoomCreateResponseDto createRoom(RoomCreateRequestDto request, Long memberSeq) {
         Member member = memberRepository.getBySeq(memberSeq);
+        if(member.getRoom() != null){
+            throw new RoomException(ResponseStatus.ALREADY_ROOM_ENCOUNTER,HttpStatus.FORBIDDEN);
+        }
         Room room = Room.create(
                 request.getDestinationLat(),
                 request.getDestinationLng(),
