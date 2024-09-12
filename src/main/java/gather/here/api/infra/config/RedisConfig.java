@@ -24,10 +24,13 @@ public class RedisConfig {
     @Value("${redis.password}")
     private String password;
 
+
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host,port);
-        config.setPassword(password);
+        if(!password.equals("test")) {
+            config.setPassword(password);
+        }
         return new LettuceConnectionFactory(config);
     }
     @Bean
