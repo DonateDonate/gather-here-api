@@ -15,7 +15,7 @@ VOLUME /tmp
 # ARG JAR_FILE_PATH=target/*.jar
 
 COPY ${JAR_FILE} app.jar
-# COPY canofy-md-0.0.1-SNAPSHOT.jar app.jar
+
 
 EXPOSE 8080
 

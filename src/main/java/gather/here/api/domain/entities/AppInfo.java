@@ -15,6 +15,8 @@ public class AppInfo extends BaseTime{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
     private String version;
+    private String clientId;
+    private String secretKey;
 
     private AppInfo(String version) {
         this.version = version;

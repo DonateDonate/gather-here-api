@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public class FileFactoryImpl implements FileFactory {
+public class S3FileFactoryImpl implements FileFactory {
     private final AmazonS3Client amazonS3Client;
     @Override
     public String getImageUrl(String imageKey) {
