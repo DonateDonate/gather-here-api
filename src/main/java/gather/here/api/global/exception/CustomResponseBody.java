@@ -1,6 +1,7 @@
 package gather.here.api.global.exception;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.List;
