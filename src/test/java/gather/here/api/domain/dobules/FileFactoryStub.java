@@ -6,10 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileFactoryStub implements FileFactory {
     @Override
     public String getImageUrl(String imageKey) {
-        if(imageKey == null) {
-            throw new RuntimeException();
-        }
-
         return imageKey;
     }
 

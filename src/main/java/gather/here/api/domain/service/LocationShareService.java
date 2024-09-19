@@ -1,8 +1,5 @@
 package gather.here.api.domain.service;
 
-import gather.here.api.domain.service.dto.request.LocationShareEventRequestDto;
-import gather.here.api.domain.service.dto.response.GetLocationShareResponseDto;
-import gather.here.api.domain.service.dto.response.LocationShareMessage;
 import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.WebSocketAuth;
@@ -10,20 +7,22 @@ import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
+import gather.here.api.domain.service.dto.request.LocationShareEventRequestDto;
+import gather.here.api.domain.service.dto.response.GetLocationShareResponseDto;
+import gather.here.api.domain.service.dto.response.LocationShareMessage;
 import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.RoomException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 public class LocationShareService {
-    private static final Logger log = LoggerFactory.getLogger(LocationShareService.class);
     private final WebSocketAuthRepository webSocketAuthRepository;
     private final MemberRepository memberRepository;
     private final FileFactory fileFactory;

@@ -1,10 +1,7 @@
 package gather.here.api.domain.service;
 
 import gather.here.api.Utils.Utils;
-import gather.here.api.domain.service.dto.request.JoinRoomRequestDto;
-import gather.here.api.domain.service.dto.request.LocationShareEventRequestDto;
-import gather.here.api.domain.service.dto.request.MemberSignUpRequestDto;
-import gather.here.api.domain.service.dto.request.RoomCreateRequestDto;
+import gather.here.api.domain.dobules.FileFactoryStub;
 import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.Room;
@@ -12,6 +9,10 @@ import gather.here.api.domain.entities.WebSocketAuth;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
+import gather.here.api.domain.service.dto.request.JoinRoomRequestDto;
+import gather.here.api.domain.service.dto.request.LocationShareEventRequestDto;
+import gather.here.api.domain.service.dto.request.MemberSignUpRequestDto;
+import gather.here.api.domain.service.dto.request.RoomCreateRequestDto;
 import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.RoomException;
@@ -31,8 +32,6 @@ import java.util.UUID;
 @SpringBootTest
 @ActiveProfiles("test")
 class LocationShareServiceTest {
-    @Autowired
-    private LocationShareService locationShareService;
 
     @Autowired
     private WebSocketAuthRepository webSocketAuthRepository;
@@ -47,7 +46,7 @@ class LocationShareServiceTest {
     private RoomRepository roomRepository;
 
     @Autowired
-    MemberRepository memberRepository;
+    private MemberRepository memberRepository;
 
 
     @DisplayName("sut는 참가한 room이 없으면 예외가 발생한다")
@@ -56,7 +55,7 @@ class LocationShareServiceTest {
         //arrange
         String sessionId = String.valueOf(UUID.randomUUID());
         Member member = createMember();
-        LocationShareService sut = locationShareService;
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
 
         WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(), sessionId);
         webSocketAuthRepository.save(webSocketAuth);
@@ -89,7 +88,7 @@ class LocationShareServiceTest {
         roomRepository.save(room);
         member.setRoom(room);
 
-        LocationShareService sut = locationShareService;
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
         WebSocketAuth actual = null;
 
         //act
@@ -134,7 +133,8 @@ class LocationShareServiceTest {
                 member.getSeq()
         );
 
-        locationShareService.saveWebSocketAuth(sessionId,member.getSeq());
+        WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(),sessionId);
+        webSocketAuthRepository.save(webSocketAuth);
 
         int type =0;
         Double presentLat = 12.3;
@@ -143,7 +143,7 @@ class LocationShareServiceTest {
         LocationShareEventRequestDto request =
                 new LocationShareEventRequestDto(type,presentLat,presentLng,destinationDistance);
 
-        LocationShareService sut = locationShareService;
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
 
         LocationShareEvent locationShareEvent
                 = new LocationShareEvent().create(
@@ -204,7 +204,8 @@ class LocationShareServiceTest {
         );
 
 
-        locationShareService.saveWebSocketAuth(sessionId,member.getSeq());
+        WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(),sessionId);
+        webSocketAuthRepository.save(webSocketAuth);
 
         int type =0;
         Double presentLat = 12.1;
@@ -213,7 +214,7 @@ class LocationShareServiceTest {
         LocationShareEventRequestDto request =
                 new LocationShareEventRequestDto(type,presentLat,presentLng,destinationDistance);
 
-        LocationShareService sut = locationShareService;
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
 
         //act
         sut.createTypeHandleAction(request, sessionId);
@@ -227,12 +228,14 @@ class LocationShareServiceTest {
 
     }
 
+    @Transactional
     @DisplayName("sut는 roomSeq로 만들어진 locationShareEvent가 없으면 예외가 발생한다")
     @Test
     public void notFoundRoomSeqJoinTest(){
         //arrange
         LocationShareException actual = null;
-        LocationShareService sut = locationShareService;
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
+
         //방장 member 추가
         String createIdentity = Utils.randomMemberId();
         String createPassword = "1234";
@@ -274,8 +277,8 @@ class LocationShareServiceTest {
                 joinMember.getSeq()
         );
 
-        locationShareService.saveWebSocketAuth(createSessionId,createMember.getSeq());
-        locationShareService.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
+        sut.saveWebSocketAuth(createSessionId,createMember.getSeq());
+        sut.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
 
         //roomMember -> create locationShareEvent
         int createType =0;
@@ -285,7 +288,7 @@ class LocationShareServiceTest {
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
-        locationShareService.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
+        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
 
         //act
         int joinType =0;
@@ -308,7 +311,8 @@ class LocationShareServiceTest {
     public void successJoinTest(){
 
         //arrange
-        LocationShareService sut = locationShareService;
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
+
         //방장 member 추가
         String createIdentity = Utils.randomMemberId();
         String createPassword = "1234";
@@ -350,8 +354,8 @@ class LocationShareServiceTest {
         JoinRoomRequestDto joinRoomRequestDto = new JoinRoomRequestDto(shareCode);
         roomService.joinRoom(joinRoomRequestDto,joinMember.getSeq());
 
-        locationShareService.saveWebSocketAuth(createSessionId,createMember.getSeq());
-        locationShareService.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
+        sut.saveWebSocketAuth(createSessionId,createMember.getSeq());
+        sut.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
 
         //roomMember -> create locationShareEvent
         int createType =0;
@@ -361,7 +365,7 @@ class LocationShareServiceTest {
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
-        locationShareService.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
+        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
 
         //act
         int joinType =1;
@@ -399,7 +403,7 @@ class LocationShareServiceTest {
     public void distanceChangeTest(){
 
         //arrange
-        LocationShareService sut = locationShareService;
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
 
         //방장 member 추가
         String createIdentity = Utils.randomMemberId();
@@ -442,8 +446,8 @@ class LocationShareServiceTest {
         JoinRoomRequestDto joinRoomRequestDto = new JoinRoomRequestDto(shareCode);
         roomService.joinRoom(joinRoomRequestDto,joinMember.getSeq());
 
-        locationShareService.saveWebSocketAuth(createSessionId,createMember.getSeq());
-        locationShareService.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
+        sut.saveWebSocketAuth(createSessionId,createMember.getSeq());
+        sut.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
 
         //roomMember -> create locationShareEvent
         int createType =0;
@@ -453,12 +457,12 @@ class LocationShareServiceTest {
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
-        locationShareService.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
+        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
 
         int joinType =1;
         LocationShareEventRequestDto joinLocationShareEventRequest =
                 new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
-        locationShareService.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
+        sut.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
 
         //act
         int distanceChangeType = 2;
@@ -485,7 +489,7 @@ class LocationShareServiceTest {
     public void setScoreTest(){
 
         //arrange
-        LocationShareService sut = locationShareService;
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
 
         //방장 member 추가
         String createIdentity = Utils.randomMemberId();
@@ -529,8 +533,8 @@ class LocationShareServiceTest {
         JoinRoomRequestDto joinRoomRequestDto = new JoinRoomRequestDto(shareCode);
         roomService.joinRoom(joinRoomRequestDto,joinMember.getSeq());
 
-        locationShareService.saveWebSocketAuth(createSessionId,createMember.getSeq());
-        locationShareService.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
+        sut.saveWebSocketAuth(createSessionId,createMember.getSeq());
+        sut.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
 
         //roomMember -> create locationShareEvent
         int createType =0;
@@ -540,12 +544,12 @@ class LocationShareServiceTest {
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
-        locationShareService.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
+        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
 
         int joinType =1;
         LocationShareEventRequestDto joinLocationShareEventRequest =
                 new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
-        locationShareService.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
+        sut.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
 
         //act
         int distanceChangeType = 2;
@@ -572,7 +576,7 @@ class LocationShareServiceTest {
     @Transactional
     public void successRemoveWebSocketAuthAndLocationShareMember(){
         //arrange
-        LocationShareService sut  = locationShareService;
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
         //createMember
         String createIdentity = Utils.randomMemberId();
         String createPassword = "1234";
@@ -613,8 +617,8 @@ class LocationShareServiceTest {
         roomService.joinRoom(joinRoomRequestDto,joinMember.getSeq());
 
         //create webSocketAuth
-        locationShareService.saveWebSocketAuth(createSessionId,createMember.getSeq());
-        locationShareService.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
+        sut.saveWebSocketAuth(createSessionId,createMember.getSeq());
+        sut.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
 
         //create locationShareEvent
         int createType =0;
@@ -623,12 +627,12 @@ class LocationShareServiceTest {
         Double destinationDistance = 41.4;
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
-        locationShareService.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
+        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
 
         int joinType =1;
         LocationShareEventRequestDto joinLocationShareEventRequest =
                 new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
-        locationShareService.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
+        sut.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
 
 
         //act
