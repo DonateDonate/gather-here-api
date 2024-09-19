@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -42,6 +43,7 @@ public class WebSocketService {
 
     private final List<WebSocketSession> sessionList = new ArrayList<>();
 
+    @Transactional
     public void connectHandle(WebSocketSession session) throws IOException {
         try {
             String accessTokenTokenWithPrefix = extractAccessToken(session);
@@ -58,6 +60,7 @@ public class WebSocketService {
         }
     }
 
+    @Transactional
     public void messageHandle(WebSocketSession session, TextMessage message) throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -76,12 +79,12 @@ public class WebSocketService {
         }
     }
 
-    public void connectClosedHandle(WebSocketSession session, CloseStatus status) throws Exception {
-
-        int code = status.getCode();
-        if (code == 1000) {
+    @Transactional
+    public void connectClosedHandle(WebSocketSession session, CloseStatus status) {
+        if (status.getCode() == 1000 && session !=null) {
             sessionList.remove(session.getId());
-            locationShareService.removeWebSocketAuthAndLocationShareMember(session.getId());
+            GetLocationShareResponseDto response = locationShareService.removeWebSocketAuthAndLocationShareMember(session.getId());
+            sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
         }
     }
 

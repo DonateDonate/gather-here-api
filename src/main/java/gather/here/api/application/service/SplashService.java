@@ -20,7 +20,6 @@ public class SplashService {
         if (isJoinRoom) {
             status = 1;
         }
-
         return new GetSplashResponseDto(appInfo.getVersion(), status);
     }
 }

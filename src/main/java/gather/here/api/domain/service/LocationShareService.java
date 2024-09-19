@@ -46,7 +46,7 @@ public class LocationShareService {
 
     @Transactional
     public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
-       log.info("create = {} ",sessionId);
+       log.info("create sessionId = {} ",sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
@@ -73,7 +73,7 @@ public class LocationShareService {
 
     @Transactional
     public GetLocationShareResponseDto joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
-        log.info("join sessionid = {}",sessionId);
+        log.info("join sessionId = {}",sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
@@ -99,6 +99,7 @@ public class LocationShareService {
 
     @Transactional
     public GetLocationShareResponseDto distanceChangeHandleAction(LocationShareEventRequestDto request, String sessionId) {
+        log.info("distance change sessionId = {} ",sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
         Long memberSeq = webSocketAuth.getMemberSeq();
         Member member = memberRepository.getBySeq(memberSeq);
@@ -126,7 +127,8 @@ public class LocationShareService {
     }
 
     @Transactional
-    public void removeWebSocketAuthAndLocationShareMember(String sessionId) {
+    public GetLocationShareResponseDto removeWebSocketAuthAndLocationShareMember(String sessionId) {
+        log.info("remove sessionId = {}", sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
         webSocketAuthRepository.deleteByMemberSeq(webSocketAuth.getMemberSeq());
         Member member = memberRepository.getBySeq(webSocketAuth.getMemberSeq());
@@ -140,9 +142,8 @@ public class LocationShareService {
         }else{
             roomRepository.updateLocationShareEvent(locationShareEvent);
         }
-        /**
-         * 모든 메시지 보내기
-         */
+        LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
+        return new GetLocationShareResponseDto(message, locationShareEvent.getSessionIdList());
     }
 
     private void updateDestinationMember(Double destinationDistance, LocationShareEvent locationShareEvent,Long memberSeq) {
