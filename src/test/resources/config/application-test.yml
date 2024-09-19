@@ -47,3 +47,10 @@ aws:
     key:
   secret:
     key:
+
+sh:
+  item:
+    server:
+      url:
+      clientId:
+      secretKey:

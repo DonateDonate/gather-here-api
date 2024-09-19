@@ -2,6 +2,8 @@ package gather.here.api.infra.file;
 
 import gather.here.api.application.service.dto.request.ShItemUploadFileRequestDto;
 import gather.here.api.domain.file.FileFactory;
+import gather.here.api.infra.file.dto.DeleteFileRequestDto;
+import gather.here.api.infra.file.dto.GetImageUrlResponseDto;
 import gather.here.api.infra.file.dto.UploadFileResponseDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +25,15 @@ public class ShFileFactoryImpl implements FileFactory {
 
     @Override
     public String getImageUrl(String imageKey) {
-        return "";
+
+        GetImageUrlResponseDto response = WebClient.create(SH_ITEM_SERVER_URL + "/" + imageKey)
+                .get()
+                .header("clientId", SH_ITEM_SERVER_CLIENT_ID)
+                .header("secretKey", SH_ITEM_SERVER_SECRET_KEY)
+                .retrieve()
+                .bodyToMono(GetImageUrlResponseDto.class)
+                .block();
+        return response.getItemUrl();
     }
 
     @Override
@@ -46,7 +56,14 @@ public class ShFileFactoryImpl implements FileFactory {
 
     @Override
     public void deleteFile(String imageKey) {
-
+        DeleteFileRequestDto request = new DeleteFileRequestDto(imageKey);
+        WebClient.create(SH_ITEM_SERVER_URL)
+                .post()
+                .header("clientId", SH_ITEM_SERVER_CLIENT_ID)
+                .header("secretKey", SH_ITEM_SERVER_SECRET_KEY)
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block();
     }
-
 }
