@@ -25,6 +25,9 @@ public class ShFileFactoryImpl implements FileFactory {
 
     @Override
     public String getImageUrl(String imageKey) {
+        if(imageKey == null){
+            return "";
+        }
 
         GetImageUrlResponseDto response = WebClient.create(SH_ITEM_SERVER_URL + "/" + imageKey)
                 .get()

@@ -1,15 +1,18 @@
 package gather.here.api.presentation.api;
 
-import gather.here.api.domain.service.dto.request.RoomCreateRequestDto;
-import gather.here.api.domain.service.RoomService;
 import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.WebSocketAuth;
+import gather.here.api.domain.service.RoomService;
+import gather.here.api.domain.service.dto.request.RoomCreateRequestDto;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 

@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface WebSocketAuthRepository{
     void save(WebSocketAuth webSocketAuth);
-     Optional<WebSocketAuth> findMemberSeq(Long memberSeq);
+    Optional<WebSocketAuth> findMemberSeq(Long memberSeq);
     WebSocketAuth getBySessionId(String sessionId);
     List<WebSocketAuth> findAll();
     void deleteByMemberSeq(Long memberSeq);

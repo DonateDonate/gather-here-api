@@ -47,7 +47,7 @@ public class MemberService {
         assertMemberIdentity(request.getIdentity());
     }
 
-    public GetMemberResponseDto getMember(Long memberSeq){
+    public GetMemberResponseDto getMember(Long memberSeq) {
         Member member = memberRepository.getBySeq(memberSeq);
         String imageUrl = StringUtils.isNotEmpty(member.getImageKey()) ? fileFactory.getImageUrl(member.getImageKey()) : null;
 
@@ -55,13 +55,13 @@ public class MemberService {
     }
 
     @Transactional
-    public void modifyNickname(ModifyNicknameRequestDto request, Long memberSeq){
+    public void modifyNickname(ModifyNicknameRequestDto request, Long memberSeq) {
         Member member = memberRepository.getBySeq(memberSeq);
         member.setNickname(request.getNickname());
     }
 
     @Transactional
-    public void modifyPassword(ModifyPasswordRequestDto request, Long memberSeq){
+    public void modifyPassword(ModifyPasswordRequestDto request, Long memberSeq) {
         Member member = memberRepository.getBySeq(memberSeq);
         String encodedPassword = cryptoFactory.passwordEncoder(request.getPassword());
         member.modifyPassword(request.getPassword(),encodedPassword);
@@ -74,7 +74,7 @@ public class MemberService {
     }
 
     @Transactional
-    public UpdateImageResponseDto updateMemberImage(MultipartFile multipartFile, Long memberSeq){
+    public UpdateImageResponseDto updateMemberImage(MultipartFile multipartFile, Long memberSeq) {
         Member member = memberRepository.getBySeq(memberSeq);
         if(member.getImageKey() != null){
             fileFactory.deleteFile(member.getImageKey());
@@ -84,6 +84,7 @@ public class MemberService {
         member.setImageKey(imageKey);
         return new UpdateImageResponseDto(fileFactory.getImageUrl(imageKey));
     }
+
     public boolean isJoinRoom(Long memberSeq) {
         Member member = memberRepository.getBySeq(memberSeq);
         if (member.getRoom() != null && member.getRoom().getStatus() == 1) {

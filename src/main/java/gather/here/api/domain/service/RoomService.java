@@ -33,7 +33,7 @@ public class RoomService {
     @Transactional
     public RoomCreateResponseDto createRoom(RoomCreateRequestDto request, Long memberSeq) {
         Member member = memberRepository.getBySeq(memberSeq);
-        if(member.getRoom() != null){
+        if(member.getRoom() != null && member.getRoom().getStatus() == 1){
             throw new RoomException(ResponseStatus.ALREADY_ROOM_ENCOUNTER,HttpStatus.FORBIDDEN);
         }
         Room room = Room.create(
@@ -59,7 +59,7 @@ public class RoomService {
     @Transactional
     public JoinRoomResponseDto joinRoom(JoinRoomRequestDto request, Long memberSeq) {
         Member member = memberRepository.getBySeq(memberSeq);
-        if (member.getRoom() != null) {
+        if (member.getRoom() != null && member.getRoom().getStatus() == 1) {
             throw new RoomException(ResponseStatus.ALREADY_ROOM_ENCOUNTER, HttpStatus.FORBIDDEN);
         }
         Room room = roomRepository.getByShareCode(request.getShareCode());
@@ -84,7 +84,7 @@ public class RoomService {
             throw new RoomException(ResponseStatus.NOT_FOUND_ROOM_SEQ, HttpStatus.FORBIDDEN);
         }
         List<Member> memberList = member.getRoom().getMemberList();
-        if (memberList.size() == 1 && memberList.get(0).getSeq() == memberSeq) {
+        if (memberList.size() == 1 && memberList.get(0).getSeq().equals(memberSeq)) {
             Room room = member.getRoom();
             room.closeRoom();
         }

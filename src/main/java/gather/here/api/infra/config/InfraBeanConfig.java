@@ -1,11 +1,14 @@
 package gather.here.api.infra.config;
 
 import gather.here.api.domain.repositories.RefreshTokenRepository;
+import gather.here.api.domain.repositories.RoomRepository;
+import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import gather.here.api.domain.security.AccessTokenFactory;
 import gather.here.api.domain.security.CryptoFactory;
 import gather.here.api.domain.security.RefreshTokenFactory;
 import gather.here.api.infra.crypto.CryptoFactoryImpl;
 import gather.here.api.infra.file.ShFileFactoryImpl;
+import gather.here.api.infra.scheduler.RoomScheduler;
 import gather.here.api.infra.security.AccessTokenFactoryImpl;
 import gather.here.api.infra.security.RefreshTokenFactoryImpl;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class InfraBeanConfig {
 
     @Bean
-    public CryptoFactory cryptoFactory(PasswordEncoder passwordEncoder){
+    public CryptoFactory cryptoFactory(PasswordEncoder passwordEncoder) {
         return new CryptoFactoryImpl(passwordEncoder);
     }
 //
@@ -26,7 +29,7 @@ public class InfraBeanConfig {
 //    }
 
     @Bean
-    public ShFileFactoryImpl fileFactory(){
+    public ShFileFactoryImpl fileFactory() {
         return new ShFileFactoryImpl();
     }
 
@@ -36,8 +39,12 @@ public class InfraBeanConfig {
     }
 
     @Bean
-    public RefreshTokenFactory refreshTokenFactory(RefreshTokenRepository repository){
+    public RefreshTokenFactory refreshTokenFactory(RefreshTokenRepository repository ){
         return new RefreshTokenFactoryImpl(repository);
     }
 
+    @Bean
+    public RoomScheduler roomScheduler(RoomRepository roomRepository, WebSocketAuthRepository webSocketAuthRepository) {
+        return new RoomScheduler(roomRepository,webSocketAuthRepository);
+    }
 }

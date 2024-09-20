@@ -3,6 +3,7 @@ package gather.here.api.domain.repositories;
 import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Room;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RoomRepository {
@@ -14,4 +15,5 @@ public interface RoomRepository {
     void updateLocationShareEvent(LocationShareEvent locationShareEvent);
     Iterable<LocationShareEvent> findAllLocationEvents();
     void deleteLocationShareEvent(LocationShareEvent locationShareEvent);
+    List<Room> findByStatus(int status);
 }
