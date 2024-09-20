@@ -47,7 +47,7 @@ public class RoomRepositoryImpl implements RoomRepository {
     @Override
     public LocationShareEvent getLocationShareEventByRoomSeq(Long roomSeq) {
         return locationShareEventRedisRepository.findById(roomSeq).orElseThrow(
-                () -> new LocationShareException(ResponseStatus.NOT_FOUND_LOCATION_SHARE_EVENT,HttpStatus.FORBIDDEN)
+                () -> new LocationShareException(ResponseStatus.NOT_FOUND_LOCATION_SHARE_EVENT, HttpStatus.FORBIDDEN)
         );
     }
 
