@@ -10,6 +10,7 @@ import gather.here.api.infra.persistence.redis.LocationShareEventRedisRepository
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -64,5 +65,10 @@ public class RoomRepositoryImpl implements RoomRepository {
     @Override
     public void deleteLocationShareEvent(LocationShareEvent locationShareEvent) {
         locationShareEventRedisRepository.deleteById(locationShareEvent.getRoomSeq());
+    }
+
+    @Override
+    public List<Room> findByStatus(int status) {
+        return roomJpaRepository.findByStatus(status);
     }
 }
