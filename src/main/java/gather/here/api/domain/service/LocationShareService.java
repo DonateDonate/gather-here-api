@@ -38,7 +38,8 @@ public class LocationShareService {
         Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
         if(existWebSocketAuth.isPresent()){
             webSocketAuthRepository.deleteByMemberSeq(memberSeq);
-            //locationShareEvent초기화 처리 해야함
+            LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
+            updateLocationShareEventByMemberSeq(locationShareEvent, member);
         }
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
         webSocketAuthRepository.save(webSocketAuth);
@@ -173,4 +174,9 @@ public class LocationShareService {
         }
     }
 
+    private void updateLocationShareEventByMemberSeq(LocationShareEvent locationShareEvent, Member member) {
+        locationShareEvent.removeMemberLocation(member.getSeq());
+        locationShareEvent.removeDestinationMemberList(member.getSeq());
+        roomRepository.updateLocationShareEvent(locationShareEvent);
+    }
 }
