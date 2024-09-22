@@ -10,6 +10,7 @@ import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import gather.here.api.domain.service.dto.request.ExitRoomRequestDto;
 import gather.here.api.domain.service.dto.request.JoinRoomRequestDto;
 import gather.here.api.domain.service.dto.request.RoomCreateRequestDto;
+import gather.here.api.domain.service.dto.response.GetRoomResponseDto;
 import gather.here.api.domain.service.dto.response.JoinRoomResponseDto;
 import gather.here.api.domain.service.dto.response.RoomCreateResponseDto;
 import gather.here.api.global.exception.ResponseStatus;
@@ -29,6 +30,23 @@ public class RoomService {
     private final MemberRepository memberRepository;
     private final RoomRepository roomRepository;
     private final WebSocketAuthRepository webSocketAuthRepository;
+
+    @Transactional(readOnly = true)
+    public GetRoomResponseDto getRoomInfo(Long memberSeq) {
+        Member member = memberRepository.getBySeq(memberSeq);
+        Room room = member.getRoom();
+        if(room != null) {
+            return new GetRoomResponseDto(
+                    room.getSeq(),
+                    room.getDestinationLat(),
+                    room.getDestinationLng(),
+                    room.getDestinationName(),
+                    convertLocalDateTimeToString(room.getEncounterDate()),
+                    room.getShareCode()
+            );
+        }
+        return new GetRoomResponseDto();
+    }
 
     @Transactional
     public RoomCreateResponseDto createRoom(RoomCreateRequestDto request, Long memberSeq) {

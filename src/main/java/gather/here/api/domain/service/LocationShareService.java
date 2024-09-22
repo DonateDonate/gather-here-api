@@ -38,6 +38,7 @@ public class LocationShareService {
         Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
         if(existWebSocketAuth.isPresent()){
             webSocketAuthRepository.deleteByMemberSeq(memberSeq);
+            //locationShareEvent초기화 처리 해야함
         }
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
         webSocketAuthRepository.save(webSocketAuth);
@@ -103,20 +104,9 @@ public class LocationShareService {
         Long memberSeq = webSocketAuth.getMemberSeq();
         Member member = memberRepository.getBySeq(memberSeq);
         LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
-        if (locationShareEvent.getDestinationMemberList() != null && locationShareEvent.getDestinationMemberList().contains(memberSeq)) {
-            throw new LocationShareException(ResponseStatus.ALREADY_ARRIVED_MEMBER, HttpStatus.FORBIDDEN);
-        }
-        locationShareEvent.getMemberLocations()
-                .removeIf(memberLocation -> memberLocation.getSessionId().equals(sessionId));
-        locationShareEvent.addMemberLocations(
-                member.getSeq(),
-                sessionId,
-                member.getNickname(),
-                fileFactory.getImageUrl(member.getImageKey()),
-                request.getPresentLat(),
-                request.getPresentLng(),
-                request.getDestinationDistance()
-        );
+
+        validateAlreadyArriveMember(locationShareEvent, memberSeq);
+        updateMemberLocation(request, sessionId, locationShareEvent, member);
 
         LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
         updateDestinationMember(request.getDestinationDistance(), locationShareEvent, member.getSeq());
@@ -162,4 +152,25 @@ public class LocationShareService {
             }
         }
     }
+
+    private void updateMemberLocation(LocationShareEventRequestDto request, String sessionId, LocationShareEvent locationShareEvent, Member member) {
+        locationShareEvent.getMemberLocations()
+                .removeIf(memberLocation -> memberLocation.getSessionId().equals(sessionId));
+        locationShareEvent.addMemberLocations(
+                member.getSeq(),
+                sessionId,
+                member.getNickname(),
+                fileFactory.getImageUrl(member.getImageKey()),
+                request.getPresentLat(),
+                request.getPresentLng(),
+                request.getDestinationDistance()
+        );
+    }
+
+    private void validateAlreadyArriveMember(LocationShareEvent locationShareEvent, Long memberSeq) {
+        if (locationShareEvent.getDestinationMemberList() != null && locationShareEvent.getDestinationMemberList().contains(memberSeq)) {
+            throw new LocationShareException(ResponseStatus.ALREADY_ARRIVED_MEMBER, HttpStatus.FORBIDDEN);
+        }
+    }
+
 }
