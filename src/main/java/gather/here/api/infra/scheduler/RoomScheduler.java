@@ -2,7 +2,9 @@ package gather.here.api.infra.scheduler;
 
 
 import gather.here.api.domain.entities.LocationShareEvent;
+import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.Room;
+import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.List;
 public class RoomScheduler {
     private final RoomRepository roomRepository;
     private final WebSocketAuthRepository webSocketAuthRepository;
+    private final MemberRepository memberRepository;
 
     @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
@@ -31,9 +34,10 @@ public class RoomScheduler {
                 List<LocationShareEvent.MemberLocation> memberLocations = locationShareEvent.getMemberLocations();
                 for(LocationShareEvent.MemberLocation memberLocation : memberLocations){
                     webSocketAuthRepository.deleteByMemberSeq(memberLocation.getMemberSeq());
+                    Member member = memberRepository.getBySeq(memberLocation.getMemberSeq());
+                    member.exitRoom();
                 }
                 roomRepository.deleteLocationShareEvent(locationShareEvent);
-                //member에도 지워야함
             }
         }
     }
