@@ -33,6 +33,7 @@ public class RoomScheduler {
                     webSocketAuthRepository.deleteByMemberSeq(memberLocation.getMemberSeq());
                 }
                 roomRepository.deleteLocationShareEvent(locationShareEvent);
+                //member에도 지워야함
             }
         }
     }

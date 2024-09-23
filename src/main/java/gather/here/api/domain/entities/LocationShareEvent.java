@@ -1,9 +1,12 @@
 package gather.here.api.domain.entities;
 
+import gather.here.api.global.exception.LocationShareException;
+import gather.here.api.global.exception.ResponseStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +45,9 @@ public class LocationShareEvent {
     }
 
     public void addMemberLocations(Long memberSeq, String sessionId, String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance){
+        if(isDuplicateMemberSeq(memberSeq)){
+            throw new LocationShareException(ResponseStatus.DUPLICATE_LOCATION_SHARE_EVENT_ROOM_SEQ, HttpStatus.FORBIDDEN);
+        }
         MemberLocation memberLocation = new MemberLocation(memberSeq, sessionId, nickname, imageUrl, presentLat, presentLng, destinationDistance);
         this.memberLocations.add(memberLocation);
     }
@@ -80,6 +86,15 @@ public class LocationShareEvent {
         this.memberLocations = memberLocations;
     }
 
+    private boolean isDuplicateMemberSeq(Long memberSeq){
+        for(MemberLocation memberLocation : this.memberLocations){
+            if(memberLocation.getMemberSeq().equals(memberSeq) || destinationMemberList.contains(memberSeq)){
+                return true;
+            }
+        }
+       return false;
+    }
+
     @NoArgsConstructor
     @Getter
     public static class MemberLocation{
@@ -100,7 +115,6 @@ public class LocationShareEvent {
             this.presentLng = presentLng;
             this.destinationDistance = destinationDistance;
         }
-
     }
 
    @Getter

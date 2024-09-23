@@ -1,6 +1,7 @@
 package gather.here.api.domain.service;
 
 
+import gather.here.api.application.service.dto.response.GetSplashResponseDto;
 import gather.here.api.domain.entities.AppInfo;
 import gather.here.api.domain.repositories.AppInfoRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,8 @@ public class AppInfoService {
         appInfoRepository.save(appInfo);
     }
 
-    public AppInfo findLatestAppInfo(){
-        return appInfoRepository.getByLatestAppInfo();
+    public GetSplashResponseDto getAppInfo(Long memberSeq) {
+        AppInfo appInfo = appInfoRepository.getByLatestAppInfo();
+        return new GetSplashResponseDto(appInfo.getVersion());
     }
 }
