@@ -24,8 +24,8 @@ public class LocationShareEvent {
     private Score score;
     private List<Long> destinationMemberList = new ArrayList<>();
 
-    public LocationShareEvent create(Long roomSeq, Long memberSeq, String sessionId, String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance){
-        MemberLocation memberLocation = new MemberLocation(memberSeq,sessionId, nickname, imageUrl,presentLat,presentLng,destinationDistance);
+    public LocationShareEvent create(Long roomSeq, Long memberSeq, String sessionId, String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance, Boolean isOpen){
+        MemberLocation memberLocation = new MemberLocation(memberSeq,sessionId, nickname, imageUrl,presentLat,presentLng,destinationDistance,isOpen);
         this.memberLocations.add(memberLocation);
         return new LocationShareEvent(roomSeq, memberLocations);
     }
@@ -44,11 +44,11 @@ public class LocationShareEvent {
         );
     }
 
-    public void addMemberLocations(Long memberSeq, String sessionId, String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance){
+    public void addMemberLocations(Long memberSeq, String sessionId, String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance,Boolean isOpen){
         if(isDuplicateMemberSeq(memberSeq)){
             throw new LocationShareException(ResponseStatus.DUPLICATE_LOCATION_SHARE_EVENT_ROOM_SEQ, HttpStatus.FORBIDDEN);
         }
-        MemberLocation memberLocation = new MemberLocation(memberSeq, sessionId, nickname, imageUrl, presentLat, presentLng, destinationDistance);
+        MemberLocation memberLocation = new MemberLocation(memberSeq, sessionId, nickname, imageUrl, presentLat, presentLng, destinationDistance,isOpen);
         this.memberLocations.add(memberLocation);
     }
 
@@ -105,8 +105,9 @@ public class LocationShareEvent {
         private Double presentLat;
         private Double presentLng;
         private Double destinationDistance;
+        private Boolean isOpen;
 
-        private MemberLocation(Long memberSeq, String sessionId,String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance) {
+        private MemberLocation(Long memberSeq, String sessionId,String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance, Boolean isOpen) {
             this.memberSeq = memberSeq;
             this.sessionId = sessionId;
             this.nickname = nickname;
@@ -114,6 +115,7 @@ public class LocationShareEvent {
             this.presentLat = presentLat;
             this.presentLng = presentLng;
             this.destinationDistance = destinationDistance;
+            this.isOpen = isOpen;
         }
     }
 

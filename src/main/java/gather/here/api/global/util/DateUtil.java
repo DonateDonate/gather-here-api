@@ -22,7 +22,6 @@ public class DateUtil {
         return localDatetime.format(FORMATTER);
     }
 
-
     public static LocalDateTime convertToLocalDateTime(String dateTimeString) {
         try {
             ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateTimeString, FORMATTER.withZone(ZoneId.of("Asia/Seoul")));

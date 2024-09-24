@@ -20,7 +20,10 @@ public class LocationShareMessage {
                     memberLocation.getMemberSeq(),
                     memberLocation.getNickname(),
                     memberLocation.getImageUrl(),
-                    memberLocation.getPresentLat(),memberLocation.getPresentLng(),memberLocation.getDestinationDistance())
+                    memberLocation.getPresentLat(),memberLocation.getPresentLng()
+                    ,memberLocation.getDestinationDistance(),
+                    memberLocation.getIsOpen()
+                    )
             );
         }
         if(locationShareEvent.getScore() != null){
@@ -39,7 +42,9 @@ public class LocationShareMessage {
                     memberLocation.getMemberSeq(),
                     memberLocation.getNickname(),
                     memberLocation.getImageUrl(),
-                    memberLocation.getPresentLat(),memberLocation.getPresentLat(),memberLocation.getDestinationDistance())
+                    memberLocation.getPresentLat(),memberLocation.getPresentLat(),memberLocation.getDestinationDistance(),
+                    memberLocation.getIsOpen()
+                    )
             );
         }
 
@@ -69,14 +74,16 @@ public class LocationShareMessage {
         private Double presentLat;
         private Double presentLng;
         private Double destinationDistance;
+        private Boolean isOpen;
 
-        public MemberLocationRes(Long memberSeq, String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance) {
+        public MemberLocationRes(Long memberSeq, String nickname, String imageUrl, Double presentLat, Double presentLng, Double destinationDistance,Boolean isOpen) {
             this.memberSeq = memberSeq;
             this.nickname = nickname;
             this.imageUrl = imageUrl;
             this.presentLat = presentLat;
             this.presentLng = presentLng;
             this.destinationDistance = destinationDistance;
+            this.isOpen = isOpen;
         }
      }
 

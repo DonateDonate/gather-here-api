@@ -48,7 +48,7 @@ public class LocationShareService {
     }
 
     @Transactional
-    public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
+    public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId,Boolean isOpen) {
        log.info("create sessionId = {} ",sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
@@ -69,13 +69,14 @@ public class LocationShareService {
                         fileFactory.getImageUrl(member.getImageKey()),
                         request.getPresentLat(),
                         request.getPresentLng(),
-                        request.getDestinationDistance()
+                        request.getDestinationDistance(),
+                        isOpen
                 );
         roomRepository.saveLocationShareEvent(locationShareEvent);
     }
 
     @Transactional
-    public GetLocationShareResponseDto joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
+    public GetLocationShareResponseDto joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId,Boolean isOpen) {
         log.info("join sessionId = {}",sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
@@ -90,7 +91,8 @@ public class LocationShareService {
                 fileFactory.getImageUrl(member.getImageKey()),
                 request.getPresentLat(),
                 request.getPresentLng(),
-                request.getDestinationDistance()
+                request.getDestinationDistance(),
+                isOpen
         );
 
         roomRepository.updateLocationShareEvent(locationShareEvent);
@@ -101,7 +103,7 @@ public class LocationShareService {
     }
 
     @Transactional
-    public GetLocationShareResponseDto distanceChangeHandleAction(LocationShareEventRequestDto request, String sessionId) {
+    public GetLocationShareResponseDto distanceChangeHandleAction(LocationShareEventRequestDto request, String sessionId, Boolean isOpen) {
         log.info("distance change sessionId = {} ",sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
         Long memberSeq = webSocketAuth.getMemberSeq();
@@ -109,7 +111,7 @@ public class LocationShareService {
         LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
 
         validateAlreadyArriveMember(locationShareEvent, memberSeq);
-        updateMemberLocation(request, sessionId, locationShareEvent, member);
+        updateMemberLocation(request, sessionId, locationShareEvent, member,isOpen);
 
         LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
         updateDestinationMember(request.getDestinationDistance(), locationShareEvent, member.getSeq());
@@ -156,9 +158,10 @@ public class LocationShareService {
         }
     }
 
-    private void updateMemberLocation(LocationShareEventRequestDto request, String sessionId, LocationShareEvent locationShareEvent, Member member) {
+    private void updateMemberLocation(LocationShareEventRequestDto request, String sessionId, LocationShareEvent locationShareEvent, Member member, Boolean isOpen) {
         locationShareEvent.getMemberLocations()
                 .removeIf(memberLocation -> memberLocation.getSessionId().equals(sessionId));
+
         locationShareEvent.addMemberLocations(
                 member.getSeq(),
                 sessionId,
@@ -166,7 +169,8 @@ public class LocationShareService {
                 fileFactory.getImageUrl(member.getImageKey()),
                 request.getPresentLat(),
                 request.getPresentLng(),
-                request.getDestinationDistance()
+                request.getDestinationDistance(),
+                isOpen
         );
     }
 

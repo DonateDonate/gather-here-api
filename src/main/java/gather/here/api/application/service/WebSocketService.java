@@ -109,19 +109,19 @@ public class WebSocketService {
     }
 
     private void handleLocationShareRequest(WebSocketSession session, LocationShareEventRequestDto request) {
-
+        Boolean isOpen = session.isOpen();
         try {
             if (request.getType() == 0) {
-                locationShareService.createTypeHandleAction(request, session.getId());
+                locationShareService.createTypeHandleAction(request, session.getId(),isOpen);
             }
 
             if (request.getType() == 1) {
-                GetLocationShareResponseDto response = locationShareService.joinTypeHandleAction(request, session.getId());
+                GetLocationShareResponseDto response = locationShareService.joinTypeHandleAction(request, session.getId(),isOpen);
                 sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
             }
 
             if (request.getType() == 2) {
-                GetLocationShareResponseDto response = locationShareService.distanceChangeHandleAction(request, session.getId());
+                GetLocationShareResponseDto response = locationShareService.distanceChangeHandleAction(request, session.getId(),isOpen);
                 sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
             }
         }catch (Exception e){
@@ -134,7 +134,7 @@ public class WebSocketService {
         try {
             for (String id : sessionIdList) {
                 for (WebSocketSession webSocketSession : sessionList) {
-                    if (webSocketSession.getId().equals(id)) {
+                    if (webSocketSession.getId().equals(id) && webSocketSession.isOpen()) {
                         try {
                             webSocketSession.sendMessage(new TextMessage(message));
                         } catch (IOException e) {
