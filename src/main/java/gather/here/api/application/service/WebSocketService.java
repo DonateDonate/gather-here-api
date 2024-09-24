@@ -15,6 +15,7 @@ import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.util.JsonUtil;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 public class WebSocketService {
     private final TokenService tokenService;
@@ -110,6 +112,7 @@ public class WebSocketService {
 
     private void handleLocationShareRequest(WebSocketSession session, LocationShareEventRequestDto request) {
         Boolean isOpen = session.isOpen();
+        log.info("session isOpen ={}",isOpen);
         try {
             if (request.getType() == 0) {
                 locationShareService.createTypeHandleAction(request, session.getId(),isOpen);

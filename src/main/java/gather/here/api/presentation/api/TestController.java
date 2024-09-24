@@ -30,6 +30,7 @@ public class TestController {
 
     @GetMapping("/test/ping")
     public ResponseEntity ping(){
+        log.info("test ping!");
         return new ResponseEntity("pong",HttpStatus.OK) ;
     }
 
