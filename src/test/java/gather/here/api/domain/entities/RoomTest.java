@@ -26,7 +26,7 @@ class RoomTest {
         LocalDateTime localDateTime = date.toInstant()
                 .atZone(ZoneId.of("Asia/Seoul"))
                 .toLocalDateTime()
-                .plusDays(10);;
+                .plusHours(1);
 
         String encounterDate = convertLocalDateTimeToString(localDateTime);
         Member member = Member.create("01012345678","12341234");
@@ -53,7 +53,7 @@ class RoomTest {
         LocalDateTime localDateTime = date.toInstant()
                 .atZone(ZoneId.of("Asia/Seoul"))
                 .toLocalDateTime()
-                .plusDays(10);;
+                .plusHours(1);
 
         String encounterDate = convertLocalDateTimeToString(localDateTime);
         Member member = Member.create("01012345678","ENCODEPASSWORDENCODEPASSWORDENC");

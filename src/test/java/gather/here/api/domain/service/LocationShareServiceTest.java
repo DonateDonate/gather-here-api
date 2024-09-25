@@ -24,9 +24,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static gather.here.api.global.util.DateUtil.convertLocalDateTimeToString;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -82,7 +87,13 @@ class LocationShareServiceTest {
         Double destinationLat = 45.2;
         Double destinationLng = 77.7;
         String destinationName = "산하네집";
-        String encounterDate = "2025-08-11 15:33";
+        Date date = new Date();
+        LocalDateTime localDateTime = date.toInstant()
+                .atZone(ZoneId.of("Asia/Seoul"))
+                .toLocalDateTime()
+                .plusHours(1);
+
+        String encounterDate = convertLocalDateTimeToString(localDateTime);
         Room room = Room.create(destinationLat,destinationLng,destinationName,encounterDate,member);
         roomRepository.save(room);
         member.setRoom(room);
@@ -110,7 +121,13 @@ class LocationShareServiceTest {
         Double destinationLat = 45.2;
         Double destinationLng = 77.7;
         String destinationName = "산하네집";
-        String encounterDate = "2025-08-11 15:33";
+        Date date = new Date();
+        LocalDateTime localDateTime = date.toInstant()
+                .atZone(ZoneId.of("Asia/Seoul"))
+                .toLocalDateTime()
+                .plusHours(1);
+
+        String encounterDate = convertLocalDateTimeToString(localDateTime);
         LocationShareException actual = null;
 
         //member 가입
@@ -182,7 +199,13 @@ class LocationShareServiceTest {
         Double destinationLat = 45.2;
         Double destinationLng = 77.7;
         String destinationName = "산하네집";
-        String encounterDate = "2025-08-11 15:33";
+        Date date = new Date();
+        LocalDateTime localDateTime = date.toInstant()
+                .atZone(ZoneId.of("Asia/Seoul"))
+                .toLocalDateTime()
+                .plusHours(1);
+
+        String encounterDate = convertLocalDateTimeToString(localDateTime);
         LocationShareEvent actual = null;
 
         //member 가입
@@ -259,7 +282,13 @@ class LocationShareServiceTest {
         Double destinationLat = 45.2;
         Double destinationLng = 77.7;
         String destinationName = "산하네집";
-        String encounterDate = "2025-08-11 15:33";
+        Date date = new Date();
+        LocalDateTime localDateTime = date.toInstant()
+                .atZone(ZoneId.of("Asia/Seoul"))
+                .toLocalDateTime()
+                .plusHours(1);
+
+        String encounterDate = convertLocalDateTimeToString(localDateTime);
         RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
                 destinationLat,
                 destinationLng,
@@ -336,7 +365,13 @@ class LocationShareServiceTest {
         Double destinationLat = 45.2;
         Double destinationLng = 77.7;
         String destinationName = "산하네집";
-        String encounterDate = "2025-08-11 15:33";
+        Date date = new Date();
+        LocalDateTime localDateTime = date.toInstant()
+                .atZone(ZoneId.of("Asia/Seoul"))
+                .toLocalDateTime()
+                .plusHours(1);
+
+        String encounterDate = convertLocalDateTimeToString(localDateTime);
         RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
                 destinationLat,
                 destinationLng,
@@ -428,7 +463,13 @@ class LocationShareServiceTest {
         Double destinationLat = 45.2;
         Double destinationLng = 77.7;
         String destinationName = "산하네집";
-        String encounterDate = "2025-08-11 15:33";
+        Date date = new Date();
+        LocalDateTime localDateTime = date.toInstant()
+                .atZone(ZoneId.of("Asia/Seoul"))
+                .toLocalDateTime()
+                .plusHours(1);
+
+        String encounterDate = convertLocalDateTimeToString(localDateTime);
         RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
                 destinationLat,
                 destinationLng,
@@ -514,7 +555,13 @@ class LocationShareServiceTest {
         Double destinationLat = 45.2;
         Double destinationLng = 77.7;
         String destinationName = "산하네집";
-        String encounterDate = "2025-08-11 15:33";
+        Date date = new Date();
+        LocalDateTime localDateTime = date.toInstant()
+                .atZone(ZoneId.of("Asia/Seoul"))
+                .toLocalDateTime()
+                .plusHours(1);
+
+        String encounterDate = convertLocalDateTimeToString(localDateTime);
         RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
                 destinationLat,
                 destinationLng,
