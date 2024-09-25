@@ -18,6 +18,13 @@ public class DateUtil {
         return inputLocalDate.isBefore(nowDate);
     }
 
+    public static boolean isMoreThan24HoursFromNow(LocalDateTime inputLocalDate) {
+        LocalDateTime nowDate = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        // 24시간을 더한 현재 시간
+        LocalDateTime twentyFourHoursFromNow = nowDate.plusHours(24);
+        return inputLocalDate.isAfter(twentyFourHoursFromNow);
+    }
+
     public static String convertLocalDateTimeToString(LocalDateTime localDatetime) {
         return localDatetime.format(FORMATTER);
     }

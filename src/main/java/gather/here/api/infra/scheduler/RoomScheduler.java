@@ -28,7 +28,7 @@ public class RoomScheduler {
     public void removeRoom() {
         List<Room> rooms = roomRepository.findByStatus(1);
         for (Room room : rooms) {
-            if(isPast(room.getEncounterDate().plusHours(1L))){
+            if(isPast(room.getEncounterDate().plusDays(1))){
                 room.closeRoom();
                 LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(room.getSeq());
                 List<LocationShareEvent.MemberLocation> memberLocations = locationShareEvent.getMemberLocations();

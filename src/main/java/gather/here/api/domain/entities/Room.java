@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static gather.here.api.global.util.DateUtil.convertToLocalDateTime;
-import static gather.here.api.global.util.DateUtil.isPastSeoulTime;
+import static gather.here.api.global.util.DateUtil.*;
 
 @Getter
 @DynamicUpdate
@@ -74,6 +73,10 @@ public class Room extends BaseTime {
             throw new RoomException(ResponseStatus.INCORRECT_ENCOUNTER_DATE, HttpStatus.CONFLICT);
         }
 
+        if(isMoreThan24HoursFromNow(convertedToLocalDateTime)){
+            throw new RoomException(ResponseStatus.INCORRECT_ENCOUNTER_DATE, HttpStatus.CONFLICT);
+        }
+
         Room room = Room.builder()
                 .destinationLat(destinationLat)
                 .destinationLng(destinationLng)
@@ -96,9 +99,7 @@ public class Room extends BaseTime {
         return String.valueOf(UUID.randomUUID()).substring(0,4);
     }
 
-
     public void addMemberList(Member member){
         this.memberList.add(member);
     }
-
 }

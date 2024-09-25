@@ -126,6 +126,40 @@ class RoomTest {
 
     }
 
+    @DisplayName("sut는 encounterDate 필드가 24시간 이후면 예외가 발생한다")
+    @Test
+    public void isEncounterDate24HourTest(){
+
+        //arrange
+        Double destinationLat = 1.0;
+        Double destinationLng = 2.0;
+        String destinationName = "사나몬 집";
+        Room sut = null;
+        RoomException actual = null;
+
+        Date date = new Date();
+        LocalDateTime localDateTime = date.toInstant()
+                .atZone(ZoneId.of("Asia/Seoul"))
+                .toLocalDateTime()
+                .plusDays(2);
+
+        String encounterDate = convertLocalDateTimeToString(localDateTime);
+        Member member = Member.create("01012345678","ENCODEPASSWORDENCODEPASSWORDENC");
+
+        //act
+        try {
+            sut = Room.create(destinationLat, destinationLng, destinationName, encounterDate, member);
+        }catch (RoomException e){
+            actual=e;
+        }
+
+        //assert
+        Assertions.assertThat(actual).isNotNull();
+        //Assertions.assertThat(actual.getResponseStatus()).isEqualTo(ResponseStatus.PAST_DATE_INVALID);
+        Assertions.assertThat(actual).isInstanceOf(RoomException.class);
+
+    }
+
     private boolean validShareCode(String shareCode){
         return shareCode.length() == 4;
     }

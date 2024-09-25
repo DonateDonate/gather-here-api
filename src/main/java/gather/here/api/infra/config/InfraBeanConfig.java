@@ -1,5 +1,6 @@
 package gather.here.api.infra.config;
 
+import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RefreshTokenRepository;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
@@ -44,7 +45,7 @@ public class InfraBeanConfig {
     }
 
     @Bean
-    public RoomScheduler roomScheduler(RoomRepository roomRepository, WebSocketAuthRepository webSocketAuthRepository) {
-        return new RoomScheduler(roomRepository,webSocketAuthRepository);
+    public RoomScheduler roomScheduler(RoomRepository roomRepository, WebSocketAuthRepository webSocketAuthRepository, MemberRepository memberRepository) {
+        return new RoomScheduler(roomRepository,webSocketAuthRepository,memberRepository);
     }
 }
