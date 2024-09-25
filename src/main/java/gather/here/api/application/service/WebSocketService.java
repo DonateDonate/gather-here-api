@@ -1,6 +1,5 @@
 package gather.here.api.application.service;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gather.here.api.domain.security.CustomPrincipal;
 import gather.here.api.domain.service.LocationShareService;
@@ -25,8 +24,10 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import static org.springframework.web.socket.CloseStatus.BAD_DATA;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,7 +44,8 @@ public class WebSocketService {
     @Value("${security.jwt.access-token.prefix}")
     private String ACCESS_TOKEN_PREFIX;
 
-    private final List<WebSocketSession> sessionList = new ArrayList<>();
+    private final List<WebSocketSession> sessionList = new CopyOnWriteArrayList<>();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Transactional
     public void connectHandle(WebSocketSession session) throws IOException {
@@ -56,38 +58,29 @@ public class WebSocketService {
             sessionList.add(session);
 
         } catch (BusinessException e) {
-            CloseStatus closeStatus = new CloseStatus(e.getResponseStatus().getCode());
+            CloseStatus closeStatus = new CloseStatus(BAD_DATA.getCode(),String.valueOf(e.getResponseStatus().getCode()));
             session.close(closeStatus);
         } catch (JwtException e) {
-            CloseStatus closeStatus = new CloseStatus(ResponseStatus.INVALID_ACCESS_TOKEN.getCode());
+            CloseStatus closeStatus = new CloseStatus(BAD_DATA.getCode(),String.valueOf(ResponseStatus.INVALID_ACCESS_TOKEN.getCode()));
             session.close(closeStatus);
         }
     }
 
     @Transactional
-    public void messageHandle(WebSocketSession session, TextMessage message) throws IOException {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String payload = message.getPayload();
-        LocationShareEventRequestDto request = null;
+    public void messageHandle(WebSocketSession session, TextMessage message){
         try {
-            request = objectMapper.readValue(payload, LocationShareEventRequestDto.class);
-        } catch (JsonParseException e) {
-            session.sendMessage(new TextMessage(ResponseStatus.INVALID_REQUEST.getMessage()));
-            return;
-        }
-        try {
+            LocationShareEventRequestDto request = objectMapper.readValue(message.getPayload(), LocationShareEventRequestDto.class);
             handleLocationShareRequest(session, request);
-        } catch (BusinessException e) {
-            session.sendMessage(new TextMessage(e.getMessage()));
+        } catch (Exception e) {
+            log.error("invalid webSocket request body ={}",e.getMessage());
         }
     }
 
     @Transactional
     public void connectClosedHandle(WebSocketSession session, CloseStatus status) {
-        if (status.getCode() == 1000 && session !=null) {
+        if (status.getCode() == 1000 && session != null) {
             sessionList.remove(session.getId());
-            GetLocationShareResponseDto response = locationShareService.removeWebSocketAuthAndLocationShareMember(session.getId());
+            GetLocationShareResponseDto response = locationShareService.getLocationShareEvent(session.getId());
             sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
         }
     }
@@ -130,26 +123,21 @@ public class WebSocketService {
                 sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
             }
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("Error handling location share request: {}", e.getMessage());
         }
     }
 
     private void sendMessage(List<String> sessionIdList, String message) {
-
-        try {
-            for (String id : sessionIdList) {
-                for (WebSocketSession webSocketSession : sessionList) {
-                    if (webSocketSession.getId().equals(id) && webSocketSession.isOpen()) {
+        for (String id : sessionIdList) {
+            sessionList.stream()
+                    .filter(session -> session.getId().equals(id) && session.isOpen())
+                    .forEach(session -> {
                         try {
-                            webSocketSession.sendMessage(new TextMessage(message));
+                            session.sendMessage(new TextMessage(message));
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            log.error("Error sending message to session {}: {}", id, e.getMessage());
                         }
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
+                    });
         }
     }
 }

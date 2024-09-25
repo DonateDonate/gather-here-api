@@ -71,4 +71,5 @@ public class RoomRepositoryImpl implements RoomRepository {
     public List<Room> findByStatus(int status) {
         return roomJpaRepository.findByStatus(status);
     }
+
 }

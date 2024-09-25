@@ -95,12 +95,23 @@ public class RoomService {
 
     @Transactional
     public void exitRoom(ExitRoomRequestDto request, Long memberSeq) {
-
         Member member = memberRepository.getBySeq(memberSeq);
 
         if (!member.getRoom().getSeq().equals(request.getRoomSeq())) {
             throw new RoomException(ResponseStatus.NOT_FOUND_ROOM_SEQ, HttpStatus.FORBIDDEN);
         }
+        webSocketAuthRepository.deleteByMemberSeq(member.getSeq());
+        LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
+
+        locationShareEvent.removeMemberLocation(member.getSeq());
+        locationShareEvent.removeDestinationMemberList(member.getSeq());
+
+        if(locationShareEvent.getMemberLocations().isEmpty()){
+            roomRepository.deleteLocationShareEvent(locationShareEvent);
+        }else{
+            roomRepository.updateLocationShareEvent(locationShareEvent);
+        }
+
         List<Member> memberList = member.getRoom().getMemberList();
         if (memberList.size() == 1 && memberList.get(0).getSeq().equals(memberSeq)) {
             Room room = member.getRoom();
