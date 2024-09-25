@@ -40,8 +40,7 @@ public class LocationShareService {
         Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
         if(existWebSocketAuth.isPresent()){
             webSocketAuthRepository.deleteByMemberSeq(memberSeq);
-            LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
-            updateLocationShareEventByMemberSeq(locationShareEvent, member);
+            updateLocationShareEventByMemberSeq(member);
         }
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
         webSocketAuthRepository.save(webSocketAuth);
@@ -121,21 +120,11 @@ public class LocationShareService {
     }
 
     @Transactional
-    public GetLocationShareResponseDto removeWebSocketAuthAndLocationShareMember(String sessionId) {
+    public GetLocationShareResponseDto getLocationShareEvent(String sessionId) {
         log.info("remove sessionId = {}", sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
-        webSocketAuthRepository.deleteByMemberSeq(webSocketAuth.getMemberSeq());
         Member member = memberRepository.getBySeq(webSocketAuth.getMemberSeq());
         LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
-
-        locationShareEvent.removeMemberLocation(member.getSeq());
-        locationShareEvent.removeDestinationMemberList(member.getSeq());
-
-        if(locationShareEvent.getMemberLocations().isEmpty()){
-            roomRepository.deleteLocationShareEvent(locationShareEvent);
-        }else{
-            roomRepository.updateLocationShareEvent(locationShareEvent);
-        }
         LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
         return new GetLocationShareResponseDto(message, locationShareEvent.getSessionIdList());
     }
@@ -180,7 +169,8 @@ public class LocationShareService {
         }
     }
 
-    private void updateLocationShareEventByMemberSeq(LocationShareEvent locationShareEvent, Member member) {
+    private void updateLocationShareEventByMemberSeq(Member member) {
+        LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
         locationShareEvent.removeMemberLocation(member.getSeq());
         locationShareEvent.removeDestinationMemberList(member.getSeq());
         roomRepository.updateLocationShareEvent(locationShareEvent);
