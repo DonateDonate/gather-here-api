@@ -28,9 +28,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.web.socket.CloseStatus.BAD_DATA;
-import static org.springframework.web.socket.CloseStatus.SERVER_ERROR;
-
 @Slf4j
 @RequiredArgsConstructor
 public class WebSocketService {
@@ -59,10 +56,10 @@ public class WebSocketService {
             sessionList.add(session);
 
         } catch (BusinessException e) {
-            CloseStatus closeStatus = new CloseStatus(BAD_DATA.getCode(),String.valueOf(ResponseStatus.INVALID_ACCESS_TOKEN.getCode()));
+            CloseStatus closeStatus = new CloseStatus(e.getResponseStatus().getCode());
             session.close(closeStatus);
         } catch (JwtException e) {
-            CloseStatus closeStatus = new CloseStatus(SERVER_ERROR.getCode(),String.valueOf(ResponseStatus.INVALID_ACCESS_TOKEN.getCode()));
+            CloseStatus closeStatus = new CloseStatus(ResponseStatus.INVALID_ACCESS_TOKEN.getCode());
             session.close(closeStatus);
         }
     }
