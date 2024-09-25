@@ -24,7 +24,7 @@ class LocationShareEventTest {
         Double destinationDistance = 200.0;
 
         //act
-        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
+        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance,null);
 
         //assert
         Assertions.assertThat(locationShareEvent.getRoomSeq()).isEqualTo(roomSeq);
@@ -52,7 +52,7 @@ class LocationShareEventTest {
         Double presentLng = 32.2;
         Double destinationDistance = 200.2;
 
-        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
+        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance,null);
 
         //act
         Long addMemberSeq = 2L;
@@ -70,7 +70,8 @@ class LocationShareEventTest {
                 addImageUrl,
                 addPresentLat,
                 addPresentLng,
-                addDestinationDistance
+                addDestinationDistance,
+                null
         );
         //assert
         Assertions.assertThat(locationShareEvent.getMemberLocations().size()).isEqualTo(2);
@@ -94,7 +95,7 @@ class LocationShareEventTest {
         Double presentLng = 32.1;
         Double destinationDistance = 200.2;
 
-        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
+        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance,null);
 
         Long addMemberSeq = 2L;
         String addSessionId = String.valueOf(UUID.randomUUID());
@@ -111,7 +112,8 @@ class LocationShareEventTest {
                 addImageUrl,
                 addPresentLat,
                 addPresentLng,
-                addDestinationDistance
+                addDestinationDistance,
+                null
         );
 
         //act
@@ -137,7 +139,7 @@ class LocationShareEventTest {
         Double presentLng = 32.4;
         Double destinationDistance = 200.5;
 
-        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
+        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance,null);
 
         //act
         locationShareEvent.addDestinationMemberList(memberSeq);
@@ -162,7 +164,7 @@ class LocationShareEventTest {
         Double presentLng = 32.6;
         Double destinationDistance = 200.2;
 
-        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
+        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance,null);
 
         //act
         locationShareEvent.removeDestinationMemberList(memberSeq);
@@ -189,7 +191,7 @@ class LocationShareEventTest {
         Long silverMemberSeq = 2L;
         Long bronzeMemberSeq = 3L;
 
-        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
+        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance,null);
 
         //act
         locationShareEvent.setGoldMemberSeq(memberSeq);

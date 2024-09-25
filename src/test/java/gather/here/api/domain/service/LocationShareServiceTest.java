@@ -154,13 +154,14 @@ class LocationShareServiceTest {
                         member.getImageKey(),
                         presentLat,
                         presentLng,
-                        destinationDistance
+                        destinationDistance,
+                        null
         );
         roomRepository.saveLocationShareEvent(locationShareEvent);
 
         //act
         try {
-            sut.createTypeHandleAction(request, sessionId);
+            sut.createTypeHandleAction(request, sessionId,null);
         }catch (LocationShareException e){
             actual =e;
         }
@@ -217,7 +218,7 @@ class LocationShareServiceTest {
         LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
 
         //act
-        sut.createTypeHandleAction(request, sessionId);
+        sut.createTypeHandleAction(request, sessionId,null);
         actual = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
 
         //assert
@@ -288,14 +289,14 @@ class LocationShareServiceTest {
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
-        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
+        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId,null);
 
         //act
         int joinType =0;
         LocationShareEventRequestDto joinLocationShareEventRequest =
                 new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
         try {
-            sut.joinTypeHandleAction(joinLocationShareEventRequest, joinSessionId);
+            sut.joinTypeHandleAction(joinLocationShareEventRequest, joinSessionId,null);
         }catch (LocationShareException e){
             actual = e;
         }
@@ -365,13 +366,13 @@ class LocationShareServiceTest {
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
-        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
+        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId,null);
 
         //act
         int joinType =1;
         LocationShareEventRequestDto joinLocationShareEventRequest =
                 new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
-        sut.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
+        sut.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId,null);
 
         //assert
         LocationShareEvent locationShareEventByRoomSeq = roomRepository.getLocationShareEventByRoomSeq(joinMember.getRoom().getSeq());
@@ -457,12 +458,12 @@ class LocationShareServiceTest {
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
-        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
+        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId,null);
 
         int joinType =1;
         LocationShareEventRequestDto joinLocationShareEventRequest =
                 new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
-        sut.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
+        sut.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId,null);
 
         //act
         int distanceChangeType = 2;
@@ -471,7 +472,7 @@ class LocationShareServiceTest {
         Double distanceChangeDestinationDistance = 20.1;
         LocationShareEventRequestDto distanceChangeLocationShareEventRequest =
                 new LocationShareEventRequestDto(distanceChangeType,distanceChangePresentLat,distanceChangePresentLng,distanceChangeDestinationDistance);
-        sut.distanceChangeHandleAction(distanceChangeLocationShareEventRequest,createSessionId);
+        sut.distanceChangeHandleAction(distanceChangeLocationShareEventRequest,createSessionId,null);
         LocationShareEvent actual = roomRepository.findLocationShareEventByRoomSeq(createMember.getRoom().getSeq()).get();
 
         //assert
@@ -544,12 +545,12 @@ class LocationShareServiceTest {
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
-        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
+        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId,null);
 
         int joinType =1;
         LocationShareEventRequestDto joinLocationShareEventRequest =
                 new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
-        sut.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
+        sut.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId,null);
 
         //act
         int distanceChangeType = 2;
@@ -558,9 +559,9 @@ class LocationShareServiceTest {
         Double distanceChangeDestinationDistance = 1.3;
         LocationShareEventRequestDto distanceChangeLocationShareEventRequest =
                 new LocationShareEventRequestDto(distanceChangeType,distanceChangePresentLat,distanceChangePresentLng,distanceChangeDestinationDistance);
-        sut.distanceChangeHandleAction(distanceChangeLocationShareEventRequest,createSessionId);
+        sut.distanceChangeHandleAction(distanceChangeLocationShareEventRequest,createSessionId,null);
 
-        sut.distanceChangeHandleAction(distanceChangeLocationShareEventRequest,joinSessionId);
+        sut.distanceChangeHandleAction(distanceChangeLocationShareEventRequest,joinSessionId,null);
 
         LocationShareEvent actual = roomRepository.findLocationShareEventByRoomSeq(createMember.getRoom().getSeq()).get();
 
@@ -627,12 +628,12 @@ class LocationShareServiceTest {
         Double destinationDistance = 41.4;
         LocationShareEventRequestDto createLocationShareEventRequest =
                 new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
-        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
+        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId,null);
 
         int joinType =1;
         LocationShareEventRequestDto joinLocationShareEventRequest =
                 new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
-        sut.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
+        sut.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId,null);
 
 
         //act

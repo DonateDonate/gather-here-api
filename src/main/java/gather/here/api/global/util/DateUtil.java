@@ -2,6 +2,7 @@ package gather.here.api.global.util;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
@@ -23,7 +24,8 @@ public class DateUtil {
 
     public static LocalDateTime convertToLocalDateTime(String dateTimeString) {
         try {
-            return LocalDateTime.parse(dateTimeString, FORMATTER);
+            ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateTimeString, FORMATTER.withZone(ZoneId.of("Asia/Seoul")));
+            return zonedDateTime.toLocalDateTime();
         } catch (DateTimeParseException e) {
             return null;
         }

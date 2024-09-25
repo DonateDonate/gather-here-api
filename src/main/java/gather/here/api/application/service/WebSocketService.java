@@ -15,6 +15,7 @@ import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.util.JsonUtil;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 public class WebSocketService {
     private final TokenService tokenService;
@@ -54,9 +56,11 @@ public class WebSocketService {
             sessionList.add(session);
 
         } catch (BusinessException e) {
-            session.close(CloseStatus.NOT_ACCEPTABLE.withReason(String.valueOf(e.getResponseStatus().getCode())));
+            CloseStatus closeStatus = new CloseStatus(e.getResponseStatus().getCode());
+            session.close(closeStatus);
         } catch (JwtException e) {
-            session.close(CloseStatus.NOT_ACCEPTABLE.withReason(String.valueOf(ResponseStatus.INVALID_ACCESS_TOKEN.getCode())));
+            CloseStatus closeStatus = new CloseStatus(ResponseStatus.INVALID_ACCESS_TOKEN.getCode());
+            session.close(closeStatus);
         }
     }
 
@@ -109,19 +113,20 @@ public class WebSocketService {
     }
 
     private void handleLocationShareRequest(WebSocketSession session, LocationShareEventRequestDto request) {
-
+        Boolean isOpen = session.isOpen();
+        log.info("session isOpen ={}",isOpen);
         try {
             if (request.getType() == 0) {
-                locationShareService.createTypeHandleAction(request, session.getId());
+                locationShareService.createTypeHandleAction(request, session.getId(),isOpen);
             }
 
             if (request.getType() == 1) {
-                GetLocationShareResponseDto response = locationShareService.joinTypeHandleAction(request, session.getId());
+                GetLocationShareResponseDto response = locationShareService.joinTypeHandleAction(request, session.getId(),isOpen);
                 sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
             }
 
             if (request.getType() == 2) {
-                GetLocationShareResponseDto response = locationShareService.distanceChangeHandleAction(request, session.getId());
+                GetLocationShareResponseDto response = locationShareService.distanceChangeHandleAction(request, session.getId(),isOpen);
                 sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
             }
         }catch (Exception e){
@@ -134,7 +139,7 @@ public class WebSocketService {
         try {
             for (String id : sessionIdList) {
                 for (WebSocketSession webSocketSession : sessionList) {
-                    if (webSocketSession.getId().equals(id)) {
+                    if (webSocketSession.getId().equals(id) && webSocketSession.isOpen()) {
                         try {
                             webSocketSession.sendMessage(new TextMessage(message));
                         } catch (IOException e) {
