@@ -31,9 +31,12 @@ public class DateUtil {
 
     public static LocalDateTime convertToLocalDateTime(String dateTimeString) {
         try {
-            ZonedDateTime zonedDateTime = ZonedDateTime.parse(dateTimeString, FORMATTER.withZone(ZoneId.of("Asia/Seoul")));
+            // LocalDateTime으로 파싱한 후, 한국 시간대에 맞게 변환
+            LocalDateTime localDateTime = LocalDateTime.parse(dateTimeString, FORMATTER);
+            ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.of("Asia/Seoul"));
             return zonedDateTime.toLocalDateTime();
         } catch (DateTimeParseException e) {
+            // 예외 처리
             return null;
         }
     }
