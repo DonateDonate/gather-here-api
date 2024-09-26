@@ -23,6 +23,7 @@ ENTRYPOINT [\
     "java",\
     "-Dspring.profiles.active=devel",\
     "-Dserver.port=8080",\
+    "-Duser.timezone=Asia/Seoul",\
     "-jar",\
     "/app.jar"\
     ]
