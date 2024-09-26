@@ -81,21 +81,36 @@ public class LocationShareService {
 
         Long memberSeq = webSocketAuth.getMemberSeq();
         Member member = memberRepository.getBySeq(memberSeq);
-        LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
-
-        locationShareEvent.addMemberLocations(
-                member.getSeq(),
-                sessionId,
-                member.getNickname(),
-                fileFactory.getImageUrl(member.getImageKey()),
-                request.getPresentLat(),
-                request.getPresentLng(),
-                request.getDestinationDistance(),
-                isOpen
-        );
-
-        roomRepository.updateLocationShareEvent(locationShareEvent);
-
+        Optional<LocationShareEvent> locationShareEventOptional = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq());
+        LocationShareEvent locationShareEvent = null;
+        if(locationShareEventOptional.isPresent()){
+            locationShareEvent = locationShareEventOptional.get();
+            locationShareEvent.addMemberLocations(
+                    member.getSeq(),
+                    sessionId,
+                    member.getNickname(),
+                    fileFactory.getImageUrl(member.getImageKey()),
+                    request.getPresentLat(),
+                    request.getPresentLng(),
+                    request.getDestinationDistance(),
+                    isOpen
+            );
+            roomRepository.updateLocationShareEvent(locationShareEvent);
+        }else{
+            locationShareEvent = new LocationShareEvent()
+                    .create(
+                            member.getRoom().getSeq(),
+                            member.getSeq(),
+                            sessionId,
+                            member.getNickname(),
+                            fileFactory.getImageUrl(member.getImageKey()),
+                            request.getPresentLat(),
+                            request.getPresentLng(),
+                            request.getDestinationDistance(),
+                            isOpen
+                    );
+            roomRepository.saveLocationShareEvent(locationShareEvent);
+        }
         LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
 
         return new GetLocationShareResponseDto(message, locationShareEvent.getSessionIdList());
