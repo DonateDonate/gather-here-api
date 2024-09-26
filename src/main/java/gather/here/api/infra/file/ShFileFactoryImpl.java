@@ -2,7 +2,6 @@ package gather.here.api.infra.file;
 
 import gather.here.api.application.service.dto.request.ShItemUploadFileRequestDto;
 import gather.here.api.domain.file.FileFactory;
-import gather.here.api.infra.file.dto.DeleteFileRequestDto;
 import gather.here.api.infra.file.dto.GetImageUrlResponseDto;
 import gather.here.api.infra.file.dto.UploadFileResponseDto;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,12 +58,10 @@ public class ShFileFactoryImpl implements FileFactory {
 
     @Override
     public void deleteFile(String imageKey) {
-        DeleteFileRequestDto request = new DeleteFileRequestDto(imageKey);
-        WebClient.create(SH_ITEM_SERVER_URL)
-                .post()
+        WebClient.create(SH_ITEM_SERVER_URL + "/" + imageKey)
+                .delete()
                 .header("clientId", SH_ITEM_SERVER_CLIENT_ID)
                 .header("secretKey", SH_ITEM_SERVER_SECRET_KEY)
-                .bodyValue(request)
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
