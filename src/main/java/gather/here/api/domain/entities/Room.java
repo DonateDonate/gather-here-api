@@ -68,7 +68,6 @@ public class Room extends BaseTime {
         if(convertedToLocalDateTime == null || isPastSeoulTime(convertedToLocalDateTime) || isMoreThan24HoursFromNow(convertedToLocalDateTime)){
             throw new RoomException(ResponseStatus.INCORRECT_ENCOUNTER_DATE, HttpStatus.CONFLICT);
         }
-
         Room room = Room.builder()
                 .destinationLat(destinationLat)
                 .destinationLng(destinationLng)
