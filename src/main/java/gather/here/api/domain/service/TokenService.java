@@ -88,8 +88,8 @@ public class TokenService {
             throw new AuthException(ResponseStatus.INVALID_REFRESH_TOKEN, HttpStatus.UNAUTHORIZED);
         }
 
-        String newAccessToken = accessTokenFactory.generate(identity, memberSeq, getKey(), ACCESS_TOKEN_MINUTE);
-        String newRefreshToken = refreshTokenFactory.generate(identity, getKey(), REFRESH_TOKEN_MINUTE);
+        String newAccessToken = ACCESS_TOKEN_PREFIX +" "+accessTokenFactory.generate(identity, memberSeq, getKey(), ACCESS_TOKEN_MINUTE);
+        String newRefreshToken = REFRESH_TOKEN_PREFIX+" "+refreshTokenFactory.generate(identity, getKey(), REFRESH_TOKEN_MINUTE);
 
         return new TokenResponseDto(newAccessToken, newRefreshToken);
     }

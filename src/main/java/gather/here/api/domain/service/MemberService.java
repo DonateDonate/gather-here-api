@@ -75,12 +75,11 @@ public class MemberService {
 
     @Transactional
     public UpdateImageResponseDto updateMemberImage(MultipartFile multipartFile, Long memberSeq) {
+        String imageKey = fileFactory.uploadFile(multipartFile);
         Member member = memberRepository.getBySeq(memberSeq);
         if(member.getImageKey() != null){
             fileFactory.deleteFile(member.getImageKey());
         }
-        String imageKey = fileFactory.uploadFile(multipartFile);
-
         member.setImageKey(imageKey);
         return new UpdateImageResponseDto(fileFactory.getImageUrl(imageKey));
     }

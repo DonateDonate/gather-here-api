@@ -134,7 +134,7 @@ public class WebSocketService {
                     .forEach(session -> {
                         try {
                             session.sendMessage(new TextMessage(message));
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             log.error("Error sending message to session {}: {}", id, e.getMessage());
                         }
                     });
