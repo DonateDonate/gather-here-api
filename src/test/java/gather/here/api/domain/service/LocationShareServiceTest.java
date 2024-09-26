@@ -252,12 +252,12 @@ class LocationShareServiceTest {
     }
 
     @Transactional
-    @DisplayName("sut는 roomSeq로 만들어진 locationShareEvent가 없으면 예외가 발생한다")
+    @DisplayName("sut는 join시 roomSeq로 만들어진 locationShareEvent가 없으면 locationShareEvent를 생성한다")
     @Test
     public void notFoundRoomSeqJoinTest(){
         //arrange
-        LocationShareException actual = null;
         LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
+        LocationShareEvent actual = null;
 
         //방장 member 추가
         String createIdentity = Utils.randomMemberId();
@@ -323,15 +323,13 @@ class LocationShareServiceTest {
         int joinType =0;
         LocationShareEventRequestDto joinLocationShareEventRequest =
                 new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
-        try {
-            sut.joinTypeHandleAction(joinLocationShareEventRequest, joinSessionId,null);
-        }catch (LocationShareException e){
-            actual = e;
-        }
+        sut.joinTypeHandleAction(joinLocationShareEventRequest, joinSessionId,null);
+
+        actual = roomRepository.getLocationShareEventByRoomSeq(joinMember.getRoom().getSeq());
 
         //assert
         Assertions.assertThat(actual).isNotNull();
-        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(3104);
+        Assertions.assertThat(actual.getRoomSeq()).isEqualTo(joinMember.getRoom().getSeq());
     }
 
     @DisplayName("sut는 성공적으로 locationShareEvent에 join 한다")
