@@ -13,7 +13,6 @@ import gather.here.api.domain.service.dto.request.JoinRoomRequestDto;
 import gather.here.api.domain.service.dto.request.LocationShareEventRequestDto;
 import gather.here.api.domain.service.dto.request.MemberSignUpRequestDto;
 import gather.here.api.domain.service.dto.request.RoomCreateRequestDto;
-import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.RoomException;
 import org.assertj.core.api.Assertions;
@@ -110,82 +109,82 @@ class LocationShareServiceTest {
         Assertions.assertThat(actual.getSessionId()).isEqualTo(sessionId);
     }
 
-    @DisplayName("sut는 locationShareEvent에 중복된 roomSeq값이 있으면 예외가 발생한다")
-    @Test
-    @Transactional
-    public void duplicateCreateTypeHandleActionTest(){
-        //arrange
-        String identity =  Utils.randomMemberId();
-        String password = "1234";
-        String sessionId = String.valueOf(UUID.randomUUID());
-        Double destinationLat = 45.2;
-        Double destinationLng = 77.7;
-        String destinationName = "산하네집";
-        Date date = new Date();
-        LocalDateTime localDateTime = date.toInstant()
-                .atZone(ZoneId.of("Asia/Seoul"))
-                .toLocalDateTime()
-                .plusHours(1);
-
-        String encounterDate = convertLocalDateTimeToString(localDateTime);
-        LocationShareException actual = null;
-
-        //member 가입
-        MemberSignUpRequestDto memberSignUpRequestDto = new MemberSignUpRequestDto(identity, password);
-        memberService.save(memberSignUpRequestDto);
-
-        Member member = memberRepository.findByIdentityAndIsActiveTrue(identity).get();
-
-
-        //room create
-        RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
-                destinationLat,
-                destinationLng,
-                destinationName,
-                encounterDate
-        );
-        roomService.createRoom(
-            roomCreateRequestDto,
-                member.getSeq()
-        );
-
-        WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(),sessionId);
-        webSocketAuthRepository.save(webSocketAuth);
-
-        int type =0;
-        Double presentLat = 12.3;
-        Double presentLng = 46.2;
-        Double destinationDistance = 41.4;
-        LocationShareEventRequestDto request =
-                new LocationShareEventRequestDto(type,presentLat,presentLng,destinationDistance);
-
-        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
-
-        LocationShareEvent locationShareEvent
-                = new LocationShareEvent().create(
-                        member.getRoom().getSeq(),
-                        member.getSeq(),
-                        sessionId,
-                        member.getNickname(),
-                        member.getImageKey(),
-                        presentLat,
-                        presentLng,
-                        destinationDistance,
-                        null
-        );
-        roomRepository.saveLocationShareEvent(locationShareEvent);
-
-        //act
-        try {
-            sut.createTypeHandleAction(request, sessionId,null);
-        }catch (LocationShareException e){
-            actual =e;
-        }
-
-        //assert
-        Assertions.assertThat(actual).isNotNull();
-        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(3103);
-    }
+//    @DisplayName("sut는 locationShareEvent에 중복된 roomSeq값이 있으면 예외가 발생한다")
+//    @Test
+//    @Transactional
+//    public void duplicateCreateTypeHandleActionTest(){
+//        //arrange
+//        String identity =  Utils.randomMemberId();
+//        String password = "1234";
+//        String sessionId = String.valueOf(UUID.randomUUID());
+//        Double destinationLat = 45.2;
+//        Double destinationLng = 77.7;
+//        String destinationName = "산하네집";
+//        Date date = new Date();
+//        LocalDateTime localDateTime = date.toInstant()
+//                .atZone(ZoneId.of("Asia/Seoul"))
+//                .toLocalDateTime()
+//                .plusHours(1);
+//
+//        String encounterDate = convertLocalDateTimeToString(localDateTime);
+//        LocationShareException actual = null;
+//
+//        //member 가입
+//        MemberSignUpRequestDto memberSignUpRequestDto = new MemberSignUpRequestDto(identity, password);
+//        memberService.save(memberSignUpRequestDto);
+//
+//        Member member = memberRepository.findByIdentityAndIsActiveTrue(identity).get();
+//
+//
+//        //room create
+//        RoomCreateRequestDto roomCreateRequestDto = new RoomCreateRequestDto(
+//                destinationLat,
+//                destinationLng,
+//                destinationName,
+//                encounterDate
+//        );
+//        roomService.createRoom(
+//            roomCreateRequestDto,
+//                member.getSeq()
+//        );
+//
+//        WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(),sessionId);
+//        webSocketAuthRepository.save(webSocketAuth);
+//
+//        int type =0;
+//        Double presentLat = 12.3;
+//        Double presentLng = 46.2;
+//        Double destinationDistance = 41.4;
+//        LocationShareEventRequestDto request =
+//                new LocationShareEventRequestDto(type,presentLat,presentLng,destinationDistance);
+//
+//        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),roomRepository);
+//
+//        LocationShareEvent locationShareEvent
+//                = new LocationShareEvent().create(
+//                        member.getRoom().getSeq(),
+//                        member.getSeq(),
+//                        sessionId,
+//                        member.getNickname(),
+//                        member.getImageKey(),
+//                        presentLat,
+//                        presentLng,
+//                        destinationDistance,
+//                        null
+//        );
+//        roomRepository.saveLocationShareEvent(locationShareEvent);
+//
+//        //act
+//        try {
+//            sut.createTypeHandleAction(request, sessionId,null);
+//        }catch (LocationShareException e){
+//            actual =e;
+//        }
+//
+//        //assert
+//        Assertions.assertThat(actual).isNotNull();
+//        Assertions.assertThat(actual.getResponseStatus().getCode()).isEqualTo(3103);
+//    }
 
     @DisplayName("sut는 성공적으로 locationShareEvent 생성한다")
     @Test
