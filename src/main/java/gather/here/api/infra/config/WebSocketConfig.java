@@ -16,14 +16,15 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig implements WebSocketConfigurer {
     private final WebSocketService webSocketService;
 
-    @Bean
-    public WebSocketHandler customWebSocketHandler(WebSocketService webSocketService){
-        return new CustomWebSocketHandler(webSocketService);
-    }
-
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(customWebSocketHandler(webSocketService),"/location/share")
                 .setAllowedOrigins("*");
     }
+
+    @Bean
+    public WebSocketHandler customWebSocketHandler(WebSocketService webSocketService){
+        return new CustomWebSocketHandler(webSocketService);
+    }
+
 }

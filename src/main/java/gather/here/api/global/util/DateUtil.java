@@ -2,7 +2,6 @@ package gather.here.api.global.util;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
@@ -10,12 +9,12 @@ import java.util.Date;
 public class DateUtil {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public static boolean isPastSeoulTime(LocalDateTime inputLocalDate){
+    public static boolean isNotPastSeoulTime(LocalDateTime inputLocalDate){
         Date date = new Date();
         LocalDateTime nowDate = date.toInstant()
                         .atZone(ZoneId.of("Asia/Seoul"))
                         .toLocalDateTime();
-        return inputLocalDate.isBefore(nowDate);
+       return !inputLocalDate.isBefore(nowDate);
     }
 
     public static boolean isMoreThan24HoursFromNow(LocalDateTime inputLocalDate) {
@@ -32,11 +31,9 @@ public class DateUtil {
     public static LocalDateTime convertToLocalDateTime(String dateTimeString) {
         try {
             // LocalDateTime으로 파싱한 후, 한국 시간대에 맞게 변환
-            LocalDateTime localDateTime = LocalDateTime.parse(dateTimeString, FORMATTER);
-            ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.of("Asia/Seoul"));
-            return zonedDateTime.toLocalDateTime();
+            return LocalDateTime.parse(dateTimeString, FORMATTER);
         } catch (DateTimeParseException e) {
-            // 예외 처리
+            e.printStackTrace();
             return null;
         }
     }
