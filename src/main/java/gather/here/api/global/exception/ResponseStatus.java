@@ -25,6 +25,8 @@ public enum ResponseStatus {
     ALREADY_ROOM_ENCOUNTER(2104,"이미 참가한 방이 있습니다"),
     CLOSED_ROOM(2105,"종료된 방입니다"),
     NOT_FOUND_ROOM_SEQ(2106,"등록되지 않은 room식별값입니다"),
+    PAST_ENCOUNTER_DATE(2107,"잘못된 요청입니다. encounterDate 값을 확인해주세요(과거)"),
+    IS_MORE_THAN_24_HOURS_ENCOUNTER_DATE(2108,"잘못된 요청입니다. encounterDate 값을 확인해주세요(24시간 지남)"),
 
     /**
      * 3xxx: Location Share exception

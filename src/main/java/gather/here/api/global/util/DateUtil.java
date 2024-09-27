@@ -9,12 +9,12 @@ import java.util.Date;
 public class DateUtil {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public static boolean isNotPastSeoulTime(LocalDateTime inputLocalDate){
+    public static boolean isPastSeoulTime(LocalDateTime inputLocalDate){
         Date date = new Date();
         LocalDateTime nowDate = date.toInstant()
                         .atZone(ZoneId.of("Asia/Seoul"))
                         .toLocalDateTime();
-       return !inputLocalDate.isBefore(nowDate);
+        return inputLocalDate.isBefore(nowDate);
     }
 
     public static boolean isMoreThan24HoursFromNow(LocalDateTime inputLocalDate) {
