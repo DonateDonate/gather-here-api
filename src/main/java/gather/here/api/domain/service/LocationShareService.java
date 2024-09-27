@@ -20,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static gather.here.api.global.exception.ResponseStatus.DUPLICATE_LOCATION_SHARE_EVENT_ROOM_SEQ;
-
 @Slf4j
 @RequiredArgsConstructor
 public class LocationShareService {
@@ -56,7 +54,8 @@ public class LocationShareService {
         Optional<LocationShareEvent> existLocationShareEvent = roomRepository.findLocationShareEventByRoomSeq(member.getRoom().getSeq());
 
         if (existLocationShareEvent.isPresent()) {
-            throw new LocationShareException(DUPLICATE_LOCATION_SHARE_EVENT_ROOM_SEQ, HttpStatus.FORBIDDEN);
+            existLocationShareEvent.get().removeMemberLocation(memberSeq);
+            existLocationShareEvent.get().addDestinationMemberList(memberSeq);
         }
 
         LocationShareEvent locationShareEvent = new LocationShareEvent()
