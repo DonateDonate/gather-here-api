@@ -8,4 +8,9 @@ import lombok.Getter;
 public class TokenResponseDto {
     private String accessToken;
     private String refreshToken;
+
+    public void addPrefix(String accessTokenHeaderName , String refreshTokenHeaderName){
+        this.accessToken  = accessTokenHeaderName + " " + accessToken;
+        this.refreshToken = refreshTokenHeaderName + " " + refreshToken;
+    }
 }

@@ -26,10 +26,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
         //accessToken 생성
-        String accessTokenWithPrefix = tokenService.accessTokenGenerate(authentication);
+        String accessTokenWithPrefix = tokenService.accessTokenGenerate(authentication.getName());
 
         //refresh token 생성 및 저장
-        String refreshTokenWithPrefix = tokenService.refreshTokenGenerate(authentication);
+        String refreshTokenWithPrefix = tokenService.refreshTokenGenerate(authentication.getName());
 
         response.setHeader(ACCESS_TOKEN_HEADER_NAME,accessTokenWithPrefix);
         response.setHeader(REFRESH_TOKEN_HEADER_NAME,refreshTokenWithPrefix);

@@ -46,4 +46,5 @@ public class AccessTokenFactoryImpl implements AccessTokenFactory {
 
         return UsernamePasswordAuthenticationToken.authenticated(new CustomPrincipal(identity, memberSeq), null,null);
     }
+
 }

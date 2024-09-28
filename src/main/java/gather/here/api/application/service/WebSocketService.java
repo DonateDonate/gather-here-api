@@ -44,6 +44,9 @@ public class WebSocketService {
     @Value("${security.jwt.access-token.prefix}")
     private String ACCESS_TOKEN_PREFIX;
 
+    @Value("${security.jwt.refresh-token.prefix}")
+    private String REFRESH_TOKEN_PREFIX;
+
     private final List<WebSocketSession> sessionList = new CopyOnWriteArrayList<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -93,9 +96,11 @@ public class WebSocketService {
         if (refreshToken != null && !refreshToken.isEmpty() && refreshToken.get(refreshToken.size() - 1) != null) {
             String token = refreshToken.get(refreshToken.size() - 1);
             TokenResponseDto reissueResponse = tokenService.reissue(token);
+            reissueResponse.addPrefix(ACCESS_TOKEN_PREFIX,REFRESH_TOKEN_PREFIX);
             try {
+
                 session.sendMessage(new TextMessage(JsonUtil.convertToJsonString(reissueResponse)));
-                return ACCESS_TOKEN_PREFIX + " " + reissueResponse.getAccessToken();
+                return reissueResponse.getAccessToken();
             } catch (IOException e) {
                 throw new LocationShareException(ResponseStatus.INVALID_REQUEST, HttpStatus.FORBIDDEN);
             }

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Key;
 import java.time.ZonedDateTime;
@@ -43,6 +44,7 @@ public class RefreshTokenFactoryImpl implements RefreshTokenFactory {
     }
 
     @Override
+    @Transactional
     public void update(String identity, String token) {
         List<RefreshToken> refreshTokens = repository.findByIdentity(identity);
 
@@ -70,6 +72,7 @@ public class RefreshTokenFactoryImpl implements RefreshTokenFactory {
     }
 
     @Override
+    @Transactional
     public void delete(String identity) {
         List<RefreshToken> refreshTokens = repository.findByIdentity(identity);
 

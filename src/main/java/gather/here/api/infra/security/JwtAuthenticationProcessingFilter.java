@@ -1,7 +1,7 @@
 package gather.here.api.infra.security;
 
-import gather.here.api.domain.service.dto.response.TokenResponseDto;
 import gather.here.api.domain.service.TokenService;
+import gather.here.api.domain.service.dto.response.TokenResponseDto;
 import gather.here.api.global.exception.AuthException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -17,8 +17,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-
-import static gather.here.api.global.util.TokenUtil.withTokenPrefix;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,8 +34,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(refreshToken)) {
             try {
                 TokenResponseDto tokenDto = tokenService.reissue(refreshToken);
+                accessToken = tokenDto.getAccessToken();
                 sendReissueSuccessResponse(response, tokenDto);
-                accessToken = withTokenPrefix(tokenDto.getAccessToken(),ACCESS_TOKEN_PREFIX);
 
             } catch (JwtException e) {
                 request.setAttribute("exception", e);
