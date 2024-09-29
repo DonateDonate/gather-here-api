@@ -57,7 +57,7 @@ public class WebSocketService {
             Authentication authentication = tokenService.accessTokenValidate(accessTokenTokenWithPrefix);
             CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
             Long memberSeq = principal.getMemberSeq();
-            locationShareService.saveWebSocketAuth(session.getId(), memberSeq);
+            locationShareService.saveWebSocketAuth(session.getId(), memberSeq,sessionList);
             sessionList.add(session);
 
         } catch (BusinessException e) {
