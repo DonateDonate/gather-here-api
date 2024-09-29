@@ -47,7 +47,7 @@ public class WebSocketService {
     @Value("${security.jwt.refresh-token.prefix}")
     private String REFRESH_TOKEN_PREFIX;
 
-    private final List<WebSocketSession> sessionList = new CopyOnWriteArrayList<>();
+    private static final List<WebSocketSession> sessionList = new CopyOnWriteArrayList<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Transactional
@@ -57,7 +57,7 @@ public class WebSocketService {
             Authentication authentication = tokenService.accessTokenValidate(accessTokenTokenWithPrefix);
             CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
             Long memberSeq = principal.getMemberSeq();
-            locationShareService.saveWebSocketAuth(session.getId(), memberSeq,sessionList);
+            locationShareService.saveWebSocketAuth(session.getId(), memberSeq);
             sessionList.add(session);
 
         } catch (BusinessException e) {
@@ -145,7 +145,7 @@ public class WebSocketService {
                     });
         }
     }
-    public List<WebSocketSession> getSessionList(){
+    public static List<WebSocketSession> getSessionList(){
         return sessionList;
     }
 }

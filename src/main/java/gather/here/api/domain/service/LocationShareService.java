@@ -17,10 +17,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.socket.WebSocketSession;
 
-import java.util.List;
 import java.util.Optional;
+
+import static gather.here.api.application.service.WebSocketService.getSessionList;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,7 +31,7 @@ public class LocationShareService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public void saveWebSocketAuth(String sessionId, Long memberSeq, List<WebSocketSession> sessionList) {
+    public void saveWebSocketAuth(String sessionId, Long memberSeq) {
         log.info("save sessionId ={}",sessionId);
         Member member = memberRepository.getBySeq(memberSeq);
         if(member.getRoom() == null || member.getRoom().getStatus() == 9){
@@ -39,7 +39,7 @@ public class LocationShareService {
         }
         Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
         if(existWebSocketAuth.isPresent()){
-            sessionList.remove(existWebSocketAuth.get().getSessionId());
+            getSessionList().remove(existWebSocketAuth.get().getSessionId());
             webSocketAuthRepository.deleteByMemberSeq(memberSeq);
             updateLocationShareEventByMemberSeq(member);
         }
