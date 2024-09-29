@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @EnableScheduling
@@ -34,14 +35,16 @@ public class RoomScheduler {
         for (Room room : rooms) {
             if(isPast(room.getEncounterDate().plusDays(1))){
                 room.closeRoom();
-                LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(room.getSeq());
-                List<LocationShareEvent.MemberLocation> memberLocations = locationShareEvent.getMemberLocations();
-                for(LocationShareEvent.MemberLocation memberLocation : memberLocations){
-                    webSocketAuthRepository.deleteByMemberSeq(memberLocation.getMemberSeq());
-                    Member member = memberRepository.getBySeq(memberLocation.getMemberSeq());
-                    member.exitRoom();
-                }
-                roomRepository.deleteLocationShareEvent(locationShareEvent);
+                Optional<LocationShareEvent> locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(room.getSeq());
+                if(locationShareEvent.isPresent()){
+                    List<LocationShareEvent.MemberLocation> memberLocations = locationShareEvent.get().getMemberLocations();
+                    for(LocationShareEvent.MemberLocation memberLocation : memberLocations){
+                        webSocketAuthRepository.deleteByMemberSeq(memberLocation.getMemberSeq());
+                        Member member = memberRepository.getBySeq(memberLocation.getMemberSeq());
+                        member.exitRoom();
+                    }
+                    roomRepository.deleteLocationShareEvent(locationShareEvent.get());
+                    }
             }
         }
     }
