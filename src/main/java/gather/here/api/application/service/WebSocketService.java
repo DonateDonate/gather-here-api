@@ -81,11 +81,9 @@ public class WebSocketService {
 
     @Transactional
     public void connectClosedHandle(WebSocketSession session, CloseStatus status) {
-        if (status.getCode() == 1000 && session != null) {
             sessionList.remove(session.getId());
             GetLocationShareResponseDto response = locationShareService.getLocationShareEvent(session.getId());
             sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
-        }
     }
 
     private String extractAccessToken(WebSocketSession session) {

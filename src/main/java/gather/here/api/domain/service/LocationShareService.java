@@ -20,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static gather.here.api.application.service.WebSocketService.getSessionList;
-
 @Slf4j
 @RequiredArgsConstructor
 public class LocationShareService {
@@ -39,7 +37,6 @@ public class LocationShareService {
         }
         Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
         if(existWebSocketAuth.isPresent()){
-            getSessionList().remove(existWebSocketAuth.get().getSessionId());
             webSocketAuthRepository.deleteByMemberSeq(memberSeq);
             updateLocationShareEventByMemberSeq(member);
         }
