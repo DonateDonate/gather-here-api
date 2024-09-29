@@ -1,5 +1,6 @@
 package gather.here.api.presentation.api;
 
+import gather.here.api.application.service.WebSocketService;
 import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.WebSocketAuth;
 import gather.here.api.domain.service.RoomService;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.socket.WebSocketSession;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -22,6 +25,9 @@ public class TestController {
 
     @Autowired
     RoomService roomService;
+
+    @Autowired
+    WebSocketService webSocketService;
 
     @GetMapping("/auth")
     public String auth(){
@@ -40,6 +46,16 @@ public class TestController {
             ){
         log.info("roomCreateRequestDto = {}",roomCreateRequestDto);
         return "ok";
+    }
+
+    @GetMapping("/test/sessionList")
+    public ResponseEntity sessionList(){
+        List<WebSocketSession> sessionList = webSocketService.getSessionList();
+        List<String> list = new ArrayList<>();
+        sessionList.stream().forEach(
+                se -> list.add(se.getId())
+        );
+        return new ResponseEntity(list,HttpStatus.OK);
     }
 
     @GetMapping("/test/webSocketAuth")

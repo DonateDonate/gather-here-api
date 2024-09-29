@@ -25,7 +25,11 @@ public class RoomScheduler {
 
     @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
-    public void removeRoom() {
+    public void processing() {
+        removeRoom();
+    }
+
+    private void removeRoom() {
         List<Room> rooms = roomRepository.findByStatus(1);
         for (Room room : rooms) {
             if(isPast(room.getEncounterDate().plusDays(1))){

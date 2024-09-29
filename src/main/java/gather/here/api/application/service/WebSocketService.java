@@ -128,7 +128,7 @@ public class WebSocketService {
                 sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
             }
         }catch (Exception e){
-            log.error("Error handling location share request: {}", e.getMessage());
+            log.error("Error handling location share request: {} {} {}", e.getCause(),e.getLocalizedMessage(),e.getMessage());
         }
     }
 
@@ -144,5 +144,8 @@ public class WebSocketService {
                         }
                     });
         }
+    }
+    public List<WebSocketSession> getSessionList(){
+        return sessionList;
     }
 }
