@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -32,6 +33,7 @@ import java.util.UUID;
 
 import static gather.here.api.global.util.DateUtil.convertLocalDateTimeToString;
 
+@WebAppConfiguration
 @SpringBootTest
 @ActiveProfiles("test")
 class LocationShareServiceTest {

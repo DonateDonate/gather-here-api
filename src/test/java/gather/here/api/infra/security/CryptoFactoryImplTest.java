@@ -1,7 +1,6 @@
 package gather.here.api.infra.security;
 
 import gather.here.api.domain.security.CryptoFactory;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 @ActiveProfiles("test")
 @SpringBootTest
+@WebAppConfiguration
 class CryptoFactoryImplTest {
 
     @Autowired

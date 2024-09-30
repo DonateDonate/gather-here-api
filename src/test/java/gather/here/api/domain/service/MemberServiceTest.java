@@ -1,14 +1,14 @@
 package gather.here.api.domain.service;
 
 import gather.here.api.Utils.Utils;
-import gather.here.api.domain.service.dto.request.MemberSignUpRequestDto;
-import gather.here.api.domain.service.dto.request.ModifyNicknameRequestDto;
-import gather.here.api.domain.service.dto.request.ModifyPasswordRequestDto;
-import gather.here.api.domain.service.dto.response.GetMemberResponseDto;
 import gather.here.api.domain.dobules.CryptoFactoryStub;
 import gather.here.api.domain.dobules.FileFactoryStub;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.repositories.MemberRepository;
+import gather.here.api.domain.service.dto.request.MemberSignUpRequestDto;
+import gather.here.api.domain.service.dto.request.ModifyNicknameRequestDto;
+import gather.here.api.domain.service.dto.request.ModifyPasswordRequestDto;
+import gather.here.api.domain.service.dto.response.GetMemberResponseDto;
 import gather.here.api.global.exception.MemberException;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
@@ -18,10 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+@WebAppConfiguration
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
