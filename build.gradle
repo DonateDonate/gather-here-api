@@ -65,7 +65,10 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.1.RELEASE'
 
 	//web socket
-	implementation("org.springframework.boot:spring-boot-starter-websocket")
+//	implementation("org.springframework.boot:spring-boot-starter-websocket")
+	// https://mvnrepository.com/artifact/org.springframework/spring-websocket
+	implementation group: 'org.springframework', name: 'spring-websocket', version: '6.1.6'
+
 
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
