@@ -82,7 +82,7 @@ public class WebSocketService {
     @Transactional
     public void connectClosedHandle(WebSocketSession session, CloseStatus status) {
             sessionList.remove(session);
-            GetLocationShareResponseDto response = locationShareService.getLocationShareEvent(session.getId());
+            GetLocationShareResponseDto response = locationShareService.disConnectHandleAction(session.getId());
             sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
     }
 

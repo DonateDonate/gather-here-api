@@ -100,7 +100,6 @@ public class RoomService {
         if (!member.getRoom().getSeq().equals(request.getRoomSeq())) {
             throw new RoomException(ResponseStatus.NOT_FOUND_ROOM_SEQ, HttpStatus.FORBIDDEN);
         }
-        webSocketAuthRepository.deleteByMemberSeq(member.getSeq());
         LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
 
         locationShareEvent.removeMemberLocation(member.getSeq());

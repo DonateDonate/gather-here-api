@@ -133,12 +133,13 @@ public class LocationShareService {
     }
 
     @Transactional
-    public GetLocationShareResponseDto getLocationShareEvent(String sessionId) {
+    public GetLocationShareResponseDto disConnectHandleAction(String sessionId) {
         log.info("remove sessionId = {}", sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
         Member member = memberRepository.getBySeq(webSocketAuth.getMemberSeq());
         LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
         LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
+        webSocketAuthRepository.deleteByMemberSeq(member.getSeq());
         return new GetLocationShareResponseDto(message, locationShareEvent.getSessionIdList());
     }
 
