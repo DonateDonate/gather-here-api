@@ -10,6 +10,7 @@ import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 @RequiredArgsConstructor
 @EnableScheduling
 public class RoomScheduler {
@@ -40,11 +42,13 @@ public class RoomScheduler {
                     List<LocationShareEvent.MemberLocation> memberLocations = locationShareEvent.get().getMemberLocations();
                     for(LocationShareEvent.MemberLocation memberLocation : memberLocations){
                         webSocketAuthRepository.deleteByMemberSeq(memberLocation.getMemberSeq());
-                        Member member = memberRepository.getBySeq(memberLocation.getMemberSeq());
-                        member.exitRoom();
                     }
                     roomRepository.deleteLocationShareEvent(locationShareEvent.get());
                     }
+
+                for(Member member : room.getMemberList()){
+                    member.exitRoom();
+                }
             }
         }
     }

@@ -55,7 +55,6 @@ public class LocationShareService {
 
         if (existLocationShareEvent.isPresent()) {
             existLocationShareEvent.get().removeMemberLocation(memberSeq);
-            existLocationShareEvent.get().addDestinationMemberList(memberSeq);
         }
 
         LocationShareEvent locationShareEvent = new LocationShareEvent()

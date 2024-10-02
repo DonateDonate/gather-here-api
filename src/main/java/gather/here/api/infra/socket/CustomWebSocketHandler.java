@@ -31,3 +31,4 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         webSocketService.connectClosedHandle(session, status);
     }
 }
+
