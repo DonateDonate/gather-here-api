@@ -33,7 +33,6 @@ public class DateUtil {
             // LocalDateTime으로 파싱한 후, 한국 시간대에 맞게 변환
             return LocalDateTime.parse(dateTimeString, FORMATTER);
         } catch (DateTimeParseException e) {
-            e.printStackTrace();
             return null;
         }
     }

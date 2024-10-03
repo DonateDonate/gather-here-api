@@ -69,12 +69,11 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springframework/spring-websocket
 	implementation group: 'org.springframework', name: 'spring-websocket', version: '6.1.6'
 
-
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 // https://mvnrepository.com/artifact/it.ozimov/embedded-redis
-	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.3'
+	implementation 'com.github.codemonstur:embedded-redis:1.4.3'
 
 	//actuator
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -89,8 +88,8 @@ tasks.named('test') {
 }
 
 configurations {
-	all {
-		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-	}
+//	all {
+//		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+//	}
 }
 
