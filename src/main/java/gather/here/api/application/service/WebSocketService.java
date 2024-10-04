@@ -138,6 +138,7 @@ public class WebSocketService {
                     .filter(session -> session.getId().equals(id) && session.isOpen())
                     .forEach(session -> {
                         try {
+                            log.info("message = {}",message );
                             session.sendMessage(new TextMessage(message));
                         } catch (Exception e) {
                             log.error("Error sending message to session {}: {}", id, e.getMessage());
