@@ -1,8 +1,6 @@
 package gather.here.api.presentation.api;
 
 import gather.here.api.application.service.WebSocketService;
-import gather.here.api.domain.entities.LocationShareEvent;
-import gather.here.api.domain.entities.WebSocketAuth;
 import gather.here.api.domain.service.RoomService;
 import gather.here.api.domain.service.dto.request.RoomCreateRequestDto;
 import jakarta.validation.Valid;
@@ -56,17 +54,5 @@ public class TestController {
                 se -> list.add(se.getId())
         );
         return new ResponseEntity(list,HttpStatus.OK);
-    }
-
-    @GetMapping("/test/webSocketAuth")
-    public ResponseEntity getWebSocketAuthList(){
-        List<WebSocketAuth> byAllWebSocketAuth = roomService.findByAllWebSocketAuth();
-        return new ResponseEntity(byAllWebSocketAuth, HttpStatus.OK);
-    }
-
-    @GetMapping("/test/locationShareEvent")
-    public ResponseEntity getLocationShareEvent(){
-        List<LocationShareEvent> locationShareEvents = roomService.findByAllLocationShareEvent();
-        return new ResponseEntity(locationShareEvents, HttpStatus.OK);
     }
 }

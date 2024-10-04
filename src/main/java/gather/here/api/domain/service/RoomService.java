@@ -4,6 +4,7 @@ import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.Room;
 import gather.here.api.domain.entities.WebSocketAuth;
+import gather.here.api.domain.repositories.LocationShareEventRepository;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
@@ -20,8 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.Optional;
 
 import static gather.here.api.global.util.DateUtil.convertLocalDateTimeToString;
 
@@ -29,6 +29,7 @@ import static gather.here.api.global.util.DateUtil.convertLocalDateTimeToString;
 public class RoomService {
     private final MemberRepository memberRepository;
     private final RoomRepository roomRepository;
+    private final LocationShareEventRepository locationShareEventRepository;
     private final WebSocketAuthRepository webSocketAuthRepository;
 
     @Transactional(readOnly = true)
@@ -100,15 +101,14 @@ public class RoomService {
         if (!member.getRoom().getSeq().equals(request.getRoomSeq())) {
             throw new RoomException(ResponseStatus.NOT_FOUND_ROOM_SEQ, HttpStatus.FORBIDDEN);
         }
-        LocationShareEvent locationShareEvent = roomRepository.getLocationShareEventByRoomSeq(member.getRoom().getSeq());
+        LocationShareEvent locationShareEvent = locationShareEventRepository.getByRoomSeq(member.getRoom().getSeq());
 
         locationShareEvent.removeMemberLocation(member.getSeq());
-        locationShareEvent.removeDestinationMemberList(member.getSeq());
 
         if(locationShareEvent.getMemberLocations().isEmpty()){
-            roomRepository.deleteLocationShareEvent(locationShareEvent);
+            locationShareEventRepository.delete(locationShareEvent);
         }else{
-            roomRepository.updateLocationShareEvent(locationShareEvent);
+            locationShareEventRepository.update(locationShareEvent);
         }
 
         List<Member> memberList = member.getRoom().getMemberList();
@@ -117,16 +117,8 @@ public class RoomService {
             room.closeRoom();
         }
         member.exitRoom();
-    }
-
-    public List<WebSocketAuth> findByAllWebSocketAuth() {
-        return webSocketAuthRepository.findAll();
-    }
-
-    public List<LocationShareEvent> findByAllLocationShareEvent() {
-        Iterable<LocationShareEvent> allLocationEvents = roomRepository.findAllLocationEvents();
-        return StreamSupport.stream(allLocationEvents.spliterator(), false)
-                .collect(Collectors.toList());
+        Optional<WebSocketAuth> webSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
+        webSocketAuth.ifPresent(webSocketAuthRepository::deleteByMemberSeq);
     }
 }
 

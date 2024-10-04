@@ -2,10 +2,7 @@ package gather.here.api.infra.config;
 
 import gather.here.api.application.service.WebSocketService;
 import gather.here.api.domain.file.FileFactory;
-import gather.here.api.domain.repositories.AppInfoRepository;
-import gather.here.api.domain.repositories.MemberRepository;
-import gather.here.api.domain.repositories.RoomRepository;
-import gather.here.api.domain.repositories.WebSocketAuthRepository;
+import gather.here.api.domain.repositories.*;
 import gather.here.api.domain.security.AccessTokenFactory;
 import gather.here.api.domain.security.CryptoFactory;
 import gather.here.api.domain.security.RefreshTokenFactory;
@@ -25,9 +22,10 @@ public class ServiceConfig {
     public RoomService roomService(
             MemberRepository memberRepository,
             RoomRepository roomRepository,
+            LocationShareEventRepository locationShareEventRepository,
             WebSocketAuthRepository webSocketAuthRepository
     ){
-        return new RoomService(memberRepository,roomRepository,webSocketAuthRepository);
+        return new RoomService(memberRepository,roomRepository,locationShareEventRepository,webSocketAuthRepository);
     }
 
     @Bean
@@ -53,9 +51,9 @@ public class ServiceConfig {
             WebSocketAuthRepository webSocketAuthRepository,
             MemberRepository memberRepository,
             FileFactory fileFactory,
-            RoomRepository roomRepository
+            LocationShareEventRepository locationShareEventRepository
     ){
-        return new LocationShareService(webSocketAuthRepository,memberRepository,fileFactory,roomRepository);
+        return new LocationShareService(webSocketAuthRepository,memberRepository,fileFactory,locationShareEventRepository);
     }
 
     @Bean

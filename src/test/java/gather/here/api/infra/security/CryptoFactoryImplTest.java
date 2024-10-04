@@ -10,9 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+@WebAppConfiguration
 @ActiveProfiles("test")
 @SpringBootTest
-@WebAppConfiguration
 class CryptoFactoryImplTest {
 
     @Autowired

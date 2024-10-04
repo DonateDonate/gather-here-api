@@ -1,9 +1,6 @@
 package gather.here.api.infra.config;
 
-import gather.here.api.domain.repositories.MemberRepository;
-import gather.here.api.domain.repositories.RefreshTokenRepository;
-import gather.here.api.domain.repositories.RoomRepository;
-import gather.here.api.domain.repositories.WebSocketAuthRepository;
+import gather.here.api.domain.repositories.*;
 import gather.here.api.domain.security.AccessTokenFactory;
 import gather.here.api.domain.security.CryptoFactory;
 import gather.here.api.domain.security.RefreshTokenFactory;
@@ -23,11 +20,6 @@ public class InfraBeanConfig {
     public CryptoFactory cryptoFactory(PasswordEncoder passwordEncoder) {
         return new CryptoFactoryImpl(passwordEncoder);
     }
-//
-//    @Bean
-//    public S3FileFactoryImpl fileFactory(AmazonS3Client amazonS3Client){
-//        return new S3FileFactoryImpl(amazonS3Client);
-//    }
 
     @Bean
     public ShFileFactoryImpl fileFactory() {
@@ -45,7 +37,8 @@ public class InfraBeanConfig {
     }
 
     @Bean
-    public RoomScheduler roomScheduler(RoomRepository roomRepository, WebSocketAuthRepository webSocketAuthRepository, MemberRepository memberRepository) {
-        return new RoomScheduler(roomRepository,webSocketAuthRepository,memberRepository);
+    public RoomScheduler roomScheduler(RoomRepository roomRepository, WebSocketAuthRepository webSocketAuthRepository, LocationShareEventRepository locationShareEventRepository) {
+        return new RoomScheduler(roomRepository,webSocketAuthRepository,locationShareEventRepository);
     }
+
 }

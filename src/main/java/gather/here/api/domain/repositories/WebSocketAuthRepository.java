@@ -10,5 +10,5 @@ public interface WebSocketAuthRepository{
     Optional<WebSocketAuth> findMemberSeq(Long memberSeq);
     WebSocketAuth getBySessionId(String sessionId);
     List<WebSocketAuth> findAll();
-    void deleteByMemberSeq(Long memberSeq);
+    void deleteByMemberSeq(WebSocketAuth webSocketAuth);
 }

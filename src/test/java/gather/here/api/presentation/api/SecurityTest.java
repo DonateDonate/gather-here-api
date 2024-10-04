@@ -1,9 +1,9 @@
 package gather.here.api.presentation.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gather.here.api.domain.service.MemberService;
 import gather.here.api.domain.service.dto.request.MemberSignInRequestDto;
 import gather.here.api.domain.service.dto.request.MemberSignUpRequestDto;
-import gather.here.api.domain.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

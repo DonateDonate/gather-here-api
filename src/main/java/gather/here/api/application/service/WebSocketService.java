@@ -69,11 +69,13 @@ public class WebSocketService {
         }
     }
 
-    @Transactional
-    public void messageHandle(WebSocketSession session, TextMessage message){
+    public void messageHandle(WebSocketSession session, TextMessage message) throws IOException {
         try {
             LocationShareEventRequestDto request = objectMapper.readValue(message.getPayload(), LocationShareEventRequestDto.class);
             handleLocationShareRequest(session, request);
+        } catch (BusinessException e){
+            session.close(BAD_DATA);
+            log.error("BusinessException webSocket request body ={}",e.getMessage());
         } catch (Exception e) {
             log.error("invalid webSocket request body ={}",e.getMessage());
         }
@@ -82,8 +84,8 @@ public class WebSocketService {
     @Transactional
     public void connectClosedHandle(WebSocketSession session, CloseStatus status) {
             sessionList.remove(session);
-            GetLocationShareResponseDto response = locationShareService.disConnectHandleAction(session.getId());
-            sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
+            //GetLocationShareResponseDto response = locationShareService.disConnectHandleAction(session.getId());
+            //sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
     }
 
     private String extractAccessToken(WebSocketSession session) {

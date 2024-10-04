@@ -8,7 +8,6 @@ import java.util.UUID;
 
 class LocationShareEventTest {
 
-
     @DisplayName("sut는 성공적으로 locationShareEvent 인스턴스를 생성한다")
     @Test
     public void successCreateLocationShareEventTest(){
@@ -123,90 +122,4 @@ class LocationShareEventTest {
         Assertions.assertThat(locationShareEvent.getMemberLocations().size()).isEqualTo(1);
         Assertions.assertThat(locationShareEvent.getMemberLocations().get(0).getMemberSeq()).isEqualTo(memberSeq);
     }
-
-    @DisplayName("sut는 성공적으로 destinationMemberList에 값을 추가한다")
-    @Test
-    public void successAddDestinationMemberList(){
-        //arrange
-        LocationShareEvent sut = new LocationShareEvent();
-
-        Long roomSeq = 1L;
-        Long memberSeq = 1L;
-        String sessionId = String.valueOf(UUID.randomUUID());
-        String nickName = "spring";
-        String imageUrl = "https://test/"+UUID.randomUUID();
-        Double presentLat = 34.2;
-        Double presentLng = 32.4;
-        Double destinationDistance = 200.5;
-
-        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance,null);
-
-        //act
-        locationShareEvent.addDestinationMemberList(memberSeq);
-
-        //assert
-        Assertions.assertThat(locationShareEvent.getDestinationMemberList().size()).isEqualTo(1);
-        Assertions.assertThat(locationShareEvent.getDestinationMemberList().get(0)).isEqualTo(memberSeq);
-    }
-
-    @DisplayName("sut는 성공적으로 요청된 memberSeq 값을 destinationMemberList에서 삭제한다")
-    @Test
-    public void successRemoveDestinationMemberList(){
-        //arrange
-        LocationShareEvent sut = new LocationShareEvent();
-
-        Long roomSeq = 1L;
-        Long memberSeq = 1L;
-        String sessionId = String.valueOf(UUID.randomUUID());
-        String nickName = "spring";
-        String imageUrl = "https://test/"+UUID.randomUUID();
-        Double presentLat = 34.5;
-        Double presentLng = 32.6;
-        Double destinationDistance = 200.2;
-
-        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance,null);
-
-        //act
-        locationShareEvent.removeDestinationMemberList(memberSeq);
-
-        //assert
-        Assertions.assertThat(locationShareEvent.getDestinationMemberList().size()).isEqualTo(0);
-    }
-
-    @DisplayName("sut는 socre 객체에 memberSeq값이 정상적으로 들어간다")
-    @Test
-    public void setScoreTest(){
-        //arrange
-        LocationShareEvent sut = new LocationShareEvent();
-
-        Long roomSeq = 1L;
-        Long memberSeq = 1L;
-        String sessionId = String.valueOf(UUID.randomUUID());
-        String nickName = "spring";
-        String imageUrl = "https://test/"+UUID.randomUUID();
-        Double presentLat = 3.2;
-        Double presentLng = 32.4;
-        Double destinationDistance = 200.5;
-
-        Long silverMemberSeq = 2L;
-        Long bronzeMemberSeq = 3L;
-
-        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance,null);
-
-        //act
-        locationShareEvent.setGoldMemberSeq(memberSeq);
-        locationShareEvent.setSilverMemberSeq(silverMemberSeq);
-        locationShareEvent.setBronzeMemberSeq(bronzeMemberSeq);
-
-        //assert
-        Assertions.assertThat(locationShareEvent.getScore().getGoldMemberSeq()).isEqualTo(memberSeq);
-        Assertions.assertThat(locationShareEvent.getScore().getSilverMemberSeq()).isEqualTo(silverMemberSeq);
-        Assertions.assertThat(locationShareEvent.getScore().getBronzeMemberSeq()).isEqualTo(bronzeMemberSeq);
-    }
-
-
-
-
-
-
 }

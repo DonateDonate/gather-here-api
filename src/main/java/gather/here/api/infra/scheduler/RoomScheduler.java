@@ -4,13 +4,13 @@ package gather.here.api.infra.scheduler;
 import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.Room;
-import gather.here.api.domain.repositories.MemberRepository;
+import gather.here.api.domain.entities.WebSocketAuth;
+import gather.here.api.domain.repositories.LocationShareEventRepository;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -18,13 +18,12 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
-@Component
 @RequiredArgsConstructor
 @EnableScheduling
 public class RoomScheduler {
     private final RoomRepository roomRepository;
     private final WebSocketAuthRepository webSocketAuthRepository;
-    private final MemberRepository memberRepository;
+    private final LocationShareEventRepository locationShareEventRepository;
 
     @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
@@ -37,13 +36,16 @@ public class RoomScheduler {
         for (Room room : rooms) {
             if(isPast(room.getEncounterDate().plusDays(1))){
                 room.closeRoom();
-                Optional<LocationShareEvent> locationShareEvent = roomRepository.findLocationShareEventByRoomSeq(room.getSeq());
+                Optional<LocationShareEvent> locationShareEvent = locationShareEventRepository.findByRoomSeq(room.getSeq());
                 if(locationShareEvent.isPresent()){
                     List<LocationShareEvent.MemberLocation> memberLocations = locationShareEvent.get().getMemberLocations();
                     for(LocationShareEvent.MemberLocation memberLocation : memberLocations){
-                        webSocketAuthRepository.deleteByMemberSeq(memberLocation.getMemberSeq());
+                        Optional<WebSocketAuth> webSocketAuth = webSocketAuthRepository.findMemberSeq(memberLocation.getMemberSeq());
+                        if(webSocketAuth.isPresent()){
+                            webSocketAuthRepository.deleteByMemberSeq(webSocketAuth.get());
+                        }
                     }
-                    roomRepository.deleteLocationShareEvent(locationShareEvent.get());
+                    locationShareEventRepository.delete(locationShareEvent.get());
                     }
 
                 for(Member member : room.getMemberList()){
