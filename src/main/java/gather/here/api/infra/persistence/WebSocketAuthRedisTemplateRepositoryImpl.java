@@ -5,7 +5,7 @@ import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.WebSocketAuthException;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 
@@ -50,7 +50,7 @@ public class WebSocketAuthRedisTemplateRepositoryImpl implements WebSocketAuthRe
     @Override
     public WebSocketAuth getBySessionId(String sessionId) {
         String key = (String) redisTemplate.opsForHash().get("sessionIdIndex", sessionId);
-        if(Strings.isEmpty(key)){
+        if(StringUtils.isEmpty(key)){
             throw new WebSocketAuthException(ResponseStatus.NOT_FOUND_SESSION_ID, HttpStatus.FORBIDDEN);
         }
         Map<Object, Object> data = redisTemplate.opsForHash().entries(key);
