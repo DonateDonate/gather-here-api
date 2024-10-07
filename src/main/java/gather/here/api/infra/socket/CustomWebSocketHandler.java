@@ -27,7 +27,6 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     // 소켓 종료 확인
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        log.info("connect close session ={}",session.getId());
         webSocketService.connectClosedHandle(session, status);
     }
 }
