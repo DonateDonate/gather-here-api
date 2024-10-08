@@ -1,12 +1,13 @@
 package gather.here.api.infra.persistence;
 
 import gather.here.api.domain.entities.WebSocketAuth;
+import gather.here.api.domain.etc.RedisTransaction;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.WebSocketAuthException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
@@ -16,7 +17,13 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class WebSocketAuthRedisTemplateRepositoryImpl implements WebSocketAuthRepository {
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisOperations<String, Object> redisOperations;
+
+    public <K,V>void test( RedisTransaction.TransactionCommand<K, V> command){
+        RedisTransaction.transaction(redisOperations, operations -> {
+        });
+    }
+
 
     @Override
     public void save(WebSocketAuth webSocketAuth) {
@@ -24,14 +31,14 @@ public class WebSocketAuthRedisTemplateRepositoryImpl implements WebSocketAuthRe
         Map<String, Object> data = new HashMap<>();
         data.put("sessionId", webSocketAuth.getSessionId());
         data.put("memberSeq", webSocketAuth.getMemberSeq());
-        redisTemplate.opsForHash().putAll(key, data);
-        redisTemplate.opsForHash().put("sessionIdIndex", webSocketAuth.getSessionId(), key);
+        redisOperations.opsForHash().putAll(key, data);
+        redisOperations.opsForHash().put("sessionIdIndex", webSocketAuth.getSessionId(), key);
     }
 
     public Optional<WebSocketAuth> findMemberSeq(Long memberSeq) {
         String key = "webSocketAuth:" + memberSeq;
 
-        Map<Object, Object> data = redisTemplate.opsForHash().entries(key);
+        Map<Object, Object> data = redisOperations.opsForHash().entries(key);
 
         if (data.isEmpty()) {
             return Optional.empty();
@@ -49,20 +56,20 @@ public class WebSocketAuthRedisTemplateRepositoryImpl implements WebSocketAuthRe
 
     @Override
     public WebSocketAuth getBySessionId(String sessionId) {
-        String key = (String) redisTemplate.opsForHash().get("sessionIdIndex", sessionId);
+        String key = (String) redisOperations.opsForHash().get("sessionIdIndex", sessionId);
         if(StringUtils.isEmpty(key)){
             throw new WebSocketAuthException(ResponseStatus.NOT_FOUND_SESSION_ID, HttpStatus.FORBIDDEN);
         }
-        Map<Object, Object> data = redisTemplate.opsForHash().entries(key);
+        Map<Object, Object> data = redisOperations.opsForHash().entries(key);
         return WebSocketAuth.create(data.get("memberSeq"),data.get("sessionId"));
     }
 
     @Override
     public void deleteByMemberSeq(WebSocketAuth webSocketAuth) {
         String key = "webSocketAuth:" + webSocketAuth.getMemberSeq();
-        if (redisTemplate.hasKey(key)) {
-            redisTemplate.delete(key);
-            redisTemplate.opsForHash().delete("sessionIdIndex", webSocketAuth.getSessionId());
+        if (redisOperations.hasKey(key)) {
+            redisOperations.delete(key);
+            redisOperations.opsForHash().delete("sessionIdIndex", webSocketAuth.getSessionId());
         } else {
             throw new WebSocketAuthException(ResponseStatus.NOT_FOUND_MEMBER, HttpStatus.FORBIDDEN);
         }

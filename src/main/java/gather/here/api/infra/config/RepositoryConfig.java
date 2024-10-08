@@ -8,6 +8,7 @@ import gather.here.api.infra.persistence.jpa.RefreshTokenJpaRepository;
 import gather.here.api.infra.persistence.jpa.RoomJpaRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
 @Configuration
@@ -36,9 +37,10 @@ public class RepositoryConfig {
     }
 
     @Bean
-    public WebSocketAuthRepository webSocketAuthRepository(RedisTemplate<String, Object> redisTemplate){
-        return new WebSocketAuthRedisTemplateRepositoryImpl(redisTemplate);
+    public WebSocketAuthRepository webSocketAuthRepository(RedisOperations<String, Object> redisOperations){
+        return new WebSocketAuthRedisTemplateRepositoryImpl(redisOperations);
     }
+
     @Bean
     public LocationShareEventRepository locationShareEventRepository(RedisTemplate<String, Object> redisTemplate){
         return new LocationShareEventRedisTemplateRepositoryImpl(redisTemplate);

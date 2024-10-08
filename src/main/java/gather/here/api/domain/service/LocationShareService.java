@@ -28,6 +28,37 @@ public class LocationShareService {
     private final FileFactory fileFactory;
     private final LocationShareEventRepository locationShareEventRepository;
 
+//    @Transactional
+//    public void saveWebSocketAuth(String sessionId, Long memberSeq) {
+//        log.info("save sessionId ={}", sessionId);
+//        Member member = memberRepository.getBySeq(memberSeq);
+//        if (member.getRoom() == null || member.getRoom().getStatus() == 9) {
+//            throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
+//        }
+//        Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
+//
+//
+//        redisTemplate.execute(new SessionCallback() {
+//            @Override
+//            public Object execute(RedisOperations operations){
+//                // transaction start
+//                operations.multi();
+//                if (existWebSocketAuth.isPresent()) {
+//                    String key = "webSocketAuth:" + existWebSocketAuth.get().getMemberSeq();
+//                    if(operations.hasKey(key)){
+//                        operations.delete(key);
+//                        operations.opsForHash().delete("sessionIdIndex", existWebSocketAuth.get().getSessionId());
+//                    }
+//                }
+//                WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
+//                webSocketAuthRepository.save(webSocketAuth);
+//                return operations.exec();
+//                // transaction end
+//            }
+//        });
+//    }
+
+
     @Transactional
     public void saveWebSocketAuth(String sessionId, Long memberSeq) {
             log.info("save sessionId ={}", sessionId);
@@ -36,6 +67,7 @@ public class LocationShareService {
                 throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
             }
             Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
+
             if (existWebSocketAuth.isPresent()) {
                 webSocketAuthRepository.deleteByMemberSeq(existWebSocketAuth.get());
                 updateLocationShareEventByMemberSeq(member);

@@ -52,7 +52,7 @@ public class ServiceConfig {
             MemberRepository memberRepository,
             FileFactory fileFactory,
             LocationShareEventRepository locationShareEventRepository
-    ){
+            ) {
         return new LocationShareService(webSocketAuthRepository,memberRepository,fileFactory,locationShareEventRepository);
     }
 
