@@ -146,7 +146,4 @@ public class WebSocketService {
                     });
         }
     }
-    public static List<WebSocketSession> getSessionList(){
-        return sessionList;
-    }
 }
