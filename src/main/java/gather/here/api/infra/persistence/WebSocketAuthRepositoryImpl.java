@@ -6,8 +6,6 @@ import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.WebSocketAuthException;
 import gather.here.api.infra.persistence.redis.WebSocketAuthRedisRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
@@ -16,11 +14,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WebSocketAuthRepositoryImpl implements WebSocketAuthRepository {
     private final WebSocketAuthRedisRepository webSocketAuthRedisRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public void save(WebSocketAuth webSocketAuth) {
-        SetOperations<String, Object> set = redisTemplate.opsForSet();
         webSocketAuthRedisRepository.save(webSocketAuth);
     }
 
