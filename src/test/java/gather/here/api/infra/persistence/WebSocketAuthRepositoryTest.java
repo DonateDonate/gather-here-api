@@ -5,8 +5,6 @@ import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,7 +20,6 @@ import java.util.UUID;
 @WebAppConfiguration
 class WebSocketAuthRepositoryTest {
 
-    private static final Logger log = LoggerFactory.getLogger(WebSocketAuthRepositoryTest.class);
 
     @Autowired
     WebSocketAuthRepository webSocketAuthRepository;
@@ -41,7 +38,7 @@ class WebSocketAuthRepositoryTest {
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq,sessionId);
 
         //act
-        sut.save(webSocketAuth);
+        sut.save(null,null,webSocketAuth);
         Optional<WebSocketAuth> actual = sut.findMemberSeq(memberSeq);
 
         //assert
@@ -61,7 +58,7 @@ class WebSocketAuthRepositoryTest {
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq,sessionId);
 
         //act
-        sut.save(webSocketAuth);
+        sut.save(null,null,webSocketAuth);
         WebSocketAuth actual = sut.getBySessionId(sessionId);
 
         //assert

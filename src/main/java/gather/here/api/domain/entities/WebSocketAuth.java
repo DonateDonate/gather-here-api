@@ -5,6 +5,8 @@ import gather.here.api.global.exception.WebSocketAuthException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RedisHash(value = "webSocketAuth", timeToLive = 86400L)
 public class WebSocketAuth {
+    private static final Logger log = LoggerFactory.getLogger(WebSocketAuth.class);
     @Id
     private Long memberSeq;
 
@@ -21,10 +24,12 @@ public class WebSocketAuth {
     private String sessionId;
 
     public static WebSocketAuth create(Long memberSeq,String sessionId) {
+
         if(memberSeq == null){
             throw new WebSocketAuthException(ResponseStatus.NOT_FOUND_MEMBER, HttpStatus.FORBIDDEN);
         }
         if(StringUtils.isEmpty(sessionId)){
+            System.out.println("create exception");
             throw new WebSocketAuthException(ResponseStatus.INVALID_REQUEST,HttpStatus.FORBIDDEN);
         }
 

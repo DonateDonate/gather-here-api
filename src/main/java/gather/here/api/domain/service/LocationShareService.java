@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -57,23 +58,34 @@ public class LocationShareService {
 //            }
 //        });
 //    }
-
-
     @Transactional
     public void saveWebSocketAuth(String sessionId, Long memberSeq) {
-            log.info("save sessionId ={}", sessionId);
-            Member member = memberRepository.getBySeq(memberSeq);
-            if (member.getRoom() == null || member.getRoom().getStatus() == 9) {
-                throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
-            }
-            Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
+        log.info("save sessionId ={}", sessionId);
+        Member member = memberRepository.getBySeq(memberSeq);
+        if (member.getRoom() == null || member.getRoom().getStatus() == 9) {
+            throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
+        }
 
-            if (existWebSocketAuth.isPresent()) {
-                webSocketAuthRepository.deleteByMemberSeq(existWebSocketAuth.get());
-                updateLocationShareEventByMemberSeq(member);
+        webSocketAuthRepository.save(
+                deleteMemberIfExist(member), this,WebSocketAuth.create(memberSeq, sessionId)
+        );
+    }
+
+    private Consumer<LocationShareService> deleteMemberIfExist(Member member) {
+        System.out.println("delete1");
+        Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(member.getSeq());
+        if (existWebSocketAuth.isPresent()) {
+            System.out.println("delete2");
+            webSocketAuthRepository.deleteByMemberSeq(existWebSocketAuth.get());
+            Optional<LocationShareEvent> locationShareEvent = locationShareEventRepository.findByRoomSeq(member.getRoom().getSeq());
+            if(locationShareEvent.isPresent()){
+                System.out.println("delete3");
+                locationShareEvent.get().removeMemberLocation(member.getSeq());
+                locationShareEventRepository.update(locationShareEvent.get());
             }
-            WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
-            webSocketAuthRepository.save(webSocketAuth);
+        }
+        System.out.println("delete end");
+        return null;
     }
 
     @Transactional
@@ -186,13 +198,5 @@ public class LocationShareService {
                 request.getDestinationDistance(),
                 isOpen
         );
-    }
-
-    private void updateLocationShareEventByMemberSeq(Member member) {
-        Optional<LocationShareEvent> locationShareEvent = locationShareEventRepository.findByRoomSeq(member.getRoom().getSeq());
-        if(locationShareEvent.isPresent()){
-            locationShareEvent.get().removeMemberLocation(member.getSeq());
-            locationShareEventRepository.update(locationShareEvent.get());
-        }
     }
 }

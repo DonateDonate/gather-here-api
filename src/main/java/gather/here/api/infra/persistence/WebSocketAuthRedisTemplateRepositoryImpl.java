@@ -3,6 +3,7 @@ package gather.here.api.infra.persistence;
 import gather.here.api.domain.entities.WebSocketAuth;
 import gather.here.api.domain.etc.RedisTransaction;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
+import gather.here.api.domain.service.LocationShareService;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.WebSocketAuthException;
 import lombok.RequiredArgsConstructor;
@@ -14,25 +15,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class WebSocketAuthRedisTemplateRepositoryImpl implements WebSocketAuthRepository {
     private final RedisOperations<String, Object> redisOperations;
 
-    public <K,V>void test( RedisTransaction.TransactionCommand<K, V> command){
-        RedisTransaction.transaction(redisOperations, operations -> {
+
+    @Override
+    public void save(Consumer<LocationShareService> func, LocationShareService locationShareService, WebSocketAuth webSocketAuth) {
+        RedisTransaction.transaction(redisOperations,operations -> {
+            System.out.println("RedisTransaction.transaction");
+            if(func != null) {
+                func.accept(locationShareService);
+            }
+            save(webSocketAuth, operations);
         });
     }
 
-
-    @Override
-    public void save(WebSocketAuth webSocketAuth) {
+    private static void save(WebSocketAuth webSocketAuth, RedisOperations<String, Object> operations) {
         String key = "webSocketAuth:" + webSocketAuth.getMemberSeq();
         Map<String, Object> data = new HashMap<>();
         data.put("sessionId", webSocketAuth.getSessionId());
         data.put("memberSeq", webSocketAuth.getMemberSeq());
-        redisOperations.opsForHash().putAll(key, data);
-        redisOperations.opsForHash().put("sessionIdIndex", webSocketAuth.getSessionId(), key);
+        operations.opsForHash().putAll(key, data);
+        operations.opsForHash().put("sessionIdIndex", webSocketAuth.getSessionId(), key);
+        System.out.println("redis save");
     }
 
     public Optional<WebSocketAuth> findMemberSeq(Long memberSeq) {

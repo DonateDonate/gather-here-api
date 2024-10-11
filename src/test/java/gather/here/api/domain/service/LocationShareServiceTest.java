@@ -68,7 +68,7 @@ class LocationShareServiceTest {
         LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
 
         WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(), sessionId);
-        webSocketAuthRepository.save(webSocketAuth);
+        webSocketAuthRepository.save(null,null,webSocketAuth);
         RoomException actual = null;
 
         //act
@@ -234,7 +234,7 @@ class LocationShareServiceTest {
 
 
         WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(),sessionId);
-        webSocketAuthRepository.save(webSocketAuth);
+        webSocketAuthRepository.save(null,null,webSocketAuth);
 
         int type =0;
         Double presentLat = 12.1;
@@ -547,9 +547,9 @@ class LocationShareServiceTest {
 
         String sessionId = String.valueOf(UUID.randomUUID());
         WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(),sessionId);
-        webSocketAuthRepository.save(webSocketAuth);
+        webSocketAuthRepository.save(null,null,webSocketAuth);
         WebSocketAuthException actualException = null;
-
+        System.out.println("arrange end");
         //act
         String newSessionId = null;
         try {
