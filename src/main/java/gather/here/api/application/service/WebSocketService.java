@@ -77,6 +77,7 @@ public class WebSocketService {
             session.close(BAD_DATA);
             log.error("BusinessException webSocket request body ={}",e.getMessage());
         } catch (Exception e) {
+            session.close(BAD_DATA);
             log.error("invalid webSocket request body ={}",e.getMessage());
         }
     }
@@ -127,7 +128,6 @@ public class WebSocketService {
                 sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
             }
         }catch (Exception e){
-            e.printStackTrace();
             log.error("Error handling location share request: {} {} {}", e.getCause(),e.getLocalizedMessage(),e.getMessage());
         }
     }
