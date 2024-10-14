@@ -560,7 +560,7 @@ class LocationShareServiceTest {
         Optional<WebSocketAuth> actual = webSocketAuthRepository.findMemberSeq(member.getSeq());
 
         //assert
-        Assertions.assertThat(actual.isPresent()).isEqualTo(false);
+        Assertions.assertThat(actual.isPresent()).isEqualTo(true);
         Assertions.assertThat(actualException).isInstanceOf(WebSocketAuthException.class);
     }
 

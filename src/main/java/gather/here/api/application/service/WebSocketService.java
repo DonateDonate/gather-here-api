@@ -112,7 +112,6 @@ public class WebSocketService {
 
     private void handleLocationShareRequest(WebSocketSession session, LocationShareEventRequestDto request) {
         Boolean isOpen = session.isOpen();
-        log.info("session isOpen ={}",isOpen);
         try {
             if (request.getType() == 0) {
                 locationShareService.createTypeHandleAction(request, session.getId(),isOpen);
@@ -138,11 +137,9 @@ public class WebSocketService {
                     .filter(session -> session.getId().equals(id) && session.isOpen())
                     .forEach(session -> {
                         try {
-                            log.info("message = {}",message );
                             session.sendMessage(new TextMessage(message));
                         } catch (Exception e) {
-                            log.error("Error sending message to session {}: {}", id, e.getMessage());
-                        }
+                            log.error("Error sending message to session {}: {}", session.getId(), e.getMessage());}
                     });
         }
     }

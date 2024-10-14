@@ -30,23 +30,29 @@ public class LocationShareService {
 
     @Transactional
     public void saveWebSocketAuth(String sessionId, Long memberSeq) {
-            log.info("save sessionId ={}", sessionId);
-            Member member = memberRepository.getBySeq(memberSeq);
-            if (member.getRoom() == null || member.getRoom().getStatus() == 9) {
-                throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
+        Member member = memberRepository.getBySeq(memberSeq);
+        if (member.getRoom() == null || member.getRoom().getStatus() == 9) {
+            throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
+        }
+        WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
+        Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
+        deleteMemberSeqByWebSocketAuthAndLocationShareEventIfExist(existWebSocketAuth, member);
+        webSocketAuthRepository.save(webSocketAuth);
+    }
+
+    private void deleteMemberSeqByWebSocketAuthAndLocationShareEventIfExist(Optional<WebSocketAuth> existWebSocketAuth, Member member) {
+        if (existWebSocketAuth.isPresent()) {
+            webSocketAuthRepository.deleteByMemberSeq(existWebSocketAuth.get());
+            Optional<LocationShareEvent> locationShareEvent = locationShareEventRepository.findByRoomSeq(member.getRoom().getSeq());
+            if(locationShareEvent.isPresent()){
+                locationShareEvent.get().removeMemberLocation(member.getSeq());
+                locationShareEventRepository.update(locationShareEvent.get());
             }
-            Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
-            if (existWebSocketAuth.isPresent()) {
-                webSocketAuthRepository.deleteByMemberSeq(existWebSocketAuth.get());
-                updateLocationShareEventByMemberSeq(member);
-            }
-            WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
-            webSocketAuthRepository.save(webSocketAuth);
+        }
     }
 
     @Transactional
     public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId,Boolean isOpen) {
-       log.info("create sessionId = {} ",sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
@@ -72,7 +78,6 @@ public class LocationShareService {
 
     @Transactional
     public GetLocationShareResponseDto joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId,Boolean isOpen) {
-        log.info("join sessionId = {}",sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
@@ -114,7 +119,6 @@ public class LocationShareService {
 
     @Transactional
     public GetLocationShareResponseDto distanceChangeHandleAction(LocationShareEventRequestDto request, String sessionId, Boolean isOpen) {
-        log.info("distance change sessionId = {} ",sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
         Long memberSeq = webSocketAuth.getMemberSeq();
         Member member = memberRepository.getBySeq(memberSeq);
@@ -128,7 +132,6 @@ public class LocationShareService {
 
     @Transactional
     public GetLocationShareResponseDto disConnectHandleAction(String sessionId) {
-        log.info("remove sessionId = {}", sessionId);
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
         Member member = memberRepository.getBySeq(webSocketAuth.getMemberSeq());
         /**
@@ -154,13 +157,5 @@ public class LocationShareService {
                 request.getDestinationDistance(),
                 isOpen
         );
-    }
-
-    private void updateLocationShareEventByMemberSeq(Member member) {
-        Optional<LocationShareEvent> locationShareEvent = locationShareEventRepository.findByRoomSeq(member.getRoom().getSeq());
-        if(locationShareEvent.isPresent()){
-            locationShareEvent.get().removeMemberLocation(member.getSeq());
-            locationShareEventRepository.update(locationShareEvent.get());
-        }
     }
 }
