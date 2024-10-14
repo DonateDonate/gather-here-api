@@ -100,9 +100,9 @@ class LocationShareServiceTest {
                 .plusHours(1);
 
         String encounterDate = convertLocalDateTimeToString(localDateTime);
-        Room room = Room.create(destinationLat,destinationLng,destinationName,encounterDate,member);
+        Room room = Room.create(destinationLat,destinationLng,destinationName,encounterDate);
         roomRepository.save(room);
-        member.setRoom(room);
+        member.joinRoom(room);
 
  LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
         WebSocketAuth actual = null;
@@ -541,9 +541,9 @@ class LocationShareServiceTest {
                 .toLocalDateTime()
                 .plusHours(1);
         String encounterDate = convertLocalDateTimeToString(localDateTime);
-        Room room = Room.create(37.7,24.4,"목적지",encounterDate,member);
+        Room room = Room.create(37.7,24.4,"목적지",encounterDate);
         roomRepository.save(room);
-        member.setRoom(room);
+        member.joinRoom(room);
 
         String sessionId = String.valueOf(UUID.randomUUID());
         WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(),sessionId);

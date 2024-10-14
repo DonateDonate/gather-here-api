@@ -32,7 +32,7 @@ public class RoomScheduler {
     }
 
     private void removeRoom() {
-        List<Room> rooms = roomRepository.findByStatus(1);
+        List<Room> rooms = roomRepository.findAllByStatus(1);
         for (Room room : rooms) {
             if(isPast(room.getEncounterDate().plusDays(1))){
                 room.closeRoom();

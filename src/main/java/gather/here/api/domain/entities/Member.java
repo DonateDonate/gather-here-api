@@ -41,9 +41,8 @@ public class Member extends BaseTime {
     @Comment("푸쉬알림 토큰")
     private String pushToken;
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_seq")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "room_seq", nullable = true)
     private Room room;
 
     @Comment("활성화 유무")
@@ -72,7 +71,7 @@ public class Member extends BaseTime {
         }
     }
 
-    public void setRoom(Room room) {
+    public void joinRoom(Room room) {
         this.room = room;
     }
 

@@ -1,6 +1,8 @@
 package gather.here.api.Utils;
 
 
+import gather.here.api.domain.entities.Member;
+
 import java.util.Random;
 
 public class Utils {
@@ -22,5 +24,10 @@ public class Utils {
         Random random = new Random();
         long upperBound = 10000L;
         return random.nextLong(upperBound);
+    }
+
+    public static Member createRandomMember(String password) {
+        String id = Utils.randomMemberId();
+        return Member.create(id,password);
     }
 }

@@ -8,5 +8,4 @@ import java.util.List;
 public interface RoomJpaRepository extends JpaRepository<Room,Long> {
     Room findByShareCode(String shareCode);
     List<Room>findByStatus(int status);
-
 }
