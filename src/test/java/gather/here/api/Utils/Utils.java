@@ -2,7 +2,10 @@ package gather.here.api.Utils;
 
 
 import gather.here.api.domain.entities.Member;
+import gather.here.api.domain.entities.Room;
+import gather.here.api.global.util.DateUtil;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
 public class Utils {
@@ -29,5 +32,15 @@ public class Utils {
     public static Member createRandomMember(String password) {
         String id = Utils.randomMemberId();
         return Member.create(id,password);
+    }
+    public static Room createRandomRoom(){
+        Double destinationLat = 35D;
+        Double destinationLng = 30D;
+        String destinationName = "목적지";
+        String encounterDate = DateUtil.convertLocalDateTimeToString(LocalDateTime.now().plusHours(12));
+        return Room.create(destinationLat,destinationLng,destinationName,encounterDate);
+    }
+    public static String localDatePlus12Hours(){
+        return DateUtil.convertLocalDateTimeToString(LocalDateTime.now().plusHours(12));
     }
 }
