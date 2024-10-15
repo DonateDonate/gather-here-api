@@ -72,6 +72,7 @@ public class WebSocketService {
     public void messageHandle(WebSocketSession session, TextMessage message) throws IOException {
         try {
             LocationShareEventRequestDto request = objectMapper.readValue(message.getPayload(), LocationShareEventRequestDto.class);
+            log.info("요청 받은 session  : {} , type : {} ", session.getId(), request.getType());
             handleLocationShareRequest(session, request);
         } catch (BusinessException e){
             session.close(BAD_DATA);
