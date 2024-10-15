@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 import static gather.here.api.global.util.DateUtil.convertLocalDateTimeToString;
@@ -109,12 +108,6 @@ public class RoomService {
             locationShareEventRepository.delete(locationShareEvent);
         }else{
             locationShareEventRepository.update(locationShareEvent);
-        }
-
-        List<Member> memberList = member.getRoom().getMemberList();
-        if (memberList.size() == 1 && memberList.get(0).getSeq().equals(memberSeq)) {
-            Room room = member.getRoom();
-            room.closeRoom();
         }
         member.exitRoom();
         Optional<WebSocketAuth> webSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);

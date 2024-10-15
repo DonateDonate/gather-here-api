@@ -38,6 +38,7 @@ public class LocationShareService {
         Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
         deleteMemberSeqByWebSocketAuthAndLocationShareEventIfExist(existWebSocketAuth, member);
         webSocketAuthRepository.save(webSocketAuth);
+        logGenerater(member,"웹 소켓 연결");
     }
 
     private void deleteMemberSeqByWebSocketAuthAndLocationShareEventIfExist(Optional<WebSocketAuth> existWebSocketAuth, Member member) {
@@ -74,6 +75,7 @@ public class LocationShareService {
                         isOpen
                 );
         locationShareEventRepository.save(locationShareEvent);
+        logGenerater(member,"event 생성");
     }
 
     @Transactional
@@ -113,6 +115,7 @@ public class LocationShareService {
             locationShareEventRepository.save(locationShareEvent);
         }
         LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
+        logGenerater(member,"event 참가");
 
         return new GetLocationShareResponseDto(message, locationShareEvent.getSessionIdList());
     }
@@ -126,7 +129,7 @@ public class LocationShareService {
         updateMemberLocation(request, sessionId, locationShareEvent, member,isOpen);
         LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
         locationShareEventRepository.update(locationShareEvent);
-
+        logGenerater(member,"distance 변경");
         return new GetLocationShareResponseDto(message, locationShareEvent.getSessionIdList());
     }
 
@@ -157,5 +160,8 @@ public class LocationShareService {
                 request.getDestinationDistance(),
                 isOpen
         );
+    }
+    private void logGenerater(Member member, String message){
+        log.info("{}  ->  {} ",member.getNickname(),message);
     }
 }
