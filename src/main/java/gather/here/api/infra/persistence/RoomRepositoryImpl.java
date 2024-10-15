@@ -4,6 +4,7 @@ import gather.here.api.domain.entities.Room;
 import gather.here.api.domain.repositories.RoomRepository;
 import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.ResponseStatus;
+import gather.here.api.infra.persistence.jpa.RoomCustomRepository;
 import gather.here.api.infra.persistence.jpa.RoomJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoomRepositoryImpl implements RoomRepository{
     private final RoomJpaRepository roomJpaRepository;
+    private final RoomCustomRepository customRepository;
 
     @Override
     public void save(Room room) {
@@ -31,7 +33,6 @@ public class RoomRepositoryImpl implements RoomRepository{
 
     @Override
     public List<Room> findAllByStatus(int status) {
-        return roomJpaRepository.findByStatus(status);
+        return customRepository.findAllByStatus(status);
     }
-
 }

@@ -19,9 +19,10 @@ public class RepositoryConfig {
 
     @Bean
     public RoomRepository roomRepository(
-            RoomJpaRepository roomJpaRepository
+            RoomJpaRepository roomJpaRepository,
+            RoomCustomRepository roomCustomRepository
     ){
-        return new RoomRepositoryImpl(roomJpaRepository);
+        return new RoomRepositoryImpl(roomJpaRepository,roomCustomRepository);
     }
 
     @Bean
