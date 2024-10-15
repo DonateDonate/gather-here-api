@@ -49,7 +49,7 @@ public class Room extends BaseTime {
     @Comment("초대 코드")
     private String shareCode;
 
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER)
     private List<Member> memberList = new ArrayList<>();
 
     @Builder
@@ -62,7 +62,7 @@ public class Room extends BaseTime {
         this.shareCode = shareCode;
     }
 
-    public static Room create(Double destinationLat, Double destinationLng, String destinationName,String encounterDate, Member member){
+    public static Room create(Double destinationLat, Double destinationLng, String destinationName,String encounterDate){
         LocalDateTime convertedToLocalDateTime = convertToLocalDateTime(encounterDate);
 
         if(convertedToLocalDateTime == null){
@@ -83,8 +83,6 @@ public class Room extends BaseTime {
                 .destinationName(destinationName)
                 .shareCode(makeShareCode())
                 .build();
-
-        room.memberList.add(member);
 
         return room;
     }

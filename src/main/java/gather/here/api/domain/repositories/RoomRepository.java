@@ -9,5 +9,5 @@ public interface RoomRepository {
 
     Room getByShareCode(String shareCode);
 
-    List<Room> findByStatus(int status);
+    List<Room> findAllByStatus(int status);
 }

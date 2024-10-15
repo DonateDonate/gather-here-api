@@ -32,7 +32,7 @@ class RoomTest {
         Member member = Member.create("01012345678","12341234");
 
         //act
-        sut = Room.create(destinationLat,destinationLng,destinationName,encounterDate,member);
+        sut = Room.create(destinationLat,destinationLng,destinationName,encounterDate);
 
         //assert
         Assertions.assertThat(sut.getStatus()).isEqualTo(1);
@@ -59,7 +59,7 @@ class RoomTest {
         Member member = Member.create("01012345678","ENCODEPASSWORDENCODEPASSWORDENC");
 
         //act
-        sut = Room.create(destinationLat,destinationLng,destinationName,encounterDate,member);
+        sut = Room.create(destinationLat,destinationLng,destinationName,encounterDate);
 
         //assert
         Assertions.assertThat(sut.getShareCode()).isNotNull();
@@ -81,7 +81,7 @@ class RoomTest {
 
         //act
         try {
-            sut = Room.create(destinationLat, destinationLng, destinationName, encounterDate, member);
+            sut = Room.create(destinationLat, destinationLng, destinationName, encounterDate);
         }catch (RoomException e){
             actual=e;
         }
@@ -114,7 +114,7 @@ class RoomTest {
 
         //act
         try {
-            sut = Room.create(destinationLat, destinationLng, destinationName, encounterDate, member);
+            sut = Room.create(destinationLat, destinationLng, destinationName, encounterDate);
         }catch (RoomException e){
             actual=e;
         }
@@ -148,7 +148,7 @@ class RoomTest {
 
         //act
         try {
-            sut = Room.create(destinationLat, destinationLng, destinationName, encounterDate, member);
+            sut = Room.create(destinationLat, destinationLng, destinationName, encounterDate);
         }catch (RoomException e){
             actual=e;
         }

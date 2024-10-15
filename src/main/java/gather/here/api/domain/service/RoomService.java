@@ -58,11 +58,10 @@ public class RoomService {
                 request.getDestinationLat(),
                 request.getDestinationLng(),
                 request.getDestinationName(),
-                request.getEncounterDate(),
-                member);
+                request.getEncounterDate());
 
         roomRepository.save(room);
-        member.setRoom(room);
+        member.joinRoom(room);
 
         return new RoomCreateResponseDto(
                 room.getSeq(),
@@ -82,7 +81,7 @@ public class RoomService {
         }
         Room room = roomRepository.getByShareCode(request.getShareCode());
 
-        member.setRoom(room);
+        member.joinRoom(room);
         return new JoinRoomResponseDto(
                 room.getSeq(),
                 room.getDestinationLat(),

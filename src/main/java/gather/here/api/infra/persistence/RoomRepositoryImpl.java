@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class RoomRepositoryImpl implements RoomRepository {
+public class RoomRepositoryImpl implements RoomRepository{
     private final RoomJpaRepository roomJpaRepository;
 
     @Override
@@ -30,7 +30,7 @@ public class RoomRepositoryImpl implements RoomRepository {
     }
 
     @Override
-    public List<Room> findByStatus(int status) {
+    public List<Room> findAllByStatus(int status) {
         return roomJpaRepository.findByStatus(status);
     }
 
