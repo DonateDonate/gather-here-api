@@ -23,6 +23,11 @@ public class TestController {
     @Autowired
     WebSocketService webSocketService;
 
+    @GetMapping("/")
+    public ResponseEntity<Object> getMappingTest(){
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/auth")
     public String auth(){
         return "auth ok";
