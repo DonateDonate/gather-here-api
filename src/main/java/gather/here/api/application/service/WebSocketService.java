@@ -113,7 +113,6 @@ public class WebSocketService {
     }
 
     private void handleLocationShareRequest(WebSocketSession session, LocationShareEventRequestDto request) {
-        Boolean isOpen = session.isOpen();
         try {
             if (request.getType() == 0) {
                 locationShareService.createTypeHandleAction(request, session.getId());
