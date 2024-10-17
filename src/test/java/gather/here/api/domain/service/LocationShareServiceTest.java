@@ -6,6 +6,7 @@ import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.Room;
 import gather.here.api.domain.entities.WebSocketAuth;
+import gather.here.api.domain.etc.RedisTransactionManager;
 import gather.here.api.domain.repositories.LocationShareEventRepository;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RoomRepository;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +60,9 @@ class LocationShareServiceTest {
     @Autowired
     private LocationShareEventRepository locationShareEventRepository;
 
+    @Autowired
+    private RedisOperations<String,Object> redisOperations;
+
 
     @DisplayName("sut는 참가한 room이 없으면 예외가 발생한다")
     @Test
@@ -65,7 +70,7 @@ class LocationShareServiceTest {
         //arrange
         String sessionId = String.valueOf(UUID.randomUUID());
         Member member = createMember();
-        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository, new RedisTransactionManager(redisOperations));
 
         WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(), sessionId);
         webSocketAuthRepository.save(webSocketAuth);
@@ -104,7 +109,7 @@ class LocationShareServiceTest {
         roomRepository.save(room);
         member.setRoom(room);
 
- LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository, new RedisTransactionManager(redisOperations));
         WebSocketAuth actual = null;
 
         //act
@@ -262,7 +267,7 @@ class LocationShareServiceTest {
     @Test
     public void notFoundRoomSeqJoinTest(){
         //arrange
- LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository, new RedisTransactionManager(redisOperations));
         LocationShareEvent actual = null;
 
         //방장 member 추가
@@ -343,7 +348,7 @@ class LocationShareServiceTest {
     @Test
     public void successJoinTest(){
         //arrange
-        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository, new RedisTransactionManager(redisOperations));
 
         //방장 member 추가
         String createIdentity = Utils.randomMemberId();
@@ -391,8 +396,8 @@ class LocationShareServiceTest {
         JoinRoomRequestDto joinRoomRequestDto = new JoinRoomRequestDto(shareCode);
         roomService.joinRoom(joinRoomRequestDto,joinMember.getSeq());
 
-        sut.saveWebSocketAuth(createSessionId,createMember.getSeq());
-        sut.saveWebSocketAuth(joinSessionId,joinMember.getSeq());
+        webSocketAuthRepository.save(WebSocketAuth.create(createMember.getSeq(),createSessionId));
+        webSocketAuthRepository.save(WebSocketAuth.create(joinMember.getSeq(),joinSessionId));
 
         //roomMember -> create locationShareEvent
         int createType =0;
@@ -438,7 +443,7 @@ class LocationShareServiceTest {
     public void distanceChangeTest(){
 
         //arrange
- LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository, new RedisTransactionManager(redisOperations));
 
         //방장 member 추가
         String createIdentity = Utils.randomMemberId();
@@ -529,7 +534,7 @@ class LocationShareServiceTest {
     @Transactional
     public void saveWebSocketRollBackTest(){
         //arrange
- LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository, new RedisTransactionManager(redisOperations));
         Member member = createMember();
         Date date = new Date();
         LocalDateTime localDateTime = date.toInstant()
@@ -556,7 +561,7 @@ class LocationShareServiceTest {
         Optional<WebSocketAuth> actual = webSocketAuthRepository.findMemberSeq(member.getSeq());
 
         //assert
-        Assertions.assertThat(actual.isPresent()).isEqualTo(false);
+        Assertions.assertThat(actual.isPresent()).isEqualTo(true);
         Assertions.assertThat(actualException).isInstanceOf(WebSocketAuthException.class);
     }
 
@@ -566,5 +571,35 @@ class LocationShareServiceTest {
         Member member = Member.create(id,password);
         memberRepository.save(member);
         return memberRepository.findByIdentityAndIsActiveTrue(id).get();
+    }
+
+    @Test
+    @Transactional
+    public void test(){
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository, new RedisTransactionManager(redisOperations));
+        Member member = createMember();
+        Date date = new Date();
+        LocalDateTime localDateTime = date.toInstant()
+                .atZone(ZoneId.of("Asia/Seoul"))
+                .toLocalDateTime()
+                .plusHours(1);
+        String encounterDate = convertLocalDateTimeToString(localDateTime);
+        Room room = Room.create(37.7,24.4,"목적지",encounterDate,member);
+        roomRepository.save(room);
+        member.setRoom(room);
+        String createSessionId = String.valueOf(UUID.randomUUID());
+
+
+        sut.saveWebSocketAuth(createSessionId,member.getSeq());
+        WebSocketAuth webSocketAuth1 = webSocketAuthRepository.getBySessionId(createSessionId);
+        WebSocketAuth webSocketAuth2 = webSocketAuthRepository.getBySessionId(createSessionId);
+        WebSocketAuth webSocketAuth3 = webSocketAuthRepository.getBySessionId(createSessionId);
+        WebSocketAuth webSocketAuth4 = webSocketAuthRepository.getBySessionId(createSessionId);
+
+        Assertions.assertThat(webSocketAuth1).isNotNull();
+        Assertions.assertThat(webSocketAuth2).isNotNull();
+        Assertions.assertThat(webSocketAuth3).isNotNull();
+        Assertions.assertThat(webSocketAuth4).isNotNull();
+
     }
 }

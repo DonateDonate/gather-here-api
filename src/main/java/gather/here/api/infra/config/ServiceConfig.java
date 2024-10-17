@@ -1,6 +1,7 @@
 package gather.here.api.infra.config;
 
 import gather.here.api.application.service.WebSocketService;
+import gather.here.api.domain.etc.RedisTransactionManager;
 import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.*;
 import gather.here.api.domain.security.AccessTokenFactory;
@@ -9,6 +10,7 @@ import gather.here.api.domain.security.RefreshTokenFactory;
 import gather.here.api.domain.service.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisOperations;
 
 @Configuration
 public class ServiceConfig {
@@ -51,9 +53,10 @@ public class ServiceConfig {
             WebSocketAuthRepository webSocketAuthRepository,
             MemberRepository memberRepository,
             FileFactory fileFactory,
-            LocationShareEventRepository locationShareEventRepository
+            LocationShareEventRepository locationShareEventRepository,
+            RedisOperations<String,Object> redisOperations
             ) {
-        return new LocationShareService(webSocketAuthRepository,memberRepository,fileFactory,locationShareEventRepository);
+        return new LocationShareService(webSocketAuthRepository,memberRepository,fileFactory,locationShareEventRepository, new RedisTransactionManager(redisOperations));
     }
 
     @Bean

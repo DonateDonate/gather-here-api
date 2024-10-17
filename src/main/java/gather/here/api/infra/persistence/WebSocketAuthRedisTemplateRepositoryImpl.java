@@ -5,6 +5,7 @@ import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.WebSocketAuthException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 public class WebSocketAuthRedisTemplateRepositoryImpl implements WebSocketAuthRepository {
     private final RedisOperations<String, Object> redisOperations;
@@ -27,6 +29,7 @@ public class WebSocketAuthRedisTemplateRepositoryImpl implements WebSocketAuthRe
         data.put("memberSeq", webSocketAuth.getMemberSeq());
         redisOperations.opsForHash().putAll(key, data);
         redisOperations.opsForHash().put("sessionIdIndex", webSocketAuth.getSessionId(), key);
+        log.info("Saving sessionId: {} with key: {}", webSocketAuth.getSessionId(), key);
     }
 
     @Override
@@ -51,7 +54,9 @@ public class WebSocketAuthRedisTemplateRepositoryImpl implements WebSocketAuthRe
 
     @Override
     public WebSocketAuth getBySessionId(String sessionId) {
+        log.info("Getting key for sessionId: {}", sessionId);
         String key = (String) redisOperations.opsForHash().get("sessionIdIndex", sessionId);
+        log.info("Retrieved key: {}", key);
         if(StringUtils.isEmpty(key)){
             throw new WebSocketAuthException(ResponseStatus.NOT_FOUND_SESSION_ID, HttpStatus.FORBIDDEN);
         }

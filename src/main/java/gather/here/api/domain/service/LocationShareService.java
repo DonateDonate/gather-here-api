@@ -3,6 +3,7 @@ package gather.here.api.domain.service;
 import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.WebSocketAuth;
+import gather.here.api.domain.etc.TransactionManager;
 import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.LocationShareEventRepository;
 import gather.here.api.domain.repositories.MemberRepository;
@@ -17,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,46 +29,77 @@ public class LocationShareService {
     private final MemberRepository memberRepository;
     private final FileFactory fileFactory;
     private final LocationShareEventRepository locationShareEventRepository;
+    private final TransactionManager transactionManager;
 
     @Transactional
     public void saveWebSocketAuth(String sessionId, Long memberSeq) {
-        log.info("save sessionId ={}", sessionId);
         Member member = memberRepository.getBySeq(memberSeq);
         if (member.getRoom() == null || member.getRoom().getStatus() == 9) {
             throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
         }
-        deleteMemberIfExist(member);
-        WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
-        webSocketAuthRepository.save(webSocketAuth);
+        transactionManager.transaction(() -> {
+            deleteMemberIfExist(member);
+            WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
+            webSocketAuthRepository.save(webSocketAuth);
+        });
         logGenerater(sessionId,"웹 소켓 연결");
     }
 
     @Transactional
     public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
-        updateLocationShareEvent(request, sessionId);
+        transactionManager.transaction(()->{
+            updateLocationShareEvent(request, sessionId);
+        });
         logGenerater(sessionId,"event 생성");
     }
 
     @Transactional
     public GetLocationShareResponseDto joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
-        log.info("join sessionId = {}",sessionId);
-        LocationShareEvent locationShareEvent = updateLocationShareEvent(request, sessionId);
-        LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
+        AtomicReference<LocationShareEvent> locationShareEventRef = new AtomicReference<>();
+        AtomicReference<LocationShareMessage> messageRef = new AtomicReference<>();
+
+        transactionManager.transaction(() -> {
+            LocationShareEvent locationShareEvent = updateLocationShareEvent(request, sessionId);  // LocationShareEvent 업데이트
+            LocationShareMessage message = LocationShareMessage.from(locationShareEvent);  // LocationShareMessage 생성
+
+            locationShareEventRef.set(locationShareEvent);
+            messageRef.set(message);
+        });
+
+        LocationShareEvent locationShareEvent = locationShareEventRef.get();
+        LocationShareMessage message = messageRef.get();
+        List<String> sessionIdList = locationShareEvent.getSessionIdList();
         logGenerater(sessionId,"event 참가");
-        return new GetLocationShareResponseDto(message, locationShareEvent.getSessionIdList());
+        return new GetLocationShareResponseDto(message, sessionIdList);
     }
 
     @Transactional
     public GetLocationShareResponseDto distanceChangeHandleAction(LocationShareEventRequestDto request, String sessionId) {
+        AtomicReference<LocationShareEvent> locationShareEventRef = new AtomicReference<>();
+        AtomicReference<LocationShareMessage> messageRef = new AtomicReference<>();
+
+        transactionManager.transaction(()->{
+            Member member = getMemberByWebSocketAuth(sessionId);
+            LocationShareEvent locationShareEvent = locationShareEventRepository.getByRoomSeq(member.getRoom().getSeq());
+            updateMemberLocation(request, sessionId, locationShareEvent, member);
+            LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
+            locationShareEventRepository.update(locationShareEvent);
+
+            locationShareEventRef.set(locationShareEvent);
+            messageRef.set(message);
+        });
+        LocationShareEvent locationShareEvent = locationShareEventRef.get();
+        List<String> sessionIdList = locationShareEvent.getSessionIdList();
+        LocationShareMessage message = messageRef.get();
+        logGenerater(sessionId,"distance 변경");
+        return new GetLocationShareResponseDto(message, sessionIdList);
+    }
+
+    private Member getMemberByWebSocketAuth(String sessionId) {
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
         Long memberSeq = webSocketAuth.getMemberSeq();
         Member member = memberRepository.getBySeq(memberSeq);
-        LocationShareEvent locationShareEvent = locationShareEventRepository.getByRoomSeq(member.getRoom().getSeq());
-        updateMemberLocation(request, sessionId, locationShareEvent, member);
-        LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
-        locationShareEventRepository.update(locationShareEvent);
-        logGenerater(sessionId,"distance 변경");
-        return new GetLocationShareResponseDto(message, locationShareEvent.getSessionIdList());
+        return member;
     }
 
     @Transactional
@@ -82,10 +116,7 @@ public class LocationShareService {
     }
 
     private LocationShareEvent updateLocationShareEvent(LocationShareEventRequestDto request, String sessionId){
-        WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
-
-        Long memberSeq = webSocketAuth.getMemberSeq();
-        Member member = memberRepository.getBySeq(memberSeq);
+        Member member = getMemberByWebSocketAuth(sessionId);
         LocationShareEvent locationShareEvent = locationShareEventRepository.getByRoomSeq(member.getRoom().getSeq());
         locationShareEvent.addMemberLocations(
                 member.getSeq(),
@@ -128,6 +159,6 @@ public class LocationShareService {
     private void logGenerater(String sessionId, String message){
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
         Member member = memberRepository.getBySeq(webSocketAuth.getMemberSeq());
-        log.info("{}  ->  {} ",member.getNickname(),message);
+        log.info("{} ({})  ->  {} ",member.getNickname(),sessionId,message);
     }
 }

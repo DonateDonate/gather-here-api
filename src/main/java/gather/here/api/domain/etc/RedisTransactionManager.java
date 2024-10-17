@@ -6,7 +6,7 @@ import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SessionCallback;
 
 @RequiredArgsConstructor
-public class RedisTransaction implements TransactionManager{
+public class RedisTransactionManager implements TransactionManager{
     private final RedisOperations<String,Object> redisOperations;
 
     @Override
