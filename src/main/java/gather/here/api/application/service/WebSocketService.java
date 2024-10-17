@@ -72,11 +72,13 @@ public class WebSocketService {
     public void messageHandle(WebSocketSession session, TextMessage message) throws IOException {
         try {
             LocationShareEventRequestDto request = objectMapper.readValue(message.getPayload(), LocationShareEventRequestDto.class);
+            log.info("요청 받은 session  : {} , type : {} ", session.getId(), request.getType());
             handleLocationShareRequest(session, request);
         } catch (BusinessException e){
             session.close(BAD_DATA);
             log.error("BusinessException webSocket request body ={}",e.getMessage());
         } catch (Exception e) {
+            session.close(BAD_DATA);
             log.error("invalid webSocket request body ={}",e.getMessage());
         }
     }
@@ -112,7 +114,6 @@ public class WebSocketService {
 
     private void handleLocationShareRequest(WebSocketSession session, LocationShareEventRequestDto request) {
         Boolean isOpen = session.isOpen();
-        log.info("session isOpen ={}",isOpen);
         try {
             if (request.getType() == 0) {
                 locationShareService.createTypeHandleAction(request, session.getId(),isOpen);
@@ -128,6 +129,7 @@ public class WebSocketService {
                 sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
             }
         }catch (Exception e){
+            e.printStackTrace();
             log.error("Error handling location share request: {} {} {}", e.getCause(),e.getLocalizedMessage(),e.getMessage());
         }
     }
@@ -138,15 +140,10 @@ public class WebSocketService {
                     .filter(session -> session.getId().equals(id) && session.isOpen())
                     .forEach(session -> {
                         try {
-                            log.info("message = {}",message );
                             session.sendMessage(new TextMessage(message));
                         } catch (Exception e) {
-                            log.error("Error sending message to session {}: {}", id, e.getMessage());
-                        }
+                            log.error("Error sending message to session {}: {}", session.getId(), e.getMessage());}
                     });
         }
-    }
-    public static List<WebSocketSession> getSessionList(){
-        return sessionList;
     }
 }

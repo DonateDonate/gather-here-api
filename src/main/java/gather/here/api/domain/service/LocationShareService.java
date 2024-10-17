@@ -10,6 +10,7 @@ import gather.here.api.domain.repositories.WebSocketAuthRepository;
 import gather.here.api.domain.service.dto.request.LocationShareEventRequestDto;
 import gather.here.api.domain.service.dto.response.GetLocationShareResponseDto;
 import gather.here.api.domain.service.dto.response.LocationShareMessage;
+import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.RoomException;
 import lombok.RequiredArgsConstructor;
@@ -27,57 +28,20 @@ public class LocationShareService {
     private final FileFactory fileFactory;
     private final LocationShareEventRepository locationShareEventRepository;
 
-//    @Transactional
-//    public void saveWebSocketAuth(String sessionId, Long memberSeq) {
-//        log.info("save sessionId ={}", sessionId);
-//        Member member = memberRepository.getBySeq(memberSeq);
-//        if (member.getRoom() == null || member.getRoom().getStatus() == 9) {
-//            throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
-//        }
-//        Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
-//
-//
-//        redisTemplate.execute(new SessionCallback() {
-//            @Override
-//            public Object execute(RedisOperations operations){
-//                // transaction start
-//                operations.multi();
-//                if (existWebSocketAuth.isPresent()) {
-//                    String key = "webSocketAuth:" + existWebSocketAuth.get().getMemberSeq();
-//                    if(operations.hasKey(key)){
-//                        operations.delete(key);
-//                        operations.opsForHash().delete("sessionIdIndex", existWebSocketAuth.get().getSessionId());
-//                    }
-//                }
-//                WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
-//                webSocketAuthRepository.save(webSocketAuth);
-//                return operations.exec();
-//                // transaction end
-//            }
-//        });
-//    }
     @Transactional
     public void saveWebSocketAuth(String sessionId, Long memberSeq) {
-        log.info("save sessionId ={}", sessionId);
-        Member member = memberRepository.getBySeq(memberSeq);
-        if (member.getRoom() == null || member.getRoom().getStatus() == 9) {
-            throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
-        }
-        deleteMemberIfExist(member);
-        WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
-        webSocketAuthRepository.save(webSocketAuth);
-    }
-
-    private void deleteMemberIfExist(Member member) {
-        Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(member.getSeq());
-        if (existWebSocketAuth.isPresent()) {
-            webSocketAuthRepository.deleteByMemberSeq(existWebSocketAuth.get());
-            Optional<LocationShareEvent> locationShareEvent = locationShareEventRepository.findByRoomSeq(member.getRoom().getSeq());
-            if(locationShareEvent.isPresent()){
-                locationShareEvent.get().removeMemberLocation(member.getSeq());
-                locationShareEventRepository.update(locationShareEvent.get());
+            log.info("save sessionId ={}", sessionId);
+            Member member = memberRepository.getBySeq(memberSeq);
+            if (member.getRoom() == null || member.getRoom().getStatus() == 9) {
+                throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
             }
-        }
+            Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
+            if (existWebSocketAuth.isPresent()) {
+                webSocketAuthRepository.deleteByMemberSeq(existWebSocketAuth.get());
+                updateLocationShareEventByMemberSeq(member);
+            }
+            WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
+            webSocketAuthRepository.save(webSocketAuth);
     }
 
     @Transactional
@@ -87,7 +51,10 @@ public class LocationShareService {
 
         Long memberSeq = webSocketAuth.getMemberSeq();
         Member member = memberRepository.getBySeq(memberSeq);
-
+        Optional<LocationShareEvent> existLocationShareEvent = locationShareEventRepository.findByRoomSeq(member.getRoom().getSeq());
+        if(existLocationShareEvent.isPresent()){
+            throw new LocationShareException(ResponseStatus.DUPLICATE_LOCATION_SHARE_EVENT_ROOM_SEQ,HttpStatus.FORBIDDEN);
+        }
         LocationShareEvent locationShareEvent = new LocationShareEvent()
                 .create(
                         member.getRoom().getSeq(),
@@ -187,5 +154,13 @@ public class LocationShareService {
                 request.getDestinationDistance(),
                 isOpen
         );
+    }
+
+    private void updateLocationShareEventByMemberSeq(Member member) {
+        Optional<LocationShareEvent> locationShareEvent = locationShareEventRepository.findByRoomSeq(member.getRoom().getSeq());
+        if(locationShareEvent.isPresent()){
+            locationShareEvent.get().removeMemberLocation(member.getSeq());
+            locationShareEventRepository.update(locationShareEvent.get());
+        }
     }
 }

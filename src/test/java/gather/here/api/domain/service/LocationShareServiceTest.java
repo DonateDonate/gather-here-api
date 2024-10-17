@@ -549,7 +549,7 @@ class LocationShareServiceTest {
         WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(),sessionId);
         webSocketAuthRepository.save(webSocketAuth);
         WebSocketAuthException actualException = null;
-        System.out.println("arrange end");
+
         //act
         String newSessionId = null;
         try {
@@ -561,7 +561,6 @@ class LocationShareServiceTest {
 
         //assert
         Assertions.assertThat(actual.isPresent()).isEqualTo(false);
-        Assertions.assertThat(actual.get().getSessionId()).isEqualTo(sessionId);
         Assertions.assertThat(actualException).isInstanceOf(WebSocketAuthException.class);
     }
 

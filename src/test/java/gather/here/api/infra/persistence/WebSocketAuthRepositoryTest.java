@@ -2,6 +2,7 @@ package gather.here.api.infra.persistence;
 
 import gather.here.api.domain.entities.WebSocketAuth;
 import gather.here.api.domain.repositories.WebSocketAuthRepository;
+import gather.here.api.domain.service.LocationShareService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ class WebSocketAuthRepositoryTest {
 
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    LocationShareService locationShareService;
 
     @Test
     @DisplayName("sut는 성공적으로 webSocketAuth를 저장한다")
