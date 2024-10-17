@@ -80,7 +80,6 @@ public class RoomService {
                 convertLocalDateTimeToString(room.getEncounterDate()),
                 room.getShareCode()
         );
-
     }
 
     @Transactional

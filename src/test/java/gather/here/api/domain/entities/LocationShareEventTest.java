@@ -23,7 +23,7 @@ class LocationShareEventTest {
         Double destinationDistance = 200.0;
 
         //act
-        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance,null);
+        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
 
         //assert
         Assertions.assertThat(locationShareEvent.getRoomSeq()).isEqualTo(roomSeq);
@@ -51,7 +51,7 @@ class LocationShareEventTest {
         Double presentLng = 32.2;
         Double destinationDistance = 200.2;
 
-        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance,null);
+        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
 
         //act
         Long addMemberSeq = 2L;
@@ -69,8 +69,7 @@ class LocationShareEventTest {
                 addImageUrl,
                 addPresentLat,
                 addPresentLng,
-                addDestinationDistance,
-                null
+                addDestinationDistance
         );
         //assert
         Assertions.assertThat(locationShareEvent.getMemberLocations().size()).isEqualTo(2);
@@ -94,7 +93,7 @@ class LocationShareEventTest {
         Double presentLng = 32.1;
         Double destinationDistance = 200.2;
 
-        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance,null);
+        LocationShareEvent locationShareEvent = sut.create(roomSeq, memberSeq, sessionId, nickName, imageUrl, presentLat, presentLng, destinationDistance);
 
         Long addMemberSeq = 2L;
         String addSessionId = String.valueOf(UUID.randomUUID());
@@ -111,8 +110,7 @@ class LocationShareEventTest {
                 addImageUrl,
                 addPresentLat,
                 addPresentLng,
-                addDestinationDistance,
-                null
+                addDestinationDistance
         );
 
         //act

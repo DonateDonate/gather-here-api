@@ -113,19 +113,18 @@ public class WebSocketService {
     }
 
     private void handleLocationShareRequest(WebSocketSession session, LocationShareEventRequestDto request) {
-        Boolean isOpen = session.isOpen();
         try {
             if (request.getType() == 0) {
-                locationShareService.createTypeHandleAction(request, session.getId(),isOpen);
+                locationShareService.createTypeHandleAction(request, session.getId());
             }
 
             if (request.getType() == 1) {
-                GetLocationShareResponseDto response = locationShareService.joinTypeHandleAction(request, session.getId(),isOpen);
+                GetLocationShareResponseDto response = locationShareService.joinTypeHandleAction(request, session.getId());
                 sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
             }
 
             if (request.getType() == 2) {
-                GetLocationShareResponseDto response = locationShareService.distanceChangeHandleAction(request, session.getId(),isOpen);
+                GetLocationShareResponseDto response = locationShareService.distanceChangeHandleAction(request, session.getId());
                 sendMessage(response.getSessionIdList(), JsonUtil.convertToJsonString(response.getLocationShareMessage()));
             }
         }catch (Exception e){
