@@ -136,7 +136,7 @@ public class WebSocketService {
     private void sendMessage(List<String> sessionIdList, String message) {
         for (String id : sessionIdList) {
             sessionList.stream()
-                    .filter(session -> session.getId().equals(id) && session.isOpen())
+                    .filter(session -> session.getId().equals(id))
                     .forEach(session -> {
                         try {
                             session.sendMessage(new TextMessage(message));
