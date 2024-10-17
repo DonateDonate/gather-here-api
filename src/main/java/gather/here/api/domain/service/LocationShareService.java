@@ -53,7 +53,7 @@ public class LocationShareService {
     }
 
     @Transactional
-    public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId,Boolean isOpen) {
+    public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
@@ -71,15 +71,14 @@ public class LocationShareService {
                         fileFactory.getImageUrl(member.getImageKey()),
                         request.getPresentLat(),
                         request.getPresentLng(),
-                        request.getDestinationDistance(),
-                        isOpen
+                        request.getDestinationDistance()
                 );
         locationShareEventRepository.save(locationShareEvent);
         logGenerater(member,"event 생성");
     }
 
     @Transactional
-    public GetLocationShareResponseDto joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId,Boolean isOpen) {
+    public GetLocationShareResponseDto joinTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
 
         Long memberSeq = webSocketAuth.getMemberSeq();
@@ -95,8 +94,7 @@ public class LocationShareService {
                     fileFactory.getImageUrl(member.getImageKey()),
                     request.getPresentLat(),
                     request.getPresentLng(),
-                    request.getDestinationDistance(),
-                    isOpen
+                    request.getDestinationDistance()
             );
             locationShareEventRepository.update(locationShareEvent);
         }else{
@@ -109,8 +107,7 @@ public class LocationShareService {
                             fileFactory.getImageUrl(member.getImageKey()),
                             request.getPresentLat(),
                             request.getPresentLng(),
-                            request.getDestinationDistance(),
-                            isOpen
+                            request.getDestinationDistance()
                     );
             locationShareEventRepository.save(locationShareEvent);
         }
@@ -121,12 +118,12 @@ public class LocationShareService {
     }
 
     @Transactional
-    public GetLocationShareResponseDto distanceChangeHandleAction(LocationShareEventRequestDto request, String sessionId, Boolean isOpen) {
+    public GetLocationShareResponseDto distanceChangeHandleAction(LocationShareEventRequestDto request, String sessionId) {
         WebSocketAuth webSocketAuth = webSocketAuthRepository.getBySessionId(sessionId);
         Long memberSeq = webSocketAuth.getMemberSeq();
         Member member = memberRepository.getBySeq(memberSeq);
         LocationShareEvent locationShareEvent = locationShareEventRepository.getByRoomSeq(member.getRoom().getSeq());
-        updateMemberLocation(request, sessionId, locationShareEvent, member,isOpen);
+        updateMemberLocation(request, sessionId, locationShareEvent, member);
         LocationShareMessage message = LocationShareMessage.from(locationShareEvent);
         locationShareEventRepository.update(locationShareEvent);
         logGenerater(member,"distance 변경");
@@ -146,7 +143,7 @@ public class LocationShareService {
         return new GetLocationShareResponseDto(message, locationShareEvent.getSessionIdList());
     }
 
-    private void updateMemberLocation(LocationShareEventRequestDto request, String sessionId, LocationShareEvent locationShareEvent, Member member, Boolean isOpen) {
+    private void updateMemberLocation(LocationShareEventRequestDto request, String sessionId, LocationShareEvent locationShareEvent, Member member) {
         locationShareEvent.getMemberLocations()
                 .removeIf(memberLocation -> memberLocation.getSessionId().equals(sessionId));
 
@@ -157,8 +154,7 @@ public class LocationShareService {
                 fileFactory.getImageUrl(member.getImageKey()),
                 request.getPresentLat(),
                 request.getPresentLng(),
-                request.getDestinationDistance(),
-                isOpen
+                request.getDestinationDistance()
         );
     }
     private void logGenerater(Member member, String message){
