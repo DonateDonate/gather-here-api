@@ -38,7 +38,7 @@ class WebSocketAuthRepositoryTest {
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq,sessionId);
 
         //act
-        sut.save(null,null,webSocketAuth);
+        sut.save(webSocketAuth);
         Optional<WebSocketAuth> actual = sut.findMemberSeq(memberSeq);
 
         //assert
@@ -58,7 +58,7 @@ class WebSocketAuthRepositoryTest {
         WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq,sessionId);
 
         //act
-        sut.save(null,null,webSocketAuth);
+        sut.save(webSocketAuth);
         WebSocketAuth actual = sut.getBySessionId(sessionId);
 
         //assert

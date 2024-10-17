@@ -14,6 +14,7 @@ import gather.here.api.domain.service.dto.request.RoomCreateRequestDto;
 import gather.here.api.domain.service.dto.response.GetRoomResponseDto;
 import gather.here.api.domain.service.dto.response.JoinRoomResponseDto;
 import gather.here.api.domain.service.dto.response.RoomCreateResponseDto;
+import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.ResponseStatus;
 import gather.here.api.global.exception.RoomException;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +66,13 @@ public class RoomService {
         roomRepository.save(room);
         member.setRoom(room);
 
+        Optional<LocationShareEvent> existLocationShareEvent = locationShareEventRepository.findByRoomSeq(member.getRoom().getSeq());
+        if(existLocationShareEvent.isPresent()){
+            throw new LocationShareException(ResponseStatus.DUPLICATE_LOCATION_SHARE_EVENT_ROOM_SEQ,HttpStatus.FORBIDDEN);
+        }
+        LocationShareEvent locationShareEvent =  LocationShareEvent.create(room.getSeq());
+        locationShareEventRepository.save(locationShareEvent);
+
         return new RoomCreateResponseDto(
                 room.getSeq(),
                 room.getDestinationLat(),
@@ -73,6 +81,7 @@ public class RoomService {
                 convertLocalDateTimeToString(room.getEncounterDate()),
                 room.getShareCode()
         );
+
     }
 
     @Transactional

@@ -68,7 +68,7 @@ class LocationShareServiceTest {
         LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
 
         WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(), sessionId);
-        webSocketAuthRepository.save(null,null,webSocketAuth);
+        webSocketAuthRepository.save(webSocketAuth);
         RoomException actual = null;
 
         //act
@@ -234,7 +234,7 @@ class LocationShareServiceTest {
 
 
         WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(),sessionId);
-        webSocketAuthRepository.save(null,null,webSocketAuth);
+        webSocketAuthRepository.save(webSocketAuth);
 
         int type =0;
         Double presentLat = 12.1;
@@ -547,7 +547,7 @@ class LocationShareServiceTest {
 
         String sessionId = String.valueOf(UUID.randomUUID());
         WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(),sessionId);
-        webSocketAuthRepository.save(null,null,webSocketAuth);
+        webSocketAuthRepository.save(webSocketAuth);
         WebSocketAuthException actualException = null;
         System.out.println("arrange end");
         //act
@@ -560,7 +560,7 @@ class LocationShareServiceTest {
         Optional<WebSocketAuth> actual = webSocketAuthRepository.findMemberSeq(member.getSeq());
 
         //assert
-        Assertions.assertThat(actual.isPresent()).isEqualTo(true);
+        Assertions.assertThat(actual.isPresent()).isEqualTo(false);
         Assertions.assertThat(actual.get().getSessionId()).isEqualTo(sessionId);
         Assertions.assertThat(actualException).isInstanceOf(WebSocketAuthException.class);
     }

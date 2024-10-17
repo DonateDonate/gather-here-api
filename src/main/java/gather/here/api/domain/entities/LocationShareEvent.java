@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,10 @@ public class LocationShareEvent {
         MemberLocation memberLocation = new MemberLocation(memberSeq,sessionId, nickname, imageUrl,presentLat,presentLng,destinationDistance,isOpen);
         this.memberLocations.add(memberLocation);
         return new LocationShareEvent(roomSeq, memberLocations);
+    }
+
+    public static LocationShareEvent create(Long roomSeq){
+        return new LocationShareEvent(roomSeq, Arrays.asList());
     }
 
     public static LocationShareEvent create(Long roomSeq, List<MemberLocation> memberLocations ){
