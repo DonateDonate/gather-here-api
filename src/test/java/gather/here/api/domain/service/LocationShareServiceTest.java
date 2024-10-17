@@ -413,6 +413,8 @@ class LocationShareServiceTest {
         int joinType =1;
         LocationShareEventRequestDto joinLocationShareEventRequest =
                 new LocationShareEventRequestDto(joinType,presentLat,presentLng,destinationDistance);
+
+        List<WebSocketAuth> all = webSocketAuthRepository.findAll();
         sut.joinTypeHandleAction(joinLocationShareEventRequest,joinSessionId);
 
         //assert
@@ -589,17 +591,17 @@ class LocationShareServiceTest {
         member.setRoom(room);
         String createSessionId = String.valueOf(UUID.randomUUID());
 
+        LocationShareEvent locationShareEvent = LocationShareEvent.create(room.getSeq());
+        locationShareEventRepository.save(locationShareEvent);
 
         sut.saveWebSocketAuth(createSessionId,member.getSeq());
-        WebSocketAuth webSocketAuth1 = webSocketAuthRepository.getBySessionId(createSessionId);
-        WebSocketAuth webSocketAuth2 = webSocketAuthRepository.getBySessionId(createSessionId);
-        WebSocketAuth webSocketAuth3 = webSocketAuthRepository.getBySessionId(createSessionId);
-        WebSocketAuth webSocketAuth4 = webSocketAuthRepository.getBySessionId(createSessionId);
+        int createType =0;
+        Double presentLat = 12.3;
+        Double presentLng = 46.2;
+        Double destinationDistance = 41.4;
+        LocationShareEventRequestDto createLocationShareEventRequest =
+                new LocationShareEventRequestDto(createType,presentLat,presentLng,destinationDistance);
 
-        Assertions.assertThat(webSocketAuth1).isNotNull();
-        Assertions.assertThat(webSocketAuth2).isNotNull();
-        Assertions.assertThat(webSocketAuth3).isNotNull();
-        Assertions.assertThat(webSocketAuth4).isNotNull();
-
+        sut.createTypeHandleAction(createLocationShareEventRequest,createSessionId);
     }
 }

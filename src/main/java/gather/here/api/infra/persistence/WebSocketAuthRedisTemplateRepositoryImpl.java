@@ -10,10 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.http.HttpStatus;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -49,7 +46,26 @@ public class WebSocketAuthRedisTemplateRepositoryImpl implements WebSocketAuthRe
 
     @Override
     public List<WebSocketAuth> findAll() {
-        return null;
+        String pattern = "webSocketAuth:*";
+
+        Set<String> keys = redisOperations.keys(pattern);
+
+        if (keys.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<WebSocketAuth> webSocketAuthList = new ArrayList<>();
+
+        for (String key : keys) {
+            Map<Object, Object> data = redisOperations.opsForHash().entries(key);
+
+            webSocketAuthList.add(WebSocketAuth.create(
+                    Long.valueOf(String.valueOf(data.get("memberSeq"))),
+                    (String) data.get("sessionId")
+            ));
+        }
+
+        return webSocketAuthList;
     }
 
     @Override

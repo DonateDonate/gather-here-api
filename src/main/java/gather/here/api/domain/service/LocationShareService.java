@@ -31,8 +31,9 @@ public class LocationShareService {
     private final LocationShareEventRepository locationShareEventRepository;
     private final TransactionManager transactionManager;
 
-    @Transactional
     public void saveWebSocketAuth(String sessionId, Long memberSeq) {
+        // 조회, 수정 로직을 구분에 transaction 단위를 나눈다
+
         Member member = memberRepository.getBySeq(memberSeq);
         if (member.getRoom() == null || member.getRoom().getStatus() == 9) {
             throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
@@ -44,8 +45,6 @@ public class LocationShareService {
         });
         logGenerater(sessionId,"웹 소켓 연결");
     }
-
-    @Transactional
     public void createTypeHandleAction(LocationShareEventRequestDto request, String sessionId) {
         transactionManager.transaction(()->{
             updateLocationShareEvent(request, sessionId);
@@ -58,16 +57,16 @@ public class LocationShareService {
         AtomicReference<LocationShareEvent> locationShareEventRef = new AtomicReference<>();
         AtomicReference<LocationShareMessage> messageRef = new AtomicReference<>();
 
-        transactionManager.transaction(() -> {
+        //transactionManager.transaction(() -> {
             LocationShareEvent locationShareEvent = updateLocationShareEvent(request, sessionId);  // LocationShareEvent 업데이트
             LocationShareMessage message = LocationShareMessage.from(locationShareEvent);  // LocationShareMessage 생성
 
             locationShareEventRef.set(locationShareEvent);
             messageRef.set(message);
-        });
+        //});
 
-        LocationShareEvent locationShareEvent = locationShareEventRef.get();
-        LocationShareMessage message = messageRef.get();
+        //LocationShareEvent locationShareEvent = locationShareEventRef.get();
+        //LocationShareMessage message = messageRef.get();
         List<String> sessionIdList = locationShareEvent.getSessionIdList();
         logGenerater(sessionId,"event 참가");
         return new GetLocationShareResponseDto(message, sessionIdList);
