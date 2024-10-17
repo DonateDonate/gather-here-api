@@ -1,6 +1,5 @@
 package gather.here.api.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import gather.here.api.global.exception.LocationShareException;
 import gather.here.api.global.exception.ResponseStatus;
 import lombok.Getter;
@@ -13,7 +12,6 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class LocationShareEvent {
     private Long roomSeq;
     private List<MemberLocation> memberLocations = new ArrayList<>();
@@ -67,7 +65,6 @@ public class LocationShareEvent {
 
     @NoArgsConstructor
     @Getter
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class MemberLocation{
         private Long memberSeq;
         private String sessionId;
