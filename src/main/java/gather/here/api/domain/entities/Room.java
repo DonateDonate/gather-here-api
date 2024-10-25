@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 import static gather.here.api.global.util.DateUtil.*;
 
@@ -62,7 +62,7 @@ public class Room extends BaseTime {
         this.shareCode = shareCode;
     }
 
-    public static Room create(Double destinationLat, Double destinationLng, String destinationName,String encounterDate, Member member){
+    public static Room create(Double destinationLat, Double destinationLng, String destinationName,String encounterDate, Member member , String shareCode){
         LocalDateTime convertedToLocalDateTime = convertToLocalDateTime(encounterDate);
 
         if(convertedToLocalDateTime == null){
@@ -81,7 +81,7 @@ public class Room extends BaseTime {
                 .status(1)
                 .encounterDate(convertedToLocalDateTime)
                 .destinationName(destinationName)
-                .shareCode(makeShareCode())
+                .shareCode(shareCode)
                 .build();
 
         room.memberList.add(member);
@@ -93,8 +93,16 @@ public class Room extends BaseTime {
         this.status = 9;
     }
 
-    private static String makeShareCode(){
-        return String.valueOf(UUID.randomUUID()).substring(0,4);
+    public static String makeShareCode(){
+        Random random = new Random();
+        StringBuilder fourDigitNumber = new StringBuilder();
+
+        for (int i = 0; i < 4; i++) {
+            int digit = random.nextInt(10);
+            fourDigitNumber.append(digit);
+        }
+
+        return fourDigitNumber.toString();
     }
 
     public void addMemberList(Member member){

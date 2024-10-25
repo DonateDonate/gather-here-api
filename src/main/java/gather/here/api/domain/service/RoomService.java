@@ -54,12 +54,15 @@ public class RoomService {
         if(member.getRoom() != null && member.getRoom().getStatus() == 1){
             throw new RoomException(ResponseStatus.ALREADY_ROOM_ENCOUNTER,HttpStatus.FORBIDDEN);
         }
+
         Room room = Room.create(
                 request.getDestinationLat(),
                 request.getDestinationLng(),
                 request.getDestinationName(),
                 request.getEncounterDate(),
-                member);
+                member,
+                generateUniqueShareCode()
+                );
 
         roomRepository.save(room);
         member.setRoom(room);
@@ -112,6 +115,14 @@ public class RoomService {
         member.exitRoom();
         Optional<WebSocketAuth> webSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
         webSocketAuth.ifPresent(webSocketAuthRepository::deleteByMemberSeq);
+    }
+
+    private String generateUniqueShareCode() {
+        String shareCode;
+        do {
+            shareCode = Room.makeShareCode();
+        } while (roomRepository.findByShareCode(shareCode) != null);
+        return shareCode;
     }
 }
 

@@ -34,4 +34,8 @@ public class RoomRepositoryImpl implements RoomRepository {
         return roomJpaRepository.findByStatus(status);
     }
 
+    @Override
+    public Room findByShareCode(String shareCode) {
+        return roomJpaRepository.findByShareCode(shareCode);
+    }
 }

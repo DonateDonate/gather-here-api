@@ -100,7 +100,7 @@ class LocationShareServiceTest {
                 .plusHours(1);
 
         String encounterDate = convertLocalDateTimeToString(localDateTime);
-        Room room = Room.create(destinationLat,destinationLng,destinationName,encounterDate,member);
+        Room room = Room.create(destinationLat,destinationLng,destinationName,encounterDate,member,Room.makeShareCode());
         roomRepository.save(room);
         member.setRoom(room);
 
@@ -541,7 +541,7 @@ class LocationShareServiceTest {
                 .toLocalDateTime()
                 .plusHours(1);
         String encounterDate = convertLocalDateTimeToString(localDateTime);
-        Room room = Room.create(37.7,24.4,"목적지",encounterDate,member);
+        Room room = Room.create(37.7,24.4,"목적지",encounterDate,member,Room.makeShareCode());
         roomRepository.save(room);
         member.setRoom(room);
 
