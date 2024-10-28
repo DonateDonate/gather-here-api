@@ -6,6 +6,7 @@ import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.Room;
 import gather.here.api.domain.entities.WebSocketAuth;
+import gather.here.api.domain.etc.TransactionHandler;
 import gather.here.api.domain.repositories.LocationShareEventRepository;
 import gather.here.api.domain.repositories.MemberRepository;
 import gather.here.api.domain.repositories.RoomRepository;
@@ -58,6 +59,9 @@ class LocationShareServiceTest {
     @Autowired
     private LocationShareEventRepository locationShareEventRepository;
 
+    @Autowired
+    private TransactionHandler transactionHandler;
+
 
     @DisplayName("sut는 참가한 room이 없으면 예외가 발생한다")
     @Test
@@ -65,7 +69,7 @@ class LocationShareServiceTest {
         //arrange
         String sessionId = String.valueOf(UUID.randomUUID());
         Member member = createMember();
-        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+        LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository,transactionHandler);
 
         WebSocketAuth webSocketAuth = WebSocketAuth.create(member.getSeq(), sessionId);
         webSocketAuthRepository.save(webSocketAuth);
@@ -104,7 +108,7 @@ class LocationShareServiceTest {
         roomRepository.save(room);
         member.setRoom(room);
 
- LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+ LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository,transactionHandler);
         WebSocketAuth actual = null;
 
         //act
@@ -243,7 +247,7 @@ class LocationShareServiceTest {
         LocationShareEventRequestDto request =
                 new LocationShareEventRequestDto(type,presentLat,presentLng,destinationDistance);
 
- LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+ LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository,transactionHandler);
 
         //act
         sut.createTypeHandleAction(request, sessionId);
@@ -262,7 +266,7 @@ class LocationShareServiceTest {
     @Test
     public void notFoundRoomSeqJoinTest(){
         //arrange
- LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+ LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository,transactionHandler);
         LocationShareEvent actual = null;
 
         //방장 member 추가
@@ -344,7 +348,7 @@ class LocationShareServiceTest {
     public void successJoinTest(){
 
         //arrange
- LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+ LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository,transactionHandler);
 
         //방장 member 추가
         String createIdentity = Utils.randomMemberId();
@@ -442,7 +446,7 @@ class LocationShareServiceTest {
     public void distanceChangeTest(){
 
         //arrange
- LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+ LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository,transactionHandler);
 
         //방장 member 추가
         String createIdentity = Utils.randomMemberId();
@@ -533,7 +537,7 @@ class LocationShareServiceTest {
     @Transactional
     public void saveWebSocketRollBackTest(){
         //arrange
- LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository);
+ LocationShareService sut = new LocationShareService(webSocketAuthRepository,memberRepository, new FileFactoryStub(),locationShareEventRepository,transactionHandler);
         Member member = createMember();
         Date date = new Date();
         LocalDateTime localDateTime = date.toInstant()

@@ -1,5 +1,7 @@
 package gather.here.api.infra.config;
 
+import gather.here.api.domain.etc.RedisTransactionHandler;
+import gather.here.api.domain.etc.TransactionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -55,5 +58,10 @@ public class RedisConfig {
 
         template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
+    }
+
+        @Bean
+    public TransactionHandler transactionHandler(RedisOperations<String,Object> redisOperations){
+        return new RedisTransactionHandler(redisOperations);
     }
 }

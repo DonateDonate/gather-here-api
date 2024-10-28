@@ -3,6 +3,7 @@ package gather.here.api.domain.service;
 import gather.here.api.domain.entities.LocationShareEvent;
 import gather.here.api.domain.entities.Member;
 import gather.here.api.domain.entities.WebSocketAuth;
+import gather.here.api.domain.etc.TransactionHandler;
 import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.LocationShareEventRepository;
 import gather.here.api.domain.repositories.MemberRepository;
@@ -27,6 +28,7 @@ public class LocationShareService {
     private final MemberRepository memberRepository;
     private final FileFactory fileFactory;
     private final LocationShareEventRepository locationShareEventRepository;
+    private final TransactionHandler transactionHandler;
 
     @Transactional
     public void saveWebSocketAuth(String sessionId, Long memberSeq) {
@@ -34,9 +36,9 @@ public class LocationShareService {
         if (member.getRoom() == null || member.getRoom().getStatus() == 9) {
             throw new RoomException(ResponseStatus.CLOSED_ROOM, HttpStatus.FORBIDDEN);
         }
-        WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
         Optional<WebSocketAuth> existWebSocketAuth = webSocketAuthRepository.findMemberSeq(memberSeq);
         deleteMemberSeqByWebSocketAuthAndLocationShareEventIfExist(existWebSocketAuth, member);
+        WebSocketAuth webSocketAuth = WebSocketAuth.create(memberSeq, sessionId);
         webSocketAuthRepository.save(webSocketAuth);
         logGenerater(member,"웹 소켓 연결");
     }

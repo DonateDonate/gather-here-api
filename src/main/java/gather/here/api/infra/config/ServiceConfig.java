@@ -1,6 +1,7 @@
 package gather.here.api.infra.config;
 
 import gather.here.api.application.service.WebSocketService;
+import gather.here.api.domain.etc.TransactionHandler;
 import gather.here.api.domain.file.FileFactory;
 import gather.here.api.domain.repositories.*;
 import gather.here.api.domain.security.AccessTokenFactory;
@@ -51,9 +52,11 @@ public class ServiceConfig {
             WebSocketAuthRepository webSocketAuthRepository,
             MemberRepository memberRepository,
             FileFactory fileFactory,
-            LocationShareEventRepository locationShareEventRepository
+            LocationShareEventRepository locationShareEventRepository,
+            TransactionHandler transactionHandler
+
     ){
-        return new LocationShareService(webSocketAuthRepository,memberRepository,fileFactory,locationShareEventRepository);
+        return new LocationShareService(webSocketAuthRepository,memberRepository,fileFactory,locationShareEventRepository,transactionHandler);
     }
 
     @Bean
