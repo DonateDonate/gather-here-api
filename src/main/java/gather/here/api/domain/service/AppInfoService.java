@@ -19,5 +19,6 @@ public class AppInfoService {
     public GetSplashResponseDto getAppInfo(Long memberSeq) {
         AppInfo appInfo = appInfoRepository.getByLatestAppInfo();
         return new GetSplashResponseDto(appInfo.getVersion());
+
     }
 }
